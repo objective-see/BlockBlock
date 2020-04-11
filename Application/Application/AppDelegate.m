@@ -119,13 +119,8 @@ bail:
         rulesWindowController = [[RulesWindowController alloc] initWithWindowNibName:@"Rules"];
     }
     
-    //UI already configured
-    // just need to (re)configure it
-    else
-    {
-        //configure (UI)
-        [self.rulesWindowController configure];
-    }
+    //configure (UI)
+    [self.rulesWindowController configure];
     
     //make active
     [self makeActive:self.rulesWindowController];

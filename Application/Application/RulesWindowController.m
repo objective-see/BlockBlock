@@ -30,7 +30,8 @@
 @synthesize xpcDaemonClient;
 @synthesize loadingRulesSpinner;
 
--(void)awakeFromNib
+//configure (UI)
+-(void)configure
 {
     //token
     static dispatch_once_t onceToken = 0;
@@ -46,18 +47,6 @@
         xpcDaemonClient = [[XPCDaemonClient alloc] init];
         
     });
-    
-    //finalize UI conf
-    //[self configure];
-    
-    return;
-}
-
-//configure (UI)
--(void)configure
-{
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"method '%s' invoked", __PRETTY_FUNCTION__]);
     
     //load rules
     [self loadRules];
