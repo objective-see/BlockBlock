@@ -37,7 +37,7 @@ dispatch_source_t dispatchSource = nil;
     
     //configure
     // pass in 'install' flag
-    result = [NSNumber numberWithInt:[self configure:app arguements:@[CMD_INSTALL]]];
+    result = [NSNumber numberWithInt:[self configure:app arguments:@[CMD_INSTALL]]];
 
     //reply to client
     reply(result);
@@ -78,7 +78,7 @@ dispatch_source_t dispatchSource = nil;
 
     //configure
     // pass in 'uninstall' flag
-    result = [NSNumber numberWithInt:[self configure:app arguements:@[CMD_UNINSTALL, [NSNumber numberWithBool:full].stringValue]]];
+    result = [NSNumber numberWithInt:[self configure:app arguments:@[CMD_UNINSTALL, [NSNumber numberWithBool:full].stringValue]]];
     
     //reply to client
     reply(result);
@@ -88,7 +88,7 @@ dispatch_source_t dispatchSource = nil;
 
 //configure
 // install or uninstall
--(int)configure:(NSString*)app arguements:(NSArray*)args
+-(int)configure:(NSString*)app arguments:(NSArray*)args
 {
     //result
     int result = -1;
