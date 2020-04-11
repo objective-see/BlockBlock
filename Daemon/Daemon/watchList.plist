@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>description</key>
+		<string>Kernel Extension</string>
+		<key>paths</key>
+		<array>
+			<string>/System/Library/Extensions</string>
+			<string>/Library/Extensions</string>
+		</array>
+		<key>class</key>
+		<string>Kext</string>
+		<key>alert</key>
+		<string>installed a kernel extension</string>
+		<key>ignoreKids</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>description</key>
+		<string>Launch D &amp; A</string>
+		<key>paths</key>
+		<array>
+			<string>^(\/System|\/Users\/.+|)\/Library\/(LaunchDaemons|LaunchAgents)\/.+\.(?i)plist</string>
+		</array>
+		<key>class</key>
+		<string>Launchd</string>
+		<key>alert</key>
+		<string>installed a launch daemon or agent</string>
+		<key>ignoreKids</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>description</key>
+		<string>Login Item</string>
+		<key>paths</key>
+		<array>
+			<string>~/Library/Preferences/com.apple.loginitems.plist</string>
+			<string>~/Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm</string>
+		</array>
+		<key>class</key>
+		<string>LoginItem</string>
+		<key>alert</key>
+		<string>installed a login item</string>
+		<key>ignoreKids</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>description</key>
+		<string>Cron Job</string>
+		<key>paths</key>
+		<array>
+			<string>/private/var/at/tabs/root</string>
+			<string>/private/var/at/tabs/~</string>
+		</array>
+		<key>class</key>
+		<string>CronJob</string>
+		<key>alert</key>
+		<string>created a cron job</string>
+		<key>ignoreKids</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>description</key>
+		<string>App Login Items</string>
+		<key>paths</key>
+		<array>
+			<string>/Applications</string>
+		</array>
+		<key>class</key>
+		<string>AppLoginItem</string>
+		<key>alert</key>
+		<string>created an application helper login item</string>
+		<key>ignoreKids</key>
+		<false/>
+	</dict>
+	<dict>
+		<key>description</key>
+		<string>Event Monitor Daemon</string>
+		<key>paths</key>
+		<array>
+			<string>/private/etc/emond.d/rules</string>
+		</array>
+		<key>class</key>
+		<string>EventMonitor</string>
+		<key>alert</key>
+		<string>created an event monitor rule</string>
+		<key>ignoreKids</key>
+		<true/>
+	</dict>
+</array>
+</plist>

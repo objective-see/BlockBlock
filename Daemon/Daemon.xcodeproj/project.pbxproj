@@ -1,0 +1,572 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7D46FF041F5F496800FEB0F8 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7D46FF031F5F496800FEB0F8 /* patrons.txt */; };
+		7D564DB11F18434F00B8AAD6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D564DB01F18434F00B8AAD6 /* main.m */; };
+		7D564DB61F18434F00B8AAD6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D564DB41F18434F00B8AAD6 /* MainMenu.xib */; };
+		7D564DDC1F18441500B8AAD6 /* AboutWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D564DC71F18441500B8AAD6 /* AboutWindow.xib */; };
+		CD21501820AD222800CEF17B /* Sentry.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = CD21501720AD222800CEF17B /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD3913E62382649F00850CD1 /* XPCListener.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913DA2382649E00850CD1 /* XPCListener.m */; };
+		CD3913E72382649F00850CD1 /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913DB2382649E00850CD1 /* Preferences.m */; };
+		CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913DF2382649E00850CD1 /* XPCDaemon.m */; };
+		CD3913E92382649F00850CD1 /* XPCUserClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913E12382649F00850CD1 /* XPCUserClient.m */; };
+		CD3913EA2382649F00850CD1 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913E22382649F00850CD1 /* Events.m */; };
+		CD3913F32382658600850CD1 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913EC2382658600850CD1 /* logging.m */; };
+		CD3913F42382658600850CD1 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913F12382658600850CD1 /* utilities.m */; };
+		CD3913F72382675300850CD1 /* Rules.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913F62382675300850CD1 /* Rules.m */; };
+		CD3913FD238268B300850CD1 /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913FB238268B300850CD1 /* Rule.m */; };
+		CDAABD3E238BA077005AE212 /* Monitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD3D238BA077005AE212 /* Monitor.m */; };
+		CDAABD48238BA1D3005AE212 /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */; };
+		CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD49238BA1E1005AE212 /* libbsm.tbd */; };
+		CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD4C238BB1B3005AE212 /* PluginBase.m */; };
+		CDAABD53238D0220005AE212 /* Launchd.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD52238D0220005AE212 /* Launchd.m */; };
+		CDC592D4243AF99E00C190D9 /* watchList.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D3243AF99E00C190D9 /* watchList.plist */; };
+		CDC592D6243AFE9500C190D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D5243AFE9500C190D9 /* Assets.xcassets */; };
+		CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD5666C23AB547500F51B1F /* libFileMonitor.a */; };
+		CDFE5CF423ACAD4800A7B28B /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFE5CF123ACAD4700A7B28B /* Item.m */; };
+		CDFE5CF523ACAD4800A7B28B /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFE5CF223ACAD4700A7B28B /* Event.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CD32C22F209015E3009CADF6 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CD21501820AD222800CEF17B /* Sentry.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7D46FF031F5F496800FEB0F8 /* patrons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = patrons.txt; path = ../Daemon/patrons.txt; sourceTree = "<group>"; };
+		7D564DA91F18434F00B8AAD6 /* BlockBlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlockBlock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D564DB01F18434F00B8AAD6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Daemon/main.m; sourceTree = "<group>"; };
+		7D564DB51F18434F00B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		7D564DB71F18434F00B8AAD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Daemon/Info.plist; sourceTree = "<group>"; };
+		7D564DC61F18441500B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
+		7D564DC71F18441500B8AAD6 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AboutWindow.xib; path = ../Daemon/AboutWindow.xib; sourceTree = "<group>"; };
+		CD21501720AD222800CEF17B /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
+		CD30BADD22174FAF00E5D96A /* BlockBlock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BlockBlock.entitlements; path = Daemon/BlockBlock.entitlements; sourceTree = "<group>"; };
+		CD3913DA2382649E00850CD1 /* XPCListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCListener.m; path = Daemon/XPCListener.m; sourceTree = "<group>"; };
+		CD3913DB2382649E00850CD1 /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Daemon/Preferences.m; sourceTree = "<group>"; };
+		CD3913DC2382649E00850CD1 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main.h; path = Daemon/main.h; sourceTree = "<group>"; };
+		CD3913DD2382649E00850CD1 /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Daemon/Events.h; sourceTree = "<group>"; };
+		CD3913DE2382649E00850CD1 /* XPCDaemon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemon.h; path = Daemon/XPCDaemon.h; sourceTree = "<group>"; };
+		CD3913DF2382649E00850CD1 /* XPCDaemon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCDaemon.m; path = Daemon/XPCDaemon.m; sourceTree = "<group>"; };
+		CD3913E02382649E00850CD1 /* XPCListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCListener.h; path = Daemon/XPCListener.h; sourceTree = "<group>"; };
+		CD3913E12382649F00850CD1 /* XPCUserClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCUserClient.m; path = Daemon/XPCUserClient.m; sourceTree = "<group>"; };
+		CD3913E22382649F00850CD1 /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Daemon/Events.m; sourceTree = "<group>"; };
+		CD3913E42382649F00850CD1 /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = Daemon/Preferences.h; sourceTree = "<group>"; };
+		CD3913E52382649F00850CD1 /* XPCUserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserClient.h; path = Daemon/XPCUserClient.h; sourceTree = "<group>"; };
+		CD3913EC2382658600850CD1 /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = logging.m; path = ../Shared/logging.m; sourceTree = "<group>"; };
+		CD3913ED2382658600850CD1 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = ../Shared/logging.h; sourceTree = "<group>"; };
+		CD3913EE2382658600850CD1 /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
+		CD3913EF2382658600850CD1 /* utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utilities.h; path = ../Shared/utilities.h; sourceTree = "<group>"; };
+		CD3913F02382658600850CD1 /* consts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = consts.h; path = ../Shared/consts.h; sourceTree = "<group>"; };
+		CD3913F12382658600850CD1 /* utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utilities.m; path = ../Shared/utilities.m; sourceTree = "<group>"; };
+		CD3913F22382658600850CD1 /* XPCUserProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserProto.h; path = ../Shared/XPCUserProto.h; sourceTree = "<group>"; };
+		CD3913F52382675300850CD1 /* Rules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rules.h; path = Daemon/Rules.h; sourceTree = "<group>"; };
+		CD3913F62382675300850CD1 /* Rules.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rules.m; path = Daemon/Rules.m; sourceTree = "<group>"; };
+		CD3913FB238268B300850CD1 /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
+		CD3913FC238268B300850CD1 /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
+		CDAABD3C238BA077005AE212 /* Monitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Monitor.h; path = Daemon/Monitor.h; sourceTree = "<group>"; };
+		CDAABD3D238BA077005AE212 /* Monitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Monitor.m; path = Daemon/Monitor.m; sourceTree = "<group>"; };
+		CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libEndpointSecurity.tbd; path = usr/lib/libEndpointSecurity.tbd; sourceTree = SDKROOT; };
+		CDAABD49238BA1E1005AE212 /* libbsm.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbsm.tbd; path = usr/lib/libbsm.tbd; sourceTree = SDKROOT; };
+		CDAABD4B238BB1B3005AE212 /* PluginBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginBase.h; path = Daemon/PluginBase.h; sourceTree = "<group>"; };
+		CDAABD4C238BB1B3005AE212 /* PluginBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PluginBase.m; path = Daemon/PluginBase.m; sourceTree = "<group>"; };
+		CDAABD51238D0220005AE212 /* Launchd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Launchd.h; sourceTree = "<group>"; };
+		CDAABD52238D0220005AE212 /* Launchd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Launchd.m; sourceTree = "<group>"; };
+		CDC592D3243AF99E00C190D9 /* watchList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = watchList.plist; path = Daemon/watchList.plist; sourceTree = SOURCE_ROOT; };
+		CDC592D5243AFE9500C190D9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Daemon/Assets.xcassets; sourceTree = "<group>"; };
+		CDD5666B23AB547500F51B1F /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMonitor.h; sourceTree = "<group>"; };
+		CDD5666C23AB547500F51B1F /* libFileMonitor.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFileMonitor.a; sourceTree = "<group>"; };
+		CDFE5CF023ACAD4700A7B28B /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = Daemon/Event.h; sourceTree = "<group>"; };
+		CDFE5CF123ACAD4700A7B28B /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Item.m; path = Daemon/Item.m; sourceTree = "<group>"; };
+		CDFE5CF223ACAD4700A7B28B /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Event.m; path = Daemon/Event.m; sourceTree = "<group>"; };
+		CDFE5CF323ACAD4700A7B28B /* Item.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Item.h; path = Daemon/Item.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CDAABD45238BA1C6005AE212 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */,
+				CDAABD48238BA1D3005AE212 /* libEndpointSecurity.tbd in Frameworks */,
+				CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7D46FEFC1F5E129700FEB0F8 /* XIBs */ = {
+			isa = PBXGroup;
+			children = (
+				7D564DC71F18441500B8AAD6 /* AboutWindow.xib */,
+				7D564DB41F18434F00B8AAD6 /* MainMenu.xib */,
+			);
+			name = XIBs;
+			sourceTree = "<group>";
+		};
+		7D564DA01F18434F00B8AAD6 = {
+			isa = PBXGroup;
+			children = (
+				CDAABD50238D01ED005AE212 /* Plugins */,
+				CDAABD4B238BB1B3005AE212 /* PluginBase.h */,
+				CDAABD4C238BB1B3005AE212 /* PluginBase.m */,
+				CD3913F52382675300850CD1 /* Rules.h */,
+				CD3913F62382675300850CD1 /* Rules.m */,
+				CD3913DD2382649E00850CD1 /* Events.h */,
+				CD3913E22382649F00850CD1 /* Events.m */,
+				CDFE5CF023ACAD4700A7B28B /* Event.h */,
+				CDFE5CF223ACAD4700A7B28B /* Event.m */,
+				CDFE5CF323ACAD4700A7B28B /* Item.h */,
+				CDFE5CF123ACAD4700A7B28B /* Item.m */,
+				7D564DB01F18434F00B8AAD6 /* main.m */,
+				CD3913DC2382649E00850CD1 /* main.h */,
+				CD3913E42382649F00850CD1 /* Preferences.h */,
+				CD3913DB2382649E00850CD1 /* Preferences.m */,
+				CDAABD3C238BA077005AE212 /* Monitor.h */,
+				CDAABD3D238BA077005AE212 /* Monitor.m */,
+				CD3913DE2382649E00850CD1 /* XPCDaemon.h */,
+				CD3913DF2382649E00850CD1 /* XPCDaemon.m */,
+				CD3913E02382649E00850CD1 /* XPCListener.h */,
+				CD3913DA2382649E00850CD1 /* XPCListener.m */,
+				CD3913E52382649F00850CD1 /* XPCUserClient.h */,
+				CD3913E12382649F00850CD1 /* XPCUserClient.m */,
+				CD30BADD22174FAF00E5D96A /* BlockBlock.entitlements */,
+				CDC592D5243AFE9500C190D9 /* Assets.xcassets */,
+				7D564DE21F18445400B8AAD6 /* Shared */,
+				7D564DAB1F18434F00B8AAD6 /* Source */,
+				CD21501920AD224A00CEF17B /* Frameworks */,
+				7D564DAA1F18434F00B8AAD6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7D564DAA1F18434F00B8AAD6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7D564DA91F18434F00B8AAD6 /* BlockBlock.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7D564DAB1F18434F00B8AAD6 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				7D564DC41F18441500B8AAD6 /* Base.lproj */,
+				7D46FEFC1F5E129700FEB0F8 /* XIBs */,
+				7D564DAF1F18434F00B8AAD6 /* Supporting Files */,
+			);
+			name = Source;
+			path = LaunchDaemon;
+			sourceTree = "<group>";
+		};
+		7D564DAF1F18434F00B8AAD6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDC592D3243AF99E00C190D9 /* watchList.plist */,
+				7D46FF031F5F496800FEB0F8 /* patrons.txt */,
+				7D564DB71F18434F00B8AAD6 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7D564DC41F18441500B8AAD6 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				7D564DC51F18441500B8AAD6 /* MainMenu.xib */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		7D564DE21F18445400B8AAD6 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				CDD5666723AB53D600F51B1F /* Libraries */,
+				CD3913FC238268B300850CD1 /* Rule.h */,
+				CD3913FB238268B300850CD1 /* Rule.m */,
+				CD3913F02382658600850CD1 /* consts.h */,
+				CD3913ED2382658600850CD1 /* logging.h */,
+				CD3913EC2382658600850CD1 /* logging.m */,
+				CD3913EF2382658600850CD1 /* utilities.h */,
+				CD3913F12382658600850CD1 /* utilities.m */,
+				CD3913F22382658600850CD1 /* XPCUserProto.h */,
+				CD3913EE2382658600850CD1 /* XPCDaemonProto.h */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
+		CD21501920AD224A00CEF17B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CDAABD49238BA1E1005AE212 /* libbsm.tbd */,
+				CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */,
+				CD21501720AD222800CEF17B /* Sentry.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CDAABD50238D01ED005AE212 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				CDAABD51238D0220005AE212 /* Launchd.h */,
+				CDAABD52238D0220005AE212 /* Launchd.m */,
+			);
+			name = Plugins;
+			path = Daemon/Plugins;
+			sourceTree = "<group>";
+		};
+		CDD5666723AB53D600F51B1F /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				CDD5666B23AB547500F51B1F /* FileMonitor.h */,
+				CDD5666C23AB547500F51B1F /* libFileMonitor.a */,
+			);
+			name = Libraries;
+			path = ../Shared/Libraries;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7D564DA81F18434F00B8AAD6 /* Daemon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D564DBA1F18434F00B8AAD6 /* Build configuration list for PBXNativeTarget "Daemon" */;
+			buildPhases = (
+				7D564DA51F18434F00B8AAD6 /* Sources */,
+				7D564DA71F18434F00B8AAD6 /* Resources */,
+				CD32C22F209015E3009CADF6 /* Copy Frameworks */,
+				CDAABD45238BA1C6005AE212 /* Frameworks */,
+				CD32906C23A5C52000074B0E /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Daemon;
+			productName = configApp;
+			productReference = 7D564DA91F18434F00B8AAD6 /* BlockBlock.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7D564DA11F18434F00B8AAD6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = "Objective-See";
+				TargetAttributes = {
+					7D564DA81F18434F00B8AAD6 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.Mac = {
+								enabled = 0;
+							};
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 7D564DA41F18434F00B8AAD6 /* Build configuration list for PBXProject "Daemon" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+				Base,
+			);
+			mainGroup = 7D564DA01F18434F00B8AAD6;
+			productRefGroup = 7D564DAA1F18434F00B8AAD6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7D564DA81F18434F00B8AAD6 /* Daemon */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7D564DA71F18434F00B8AAD6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D46FF041F5F496800FEB0F8 /* patrons.txt in Resources */,
+				CDC592D4243AF99E00C190D9 /* watchList.plist in Resources */,
+				7D564DDC1F18441500B8AAD6 /* AboutWindow.xib in Resources */,
+				7D564DB61F18434F00B8AAD6 /* MainMenu.xib in Resources */,
+				CDC592D6243AFE9500C190D9 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CD32906C23A5C52000074B0E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#rename to bundle\n#mv \"$BUILT_PRODUCTS_DIR/BlockBlock.app\" \"$BUILT_PRODUCTS_DIR/BlockBlock.bundle\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7D564DA51F18434F00B8AAD6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDFE5CF423ACAD4800A7B28B /* Item.m in Sources */,
+				7D564DB11F18434F00B8AAD6 /* main.m in Sources */,
+				CD3913E72382649F00850CD1 /* Preferences.m in Sources */,
+				CD3913EA2382649F00850CD1 /* Events.m in Sources */,
+				CDFE5CF523ACAD4800A7B28B /* Event.m in Sources */,
+				CD3913E92382649F00850CD1 /* XPCUserClient.m in Sources */,
+				CD3913F42382658600850CD1 /* utilities.m in Sources */,
+				CDAABD53238D0220005AE212 /* Launchd.m in Sources */,
+				CDAABD3E238BA077005AE212 /* Monitor.m in Sources */,
+				CD3913E62382649F00850CD1 /* XPCListener.m in Sources */,
+				CD3913F72382675300850CD1 /* Rules.m in Sources */,
+				CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */,
+				CD3913F32382658600850CD1 /* logging.m in Sources */,
+				CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */,
+				CD3913FD238268B300850CD1 /* Rule.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		7D564DB41F18434F00B8AAD6 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7D564DB51F18434F00B8AAD6 /* Base */,
+			);
+			name = MainMenu.xib;
+			path = ../Daemon;
+			sourceTree = "<group>";
+		};
+		7D564DC51F18441500B8AAD6 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7D564DC61F18441500B8AAD6 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		7D564DB81F18434F00B8AAD6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		7D564DB91F18434F00B8AAD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		7D564DBB1F18434F00B8AAD6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1.0.0;
+				DEVELOPMENT_TEAM = VBG97UB4TA;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
+				INFOPLIST_FILE = Daemon/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../shared/Libraries",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 1.0.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";
+				PRODUCT_NAME = BlockBlock;
+				PROVISIONING_PROFILE_SPECIFIER = BlockBlock;
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		7D564DBC1F18434F00B8AAD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1.0.0;
+				DEVELOPMENT_TEAM = VBG97UB4TA;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
+				INFOPLIST_FILE = Daemon/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../shared/Libraries",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 1.0.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";
+				PRODUCT_NAME = BlockBlock;
+				PROVISIONING_PROFILE_SPECIFIER = BlockBlock;
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = x86_64;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D564DA41F18434F00B8AAD6 /* Build configuration list for PBXProject "Daemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D564DB81F18434F00B8AAD6 /* Debug */,
+				7D564DB91F18434F00B8AAD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D564DBA1F18434F00B8AAD6 /* Build configuration list for PBXNativeTarget "Daemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D564DBB1F18434F00B8AAD6 /* Debug */,
+				7D564DBC1F18434F00B8AAD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7D564DA11F18434F00B8AAD6 /* Project object */;
+}
