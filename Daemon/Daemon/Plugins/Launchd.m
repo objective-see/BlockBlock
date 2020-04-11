@@ -89,10 +89,17 @@
     }
     
     //sanity check
+    if(nil == itemBinary)
+    {
+        //bail
+        goto bail;
+    }
+    
+    //sanity check
     if(YES != [itemBinary isKindOfClass:[NSString class]])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"launch item binary path, %@, is not a string", itemBinary]);
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"launch item's binary path, %@, is not a string (but: %@)", itemBinary, itemBinary.className]);
         
         //unset
         itemBinary = nil;
