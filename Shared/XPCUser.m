@@ -24,12 +24,15 @@ extern NSMutableDictionary* alerts;
 //show an alert window
 -(void)alertShow:(NSDictionary*)alert
 {
+    //pool
+    @autoreleasepool {
+        
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"daemon invoked user XPC method, '%s'", __PRETTY_FUNCTION__]);
     
     //on main (ui) thread
     dispatch_sync(dispatch_get_main_queue(), ^{
-        
+    
         //alert window
         AlertWindowController* alertWindow = nil;
         
@@ -64,6 +67,8 @@ extern NSMutableDictionary* alerts;
         [((AppDelegate*)[[NSApplication sharedApplication] delegate]) setActivationPolicy];
         
     });
+    
+    } //pool
     
     return;
 }

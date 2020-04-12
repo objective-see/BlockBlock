@@ -219,6 +219,9 @@ extern NSMutableDictionary* alerts;
 //send alert response back to the deamon
 -(void)alertReply:(NSDictionary*)alert
 {
+    //pool
+    @autoreleasepool {
+        
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
     
@@ -239,6 +242,8 @@ extern NSMutableDictionary* alerts;
     
     //set app's background/foreground state
     [((AppDelegate*)[[NSApplication sharedApplication] delegate]) setActivationPolicy];
+        
+    } //pool
 
     return;
 }

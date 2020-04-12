@@ -134,7 +134,7 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"PLUGIN %@: blocking %@", NSStringFromClass([self class]), propertyList]);
-    
+
     
     //STEP 1: unload launch item (via launchctl)
     

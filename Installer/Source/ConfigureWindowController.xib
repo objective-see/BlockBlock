@@ -201,7 +201,7 @@
                             </button>
                         </subviews>
                     </view>
-                    <color key="fillColor" red="0.57793885469999995" green="0.75859862570000003" blue="0.2368842065" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="fillColor" red="0.50527782921564679" green="0.6623996295860104" blue="0.20337460651812619" alpha="0.9959562059859155" colorSpace="custom" customColorSpace="sRGB"/>
                 </box>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="660" translatesAutoresizingMaskIntoConstraints="NO" id="aBm-yp-Hzq">
                     <rect key="frame" x="455" y="50" width="229" height="57"/>
@@ -227,7 +227,7 @@
                     </textFieldCell>
                 </textField>
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="LND-q5-8OB">
-                    <rect key="frame" x="607" y="295" width="93" height="52"/>
+                    <rect key="frame" x="631" y="295" width="66" height="52"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="FriendsAiro" id="pUg-ax-ylI"/>
                 </imageView>
