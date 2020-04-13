@@ -30,11 +30,11 @@
 //undeliveryed alerts
 @property(nonatomic, retain)NSMutableDictionary* undelivertedAlerts;
 
-//observer for new client/user (login item)
+//observer for new client/user
 @property(nonatomic, retain)id userObserver;
 
 //xpc client for talking to user (login item)
-@property(nonatomic, retain)XPCUserClient* xpcUserClient;
+//@property(nonatomic, retain)XPCUserClient* xpcUserClient;
 
 //console user
 @property(nonatomic, retain)NSString* consoleUser;

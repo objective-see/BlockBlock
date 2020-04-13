@@ -159,7 +159,7 @@ bail:
     return 0;
 }
 
-//check for full disk access
+//check for full disk access via ESF
 // returns -1/0, as main() will return this too...
 int fdaCheck()
 {
@@ -169,16 +169,33 @@ int fdaCheck()
     //dbg msg
     logMsg(LOG_DEBUG, @"performing full disk access check...");
     
-    //tcc.db readable?
-    // only will be if we (already) have FDA
-    if(YES == [[NSFileManager defaultManager] isReadableFileAtPath:TCC_DB])
+    //client
+    es_client_t *client = nil;
+    
+    //result
+    es_new_client_result_t result = 0;
+    
+    //try create a client
+    // will fail with ES_NEW_CLIENT_RESULT_ERR_NOT_PERMITTED if we don't have FDA
+    result = es_new_client(&client, ^(es_client_t *client, const es_message_t *message) {});
+    if(ES_NEW_CLIENT_RESULT_SUCCESS == result)
     {
-        //ok!
+        //happy
         status = 0;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"result: %d", status]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"result: %d/%d", result, status]);
+    
+    //cleanup client
+    if(nil != client)
+    {
+        //free
+        es_delete_client(client);
+        
+        //unset
+        client = nil;
+    }
     
     return status;
 }

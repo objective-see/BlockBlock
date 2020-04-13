@@ -48,12 +48,15 @@
 //init method
 -(id)initWithParams:(NSDictionary*)watchItemInfo;
 
+//new user connected
+-(void)newUser:(NSString*)user;
+
 //is match
 -(BOOL)isMatch:(File*)file;
 
 //process an event
 // ->extra processing to decide if an alert should be shown
--(BOOL)shouldIgnore:(Event*)event;
+-(BOOL)shouldIgnore:(File*)file;
 
 //block an event
 // ->delete binary, files (plist), etc

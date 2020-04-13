@@ -216,11 +216,13 @@ bail:
         [event.plugin block:event];
     }
     //allow
-    // just log msg
     else
     {
         //dbg/log msg
         logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"user says, 'allow', so allowing %@", event]);
+        
+        //allow
+        [event.plugin allow:event];
     }
     
     //not temp?

@@ -27,6 +27,10 @@
 //last event
 @property (nonatomic, retain)Event* lastEvent;
 
+//observer for new client/user
+@property(nonatomic, retain)id userObserver;
+
+
 /* METHODS */
 
 //load watch list and enable watches

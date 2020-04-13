@@ -111,10 +111,22 @@
 //stubs for inherited methods
 // ->these aren't required, so will just return here if not invoked in child classes
 
+//new user connected
+-(void)newUser:(NSString*)user
+{
+    return;
+}
+
 //callback when watch event is allowed
 -(void)allow:(Event *)event
 {
     return;
+}
+
+//give plugin the option to (more) closely examine event
+-(BOOL)shouldIgnore:(File*)file
+{
+    return NO;
 }
 
 /* REQUIRED METHODS */
@@ -128,15 +140,6 @@
                                    reason:[NSString stringWithFormat:kErrFormat, NSStringFromSelector(_cmd), [self class]]
                                  userInfo:nil];
     return NO;
-}
-
--(BOOL)shouldIgnore:(Event*)event
-{
-    @throw [NSException exceptionWithName:kExceptName
-                                   reason:[NSString stringWithFormat:kErrFormat, NSStringFromSelector(_cmd), [self class]]
-                                 userInfo:nil];
-    return NO;
-    
 }
 
 -(NSString*)itemName:(Event*)event

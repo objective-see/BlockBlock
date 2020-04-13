@@ -137,7 +137,8 @@ bail:
     logMsg(LOG_DEBUG, @"received request to connect to XPC interface");
     
     //init signing req string
-    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", HELPER_ID, SIGNING_AUTH];
+    // TODO: bump this to v1.0 with release! or just check for hardened runtime! 
+    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"0.9.9.9\"", HELPER_ID, SIGNING_AUTH];
     
     //extract pid
     // note: not (really) trusted, but only used in dbg msgs

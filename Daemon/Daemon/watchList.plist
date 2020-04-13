@@ -36,8 +36,7 @@
 		<string>Login Item</string>
 		<key>paths</key>
 		<array>
-			<string>~/Library/Preferences/com.apple.loginitems.plist</string>
-			<string>~/Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm</string>
+			<string>^(\/Users\/.+|)\/Library\/Application Support\/com.apple.backgroundtaskmanagementagent\/backgrounditems.btm</string>
 		</array>
 		<key>class</key>
 		<string>LoginItem</string>

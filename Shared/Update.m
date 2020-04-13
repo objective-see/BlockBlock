@@ -43,7 +43,6 @@
         ^{
             completionHandler(result, latestVersion);
         });
-        
     });
     
     return;

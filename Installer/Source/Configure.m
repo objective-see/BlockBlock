@@ -499,6 +499,9 @@ bail:
     if( (nil == results[EXIT_CODE]) ||
         (noErr != [results[EXIT_CODE] intValue]) )
     {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'LSREGISTER' (%@)", results]);
+        
         //bail
         goto bail;
     }

@@ -11,10 +11,17 @@
 #import "Event.h"
 #import "consts.h"
 #import "Events.h"
+#import "Monitor.h"
 #import "logging.h"
 #import "utilities.h"
 
 /* GLOBALS */
+
+//monitor obj
+extern Monitor* monitor;
+
+//user client
+XPCUserClient* xpcUserClient;
 
 @implementation Events
 
@@ -22,7 +29,7 @@
 @synthesize consoleUser;
 @synthesize userObserver;
 //@synthesize relatedAlerts;
-@synthesize xpcUserClient;
+//@synthesize xpcUserClient;
 @synthesize undelivertedAlerts;
 
 //init
@@ -41,6 +48,7 @@
         //init user xpc client
         xpcUserClient = [[XPCUserClient alloc] init];
         
+        /*
         //register listener for new client/user (login item)
         // when it fires, deliver any alerts that occured when user wasn't logged in
         self.userObserver = [[NSNotificationCenter defaultCenter] addObserverForName:USER_NOTIFICATION object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification)
@@ -52,6 +60,7 @@
             //process alerts
             //[self processUndelivered];
         }];
+        */
     }
     
     return self;
@@ -125,7 +134,7 @@ bail:
 {
     //send via XPC to user
     // failure likely means no client, so just allow, but save
-    if(YES != [self.xpcUserClient deliverEvent:event])
+    if(YES != [xpcUserClient deliverEvent:event])
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"failed to deliver alert to user (no client?)");

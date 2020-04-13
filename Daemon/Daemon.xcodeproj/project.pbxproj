@@ -21,6 +21,7 @@
 		CD3913F42382658600850CD1 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913F12382658600850CD1 /* utilities.m */; };
 		CD3913F72382675300850CD1 /* Rules.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913F62382675300850CD1 /* Rules.m */; };
 		CD3913FD238268B300850CD1 /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913FB238268B300850CD1 /* Rule.m */; };
+		CD410454244406EB00069C56 /* LoginItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CD410453244406EB00069C56 /* LoginItem.m */; };
 		CDAABD3E238BA077005AE212 /* Monitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD3D238BA077005AE212 /* Monitor.m */; };
 		CDAABD48238BA1D3005AE212 /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */; };
 		CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD49238BA1E1005AE212 /* libbsm.tbd */; };
@@ -79,6 +80,8 @@
 		CD3913F62382675300850CD1 /* Rules.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rules.m; path = Daemon/Rules.m; sourceTree = "<group>"; };
 		CD3913FB238268B300850CD1 /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
 		CD3913FC238268B300850CD1 /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
+		CD410452244406EB00069C56 /* LoginItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginItem.h; sourceTree = "<group>"; };
+		CD410453244406EB00069C56 /* LoginItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginItem.m; sourceTree = "<group>"; };
 		CDAABD3C238BA077005AE212 /* Monitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Monitor.h; path = Daemon/Monitor.h; sourceTree = "<group>"; };
 		CDAABD3D238BA077005AE212 /* Monitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Monitor.m; path = Daemon/Monitor.m; sourceTree = "<group>"; };
 		CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libEndpointSecurity.tbd; path = usr/lib/libEndpointSecurity.tbd; sourceTree = SDKROOT; };
@@ -224,6 +227,8 @@
 			children = (
 				CDAABD51238D0220005AE212 /* Launchd.h */,
 				CDAABD52238D0220005AE212 /* Launchd.m */,
+				CD410452244406EB00069C56 /* LoginItem.h */,
+				CD410453244406EB00069C56 /* LoginItem.m */,
 			);
 			name = Plugins;
 			path = Daemon/Plugins;
@@ -357,6 +362,7 @@
 				CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */,
 				CD3913F32382658600850CD1 /* logging.m in Sources */,
 				CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */,
+				CD410454244406EB00069C56 /* LoginItem.m in Sources */,
 				CD3913FD238268B300850CD1 /* Rule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

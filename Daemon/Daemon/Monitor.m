@@ -34,10 +34,14 @@ extern Preferences* preferences;
 @synthesize plugins;
 @synthesize fileMon;
 @synthesize lastEvent;
+@synthesize userObserver;
 
 //init function
 -(id)init
 {
+    //new user
+    __block NSString* newUser = nil;
+    
     //init super
     self = [super init];
     if(nil != self)
@@ -45,6 +49,21 @@ extern Preferences* preferences;
         //init plugin array
         plugins = [NSMutableArray array];
     }
+    
+    //register listener for new client/user
+    // when it fires, call into each plugin in case they care...
+    self.userObserver = [[NSNotificationCenter defaultCenter] addObserverForName:USER_NOTIFICATION object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification)
+    {
+        //dbg msg
+        newUser = getConsoleUser();
+        
+        //alert each plugn
+        for(PluginBase* plugin in self.plugins)
+        {
+            //alert plugin
+            [plugin newUser:newUser];
+        }
+    }];
     
     return self;
 }
@@ -170,6 +189,14 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found plugin %@ for %@", plugin, file]);
+    
+    //allow the plugin to closely examine the event
+    // it will know more about the details so can determine if it should be ignored
+    if(YES == [plugin shouldIgnore:file])
+    {
+        //ignore
+        goto bail;
+    }
     
     //create event
     event = [[Event alloc] init:file plugin:plugin];

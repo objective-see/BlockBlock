@@ -62,6 +62,39 @@ bail:
     return !xpcError;
 }
 
+//request that a login item is remove
+// these are context sensitive, so gotta be done in user's session
+-(void)removeLoginItem:(NSURL*)loginItem reply:(void (^)(NSNumber*))reply;
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, @"invoking user XPC method: 'removeLoginItem'");
+    
+    //sanity check
+    // no client connection?
+    if(nil == xpcListener.client) reply([NSNumber numberWithInt:-1]);
+    
+    //send to user (client)
+    [[xpcListener.client remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to invoke USER XPC method: 'removeLoginItem' (error: %@)", proxyError]);
+        
+        reply([NSNumber numberWithInt:-1]);
+
+    }] removeLoginItem:loginItem reply:^(NSNumber* result)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"user XPC method responded with: %@", result]);
+        
+        //invoke block
+        reply(result);
+        
+    }];
+    
+    return;
+}
+
+
 /*
 
 //inform user rules have changed

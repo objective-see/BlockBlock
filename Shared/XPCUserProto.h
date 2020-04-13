@@ -16,6 +16,9 @@
 //show an alert
 -(void)alertShow:(NSDictionary*)alert;
 
+//remove login item
+-(void)removeLoginItem:(NSURL*)loginItem reply:(void (^)(NSNumber*))reply;
+
 //TODO: add if we want to get fancy
 //rules changed
 //-(void)rulesChanged:(NSDictionary*)rules;

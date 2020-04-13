@@ -28,4 +28,8 @@
 // note: rules have been serialized
 //-(void)rulesChanged:(NSDictionary*)rules;
 
+//request that a login item is remove
+// these are context sensitive, so gotta be done in user's session
+-(void)removeLoginItem:(NSURL*)loginItem reply:(void (^)(NSNumber*))reply;
+
 @end

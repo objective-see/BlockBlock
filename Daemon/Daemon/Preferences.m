@@ -15,7 +15,7 @@
 
 /* GLOBALS */
 
-//prefs obj
+//monitor obj
 extern Monitor* monitor;
 
 @implementation Preferences

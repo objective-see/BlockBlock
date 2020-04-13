@@ -227,7 +227,7 @@
                     </textFieldCell>
                 </textField>
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="LND-q5-8OB">
-                    <rect key="frame" x="631" y="295" width="66" height="52"/>
+                    <rect key="frame" x="625" y="295" width="66" height="52"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="FriendsAiro" id="pUg-ax-ylI"/>
                 </imageView>
