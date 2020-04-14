@@ -284,6 +284,9 @@ bail:
     //deliver alert
     [events deliver:event];
     
+    //dbg msg
+    logMsg(LOG_DEBUG, @"alert delivered...");
+    
 bail:
 
     return;

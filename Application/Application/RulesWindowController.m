@@ -27,7 +27,6 @@
 @synthesize rulesFiltered;
 @synthesize rulesObserver;
 @synthesize rulesStatusMsg;
-@synthesize xpcDaemonClient;
 @synthesize loadingRulesSpinner;
 
 //configure (UI)
@@ -38,15 +37,6 @@
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"method '%s' invoked", __PRETTY_FUNCTION__]);
-    
-    //only once
-    // init XPC client
-    dispatch_once(&onceToken, ^{
-          
-        //init XPC (daemon) client
-        xpcDaemonClient = [[XPCDaemonClient alloc] init];
-        
-    });
     
     //load rules
     [self loadRules];
@@ -83,7 +73,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
     ^{
         //get rules
-        self.rules = [[self.xpcDaemonClient getRules] mutableCopy];
+        self.rules = [[((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient getRules] mutableCopy];
         
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received %lu rules from daemon", (unsigned long)self.rules.count]);
@@ -155,7 +145,7 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
         ^{
             //delete
-            self.rules = [[self.xpcDaemonClient deleteRule:rule] mutableCopy];
+            self.rules = [[((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient deleteRule:rule] mutableCopy];
             
             //sort
             // case insensitive, by name

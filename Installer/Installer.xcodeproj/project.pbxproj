@@ -33,7 +33,6 @@
 		CDA6E639203B6F1000C78F91 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D53820104DD700F798D7 /* logging.m */; };
 		CDAAC241202255580032F2E6 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAAC23F202255580032F2E6 /* utilities.m */; };
 		CDAAC243202257D70032F2E6 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAAC23F202255580032F2E6 /* utilities.m */; };
-		CDFE9436238B407200F422C7 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = CDFE9435238B407200F422C7 /* patrons.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,7 +120,6 @@
 		CDAAC23F202255580032F2E6 /* utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utilities.m; path = ../../Shared/utilities.m; sourceTree = "<group>"; };
 		CDAAC240202255580032F2E6 /* utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utilities.h; path = ../../Shared/utilities.h; sourceTree = "<group>"; };
 		CDAFF43F203E971F00F27635 /* com.objective-see.blockblock.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "com.objective-see.blockblock.plist"; path = "Source/ConfigFiles/com.objective-see.blockblock.plist"; sourceTree = "<group>"; };
-		CDFE9435238B407200F422C7 /* patrons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = patrons.txt; path = ../../Shared/patrons.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -230,7 +228,6 @@
 		CD73DA9C20049158001FFC84 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				CDFE9435238B407200F422C7 /* patrons.txt */,
 				CDAAC24620226D400032F2E6 /* Images */,
 				CDA6E62E203B67A100C78F91 /* consts.h */,
 				CDAAC240202255580032F2E6 /* utilities.h */,
@@ -342,7 +339,6 @@
 				CD86B6EA23A5BBE7003F6BA4 /* configure.sh in Resources */,
 				BF65C19111B985C0007C20AB /* MainMenu.xib in Resources */,
 				CD17D54E20104EE700F798D7 /* AboutWindow.xib in Resources */,
-				CDFE9436238B407200F422C7 /* patrons.txt in Resources */,
 				CD3307AE203567D500F10D71 /* Assets.xcassets in Resources */,
 				CD17D55120104EE700F798D7 /* ConfigureWindowController.xib in Resources */,
 			);

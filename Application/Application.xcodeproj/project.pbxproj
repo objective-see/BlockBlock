@@ -26,8 +26,11 @@
 		CD21501C20AD2EE000CEF17B /* Sentry.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = CD21501B20AD2EE000CEF17B /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD22785E20434CAC00C72C76 /* StatusBarPopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */; };
 		CD22785F20434CAC00C72C76 /* StatusBarPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */; };
+		CD2F8008244551AC009C3D77 /* NSApplicationKeyEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */; };
+		CD2F800C24455333009C3D77 /* AboutWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD2F800924455333009C3D77 /* AboutWindow.xib */; };
+		CD2F800D24455333009C3D77 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2F800B24455333009C3D77 /* AboutWindowController.m */; };
+		CD2F800F244553F4009C3D77 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = CD2F800E244553F4009C3D77 /* patrons.txt */; };
 		CD32C2352094062D009CADF6 /* SigningInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD32C2332094062C009CADF6 /* SigningInfoViewController.m */; };
-		CD3FF8CE20DDE3EF007B39F1 /* NSApplicationKeyEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3FF8CC20DDE3EE007B39F1 /* NSApplicationKeyEvents.m */; };
 		CD6836682391DB6F00CF19C1 /* security.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD6836672391DB6F00CF19C1 /* security.plist */; };
 		CD8FD5D523BAE2D200EFE0FB /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5D323BAE2D100EFE0FB /* Preferences.xib */; };
 		CD8FD5D623BAE2D200EFE0FB /* PrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5D423BAE2D200EFE0FB /* PrefsWindowController.m */; };
@@ -89,10 +92,14 @@
 		CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatusBarPopover.xib; sourceTree = "<group>"; };
 		CD22785C20434CAB00C72C76 /* StatusBarPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusBarPopoverController.h; sourceTree = "<group>"; };
 		CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusBarPopoverController.m; sourceTree = "<group>"; };
+		CD2F8006244551AB009C3D77 /* NSApplicationKeyEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSApplicationKeyEvents.h; sourceTree = "<group>"; };
+		CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSApplicationKeyEvents.m; sourceTree = "<group>"; };
+		CD2F800924455333009C3D77 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutWindow.xib; sourceTree = "<group>"; };
+		CD2F800A24455333009C3D77 /* AboutWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutWindowController.h; sourceTree = "<group>"; };
+		CD2F800B24455333009C3D77 /* AboutWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutWindowController.m; sourceTree = "<group>"; };
+		CD2F800E244553F4009C3D77 /* patrons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = patrons.txt; sourceTree = "<group>"; };
 		CD32C2332094062C009CADF6 /* SigningInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SigningInfoViewController.m; sourceTree = "<group>"; };
 		CD32C2342094062C009CADF6 /* SigningInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigningInfoViewController.h; sourceTree = "<group>"; };
-		CD3FF8CC20DDE3EE007B39F1 /* NSApplicationKeyEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSApplicationKeyEvents.m; path = ../Shared/NSApplicationKeyEvents.m; sourceTree = "<group>"; };
-		CD3FF8CD20DDE3EE007B39F1 /* NSApplicationKeyEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSApplicationKeyEvents.h; path = ../Shared/NSApplicationKeyEvents.h; sourceTree = "<group>"; };
 		CD6836672391DB6F00CF19C1 /* security.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = security.plist; sourceTree = "<group>"; };
 		CD8FD5D123B585FE00EFE0FB /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMonitor.h; path = ../Shared/Libraries/FileMonitor.h; sourceTree = "<group>"; };
 		CD8FD5D223BAE2D100EFE0FB /* PrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsWindowController.h; sourceTree = "<group>"; };
@@ -145,8 +152,6 @@
 				CDFA08D7214606DB0089758C /* XPCDaemonProto.h */,
 				7D16D68F1F64E43300DB3161 /* Update.h */,
 				7D16D6901F64E43300DB3161 /* Update.m */,
-				CD3FF8CD20DDE3EE007B39F1 /* NSApplicationKeyEvents.h */,
-				CD3FF8CC20DDE3EE007B39F1 /* NSApplicationKeyEvents.m */,
 				7D16D6911F64E43300DB3161 /* UpdateWindow.xib */,
 				7D16D6921F64E43300DB3161 /* UpdateWindowController.h */,
 				7D16D6931F64E43300DB3161 /* UpdateWindowController.m */,
@@ -181,6 +186,11 @@
 		7D7755E51F02E05B00D0017D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CD2F8006244551AB009C3D77 /* NSApplicationKeyEvents.h */,
+				CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */,
+				CD2F800924455333009C3D77 /* AboutWindow.xib */,
+				CD2F800A24455333009C3D77 /* AboutWindowController.h */,
+				CD2F800B24455333009C3D77 /* AboutWindowController.m */,
 				CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */,
 				CD22785C20434CAB00C72C76 /* StatusBarPopoverController.h */,
 				CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */,
@@ -222,6 +232,7 @@
 		7D7755E91F02E05B00D0017D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CD2F800E244553F4009C3D77 /* patrons.txt */,
 				CD6836672391DB6F00CF19C1 /* security.plist */,
 				7D7755EA1F02E05B00D0017D /* main.m */,
 			);
@@ -318,9 +329,11 @@
 			files = (
 				CD8FD5D523BAE2D200EFE0FB /* Preferences.xib in Resources */,
 				CD6836682391DB6F00CF19C1 /* security.plist in Resources */,
+				CD2F800C24455333009C3D77 /* AboutWindow.xib in Resources */,
 				7DD2BF971F1FF64300B33214 /* AlertWindow.xib in Resources */,
 				7D16D6951F64E43300DB3161 /* UpdateWindow.xib in Resources */,
 				CD22785E20434CAC00C72C76 /* StatusBarPopover.xib in Resources */,
+				CD2F800F244553F4009C3D77 /* patrons.txt in Resources */,
 				CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */,
 				7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */,
 				7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */,
@@ -338,6 +351,7 @@
 				7D16D6961F64E43300DB3161 /* UpdateWindowController.m in Sources */,
 				7D3B75141F13354900568828 /* StatusBarItem.m in Sources */,
 				7D7755EB1F02E05B00D0017D /* main.m in Sources */,
+				CD2F8008244551AC009C3D77 /* NSApplicationKeyEvents.m in Sources */,
 				7D3B75251F13357D00568828 /* logging.m in Sources */,
 				7DD2600F1F252E8C00277EC4 /* VirusTotalViewController.m in Sources */,
 				CD32C2352094062D009CADF6 /* SigningInfoViewController.m in Sources */,
@@ -346,7 +360,6 @@
 				CD8FD5F823C05AD900EFE0FB /* RulesWindowController.m in Sources */,
 				7D7755E81F02E05B00D0017D /* AppDelegate.m in Sources */,
 				7DD2601C1F25600900277EC4 /* ParentsWindowController.m in Sources */,
-				CD3FF8CE20DDE3EF007B39F1 /* NSApplicationKeyEvents.m in Sources */,
 				CD8FD5F723C05AD900EFE0FB /* RuleRowCell.m in Sources */,
 				7DD2BF7A1F1EAC9C00B33214 /* XPCDaemonClient.m in Sources */,
 				7DD2BF981F1FF64300B33214 /* AlertWindowController.m in Sources */,
@@ -354,6 +367,7 @@
 				7DD2600C1F252E0C00277EC4 /* VirusTotal.m in Sources */,
 				CD22785F20434CAC00C72C76 /* StatusBarPopoverController.m in Sources */,
 				CD8FD5F623C05AD900EFE0FB /* RuleRow.m in Sources */,
+				CD2F800D24455333009C3D77 /* AboutWindowController.m in Sources */,
 				7D16D6941F64E43300DB3161 /* Update.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

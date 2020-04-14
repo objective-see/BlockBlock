@@ -92,9 +92,6 @@
 //status message for import/export rules
 @property (weak) IBOutlet NSTextField *rulesStatusMsg;
 
-//xpc for daemon comms
-@property(nonatomic, retain)XPCDaemonClient* xpcDaemonClient;
-
 /* METHODS */
 
 //configure (UI)

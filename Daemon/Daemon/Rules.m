@@ -333,10 +333,6 @@ bail:
         }
     }
         
-    //TODO: implement if we want to get fancy
-    //tell user (via XPC) rules changed
-    //[self.xpcUserClient rulesChanged:[self serialize]];
-    
     //happy
     result = YES;
     

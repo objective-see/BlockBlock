@@ -1,6 +1,6 @@
 //
 //  file: NSApplicationKeyEvents.h
-//  project: BlockBlock (shared)
+//  project: BlockBlock (login item)
 //  description: adds support for keyboard shortcuts (header)
 //
 //  created by Patrick Wardle

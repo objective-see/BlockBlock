@@ -47,7 +47,7 @@ extern XPCListener* xpcListener;
     }
 
     //send to user (client) to display
-    [[xpcListener.client synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    [[xpcListener.client remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //set error
         xpcError = YES;
@@ -74,7 +74,7 @@ bail:
     if(nil == xpcListener.client) reply([NSNumber numberWithInt:-1]);
     
     //send to user (client)
-    [[xpcListener.client remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    [[xpcListener.client synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to invoke USER XPC method: 'removeLoginItem' (error: %@)", proxyError]);

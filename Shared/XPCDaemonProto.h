@@ -25,27 +25,12 @@
 //delete rule
 -(void)deleteRule:(Rule*)rule reply:(void (^)(NSData*))reply;
 
-
-/*
-//get rules
-// optionally waits (blocks) for change
--(void)getRules:(void (^)(NSDictionary*))reply;
-
-//add rule
--(void)addRule:(NSString*)path action:(NSUInteger)action user:(NSUInteger)user;
-
-//update
--(void)updateRule:(NSString*)path action:(NSUInteger)action user:(NSUInteger)user;
-
-
-
-//import rules
--(void)importRules:(NSString*)rulesFile reply:(void (^)(BOOL))reply;
- 
-*/
-
 //respond to an alert
 -(void)alertReply:(NSDictionary*)alert;
+
+//add rule
+//-(void)addRule:(NSString*)path action:(NSUInteger)action user:(NSUInteger)user;
+
 
 
 @end

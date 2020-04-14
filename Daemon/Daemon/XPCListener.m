@@ -118,31 +118,68 @@ bail:
 
 //automatically invoked
 // allows NSXPCListener to configure/accept/resume a new incoming NSXPCConnection
-// note: we only allow binaries signed by Objective-See to talk to this!
+// shoutout to: https://blog.obdev.at/what-we-have-learned-from-a-vulnerability/
 -(BOOL)listener:(NSXPCListener *)listener shouldAcceptNewConnection:(NSXPCConnection *)newConnection
 {
     //flag
     BOOL shouldAccept = NO;
     
+    //audit token
+    audit_token_t auditToken = {0};
+    
     //task ref
     SecTaskRef taskRef = 0;
     
-    //pid
-    pid_t pid = 0;
+    //code ref
+    SecCodeRef codeRef = NULL;
+    
+    //code signing info
+    CFDictionaryRef csInfo = NULL;
+    
+    //cs flags
+    uint32_t csFlags = 0;
     
     //signing req string (main app)
     NSString* requirement = nil;
 
     //dbg msg
-    logMsg(LOG_DEBUG, @"received request to connect to XPC interface");
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received request to connect to XPC interface from client (pid: %d)", audit_token_to_pid(auditToken)]);
+    
+    //extract audit token
+    auditToken = ((ExtendedNSXPCConnection*)newConnection).auditToken;
+    
+    //obtain dynamic code ref
+    if(errSecSuccess != SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef))
+    {
+        //bail
+        goto bail;
+    }
+    
+    //get code signing info
+    if(errSecSuccess != SecCodeCopySigningInformation(codeRef, kSecCSDynamicInformation, &csInfo))
+    {
+        //bail
+        goto bail;
+    }
+    
+    //extract flags
+    csFlags = [((__bridge NSDictionary *)csInfo)[(__bridge NSString *)kSecCodeInfoStatus] intValue];
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"code signing flags: %#x", csFlags]);
+                    
+    //gotta have hardened runtime
+    if(!(CS_RUNTIME & csFlags))
+    {
+        //bail
+        goto bail;
+    }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"code signing flags, ok (`CS_RUNTIME`)");
     
     //init signing req string
-    // TODO: bump this to v1.0 with release! or just check for hardened runtime! 
-    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"0.9.9.9\"", HELPER_ID, SIGNING_AUTH];
-    
-    //extract pid
-    // note: not (really) trusted, but only used in dbg msgs
-    pid = audit_token_to_pid(((ExtendedNSXPCConnection*)newConnection).auditToken);
+    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\"", HELPER_ID, SIGNING_AUTH];
     
     //step 1: create task ref
     // uses NSXPCConnection's (private) 'auditToken' iVar
@@ -155,14 +192,17 @@ bail:
     
     //step 2: validate
     // check that client is signed with Objective-See's and it's BlockBlock
-    if(0 != SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement)))
+    if(errSecSuccess != SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement)))
     {
         //dbg msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed with validate client (pid: %d)", pid]);
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed with validate client (pid: %d)", audit_token_to_pid(auditToken)]);
         
         //bail
         goto bail;
     }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"client code signing information, ok");
     
     //set the interface that the exported object implements
     newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(XPCDaemonProtocol)];
@@ -189,7 +229,7 @@ bail:
     [newConnection resume];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing XPC connection from client (pid: %d)", pid]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing XPC connection from client (pid: %d)", audit_token_to_pid(auditToken)]);
     
     //happy
     shouldAccept = YES;

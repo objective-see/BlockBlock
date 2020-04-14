@@ -66,8 +66,6 @@ XPCUserClient* xpcUserClient;
     return self;
 }
 
-
-
 //add an alert to 'shown'
 -(void)addShown:(Event*)event;
 {

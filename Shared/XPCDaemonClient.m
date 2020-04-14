@@ -141,7 +141,7 @@ extern NSMutableDictionary* alerts;
             //add (each) processes rules
             [rules addObjectsFromArray:unarchivedRules[key][KEY_RULES]];
         }
-    
+        
     }];
     
     return rules;

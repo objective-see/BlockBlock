@@ -318,31 +318,17 @@ bail:
     //return/status var
     __block BOOL wasBlocked = NO;
     
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
-    //define block
-    void(^block)(NSNumber *) = ^(NSNumber *result)
-    {
-        //save result
-        wasBlocked = (BOOL)(result.intValue == 0);
-        
-        //signal sema
-        dispatch_semaphore_signal(semaphore);
-    };
-    
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
     
     //remove login item
     // gotta call into user session to remove
-    [xpcUserClient removeLoginItem:[NSURL fileURLWithPath:event.item.object] reply:block];
-    
-    //wait for installer logic to be completed by XPC
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    [xpcUserClient removeLoginItem:[NSURL fileURLWithPath:event.item.object] reply:^(NSNumber *result)
+    {
+        //save result
+        wasBlocked = (BOOL)(result.intValue == 0);
+        
+    }];
     
     return wasBlocked;
 }

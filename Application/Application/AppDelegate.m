@@ -23,6 +23,7 @@ NSMutableDictionary* alerts = nil;
 @synthesize appObserver;
 @synthesize prefsChanged;
 @synthesize xpcDaemonClient;
+@synthesize aboutWindowController;
 @synthesize prefsWindowController;
 @synthesize rulesWindowController;
 @synthesize updateWindowController;
@@ -141,6 +142,73 @@ bail:
     
     //make active
     [self makeActive:self.prefsWindowController];
+    
+    return;
+}
+
+//'about' menu item handler
+// alloc/show the about window
+-(IBAction)showAbout:(id)sender
+{
+    //alloc/init settings window
+    if(nil == self.aboutWindowController)
+    {
+        //alloc/init
+        aboutWindowController = [[AboutWindowController alloc] initWithWindowNibName:@"AboutWindow"];
+    }
+    
+    //center window
+    [[self.aboutWindowController window] center];
+    
+    //show it
+    [self.aboutWindowController showWindow:self];
+    
+    /*
+    //invoke function in background that will make window modal
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        //make modal
+        makeModal(self.aboutWindowController);
+        
+    });
+    */
+    
+    return;
+}
+
+//close window handler
+// close rules || pref window
+-(IBAction)closeWindow:(id)sender {
+    
+    //key window
+    NSWindow *keyWindow = nil;
+    
+    //get key window
+    keyWindow = [[NSApplication sharedApplication] keyWindow];
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"close window request (key window: %@)", keyWindow]);
+
+    //close
+    // but only for rules/pref/about window
+    if( (keyWindow != self.aboutWindowController.window) &&
+        (keyWindow != self.prefsWindowController.window) &&
+        (keyWindow != self.rulesWindowController.window) )
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"key window is not rules or pref window, so ignoring...");
+        
+        //ignore
+        goto bail;
+    }
+    
+    //close
+    [keyWindow close];
+    
+    //set activation policy
+    [self setActivationPolicy];
+    
+bail:
     
     return;
 }

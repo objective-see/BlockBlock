@@ -11,6 +11,7 @@
 
 #import "StatusBarItem.h"
 #import "XPCDaemonClient.h"
+#import "AboutWindowController.h"
 #import "PrefsWindowController.h"
 #import "RulesWindowController.h"
 #import "UpdateWindowController.h"
@@ -25,6 +26,9 @@
 
 //status bar menu controller
 @property(nonatomic, retain)StatusBarItem* statusBarItemController;
+
+//about window controller
+@property(nonatomic, retain)AboutWindowController* aboutWindowController;
 
 //preferences window controller
 @property(nonatomic, retain)PrefsWindowController* prefsWindowController;
