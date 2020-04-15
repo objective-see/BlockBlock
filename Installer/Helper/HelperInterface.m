@@ -29,18 +29,22 @@ dispatch_source_t dispatchSource = nil;
 // do install logic and return result
 -(void)install:(NSString*)app reply:(void (^)(NSNumber*))reply;
 {
-    //results
-    NSNumber* result = nil;
+    //response
+    BOOL response = NO;
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC-request: install (%@)", app]);
     
     //configure
     // pass in 'install' flag
-    result = [NSNumber numberWithInt:[self configure:app arguments:@[CMD_INSTALL]]];
-
+    if(0 == [self configure:app arguments:@[CMD_INSTALL]])
+    {
+        //happy
+        response = YES;
+    }
+        
     //reply to client
-    reply(result);
+    reply([NSNumber numberWithBool:response]);
 
     return;
 }
@@ -48,6 +52,9 @@ dispatch_source_t dispatchSource = nil;
 //load/unload launch daemon
 -(void)toggleDaemon:(BOOL)shouldLoad reply:(void (^)(NSNumber*))reply;
 {
+    //response
+    BOOL response = NO;
+    
     //task results
     NSDictionary* results = nil;
     
@@ -59,9 +66,15 @@ dispatch_source_t dispatchSource = nil;
     
     //load load daemon via `launchctl`
     results = execTask(@"/bin/launchctl", @[action, [@"/Library/LaunchDaemons" stringByAppendingPathComponent:LAUNCH_DAEMON_PLIST]], YES, NO);
+    if( (nil != results[EXIT_CODE]) &&
+        (0 == [results[EXIT_CODE] intValue]) )
+    {
+        //happy
+        response = YES;
+    }
     
     //reply to client
-    reply(results[EXIT_CODE]);
+    reply([NSNumber numberWithBool:response]);
 
     return;
 }
@@ -70,18 +83,22 @@ dispatch_source_t dispatchSource = nil;
 // do uninstall logic and return result
 -(void)uninstall:(NSString*)app full:(BOOL)full reply:(void (^)(NSNumber*))reply;
 {
-    //results
-    NSNumber* result = nil;
+    //response
+    BOOL response = NO;
     
     //dbg msg
     logMsg(LOG_DEBUG, @"XPC-request: uninstall");
 
     //configure
     // pass in 'uninstall' flag
-    result = [NSNumber numberWithInt:[self configure:app arguments:@[CMD_UNINSTALL, [NSNumber numberWithBool:full].stringValue]]];
-    
+    if(0 == [self configure:app arguments:@[CMD_UNINSTALL, [NSNumber numberWithBool:full].stringValue]])
+    {
+        //happy
+        response = YES;
+    }
+        
     //reply to client
-    reply(result);
+    reply([NSNumber numberWithBool:response]);
     
     return;
 }
@@ -143,8 +160,8 @@ bail:
 // since system install/launches us as root, client can't directly remove us
 -(void)cleanup:(void (^)(NSNumber*))reply
 {
-    //results
-    __block NSNumber* result = nil;
+    //response
+    __block BOOL response = NO;
     
     //flag
     __block BOOL noErrors = YES;
@@ -160,9 +177,6 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, @"XPC-request: cleanup (removing self)");
-    
-    //init
-    result = @-1;
     
     //ignore sigterm
     // handling it via GCD dispatch
@@ -209,14 +223,14 @@ bail:
         if(YES == noErrors)
         {
             //happy
-            result = @0;
+            response = YES;
             
             //dbg msg
             logMsg(LOG_DEBUG, [NSString stringWithFormat:@"removed %@ and %@", helperPlist, helperBinary]);
         }
         
         //reply to client
-        reply(result);
+        reply([NSNumber numberWithBool:response]);
         
         //bye!
         exit(SIGTERM);

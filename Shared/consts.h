@@ -115,6 +115,10 @@
 #define BUTTON_ALLOW 1
 
 //prefs
+// got FDA
+#define PREF_GOT_FDA @"gotFullDiskAccess"
+
+//prefs
 // disabled status
 #define PREF_IS_DISABLED @"disabled"
 

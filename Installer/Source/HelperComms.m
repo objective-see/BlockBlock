@@ -41,100 +41,99 @@
 }
 
 //install
-// note: XPC is async, so return logic handled in callback block
--(void)install:(void (^)(NSNumber*))reply
+-(BOOL)install
 {
+    //result
+    __block BOOL result = NO;
+    
     //dbg msg
     logMsg(LOG_DEBUG, @"invoking 'install' XPC method");
     
     //install
-    [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    [[self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'install' method on helper tool (error: %@)", proxyError]);
         
-        //invoke block
-        reply([NSNumber numberWithInt:-1]);
-          
-    }] install:[[NSBundle mainBundle] bundlePath] reply:^(NSNumber* result)
+    }] install:[[NSBundle mainBundle] bundlePath] reply:^(NSNumber* xpcResult)
     {
-        //invoke block
-        reply(result);
+        //capture result
+        result = [xpcResult boolValue];
     }];
     
-    return;
+    return result;
 }
 
 //toggle launch daemon
-// note: XPC is async, so return logic handled in callback block
--(void)toggleDaemon:(BOOL)shouldLoad reply:(void (^)(NSNumber*))reply;
+-(BOOL)toggleDaemon:(BOOL)shouldLoad
 {
+    //result
+    __block BOOL result = NO;
+    
     //dbg msg
     logMsg(LOG_DEBUG, @"invoking 'toggleDaemon' XPC method");
     
     //install
-    [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    [[self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'toggleDaemon' method on helper tool (error: %@)", proxyError]);
         
-        //invoke block
-        reply([NSNumber numberWithInt:-1]);
-          
-    }] toggleDaemon:shouldLoad reply:^(NSNumber* result)
+    }] toggleDaemon:shouldLoad reply:^(NSNumber* xpcResult)
     {
-        //invoke block
-        reply(result);
+        //capture results
+        result = [xpcResult boolValue];
     }];
     
-    return;
+    return result;
 }
 
 //uninstall
-// note: XPC is async, so return logic handled in callback block
--(void)uninstall:(BOOL)full reply:(void (^)(NSNumber*))reply
+-(BOOL)uninstall:(BOOL)full
 {
+    //result
+    __block BOOL result = NO;
+    
     //dbg msg
     logMsg(LOG_DEBUG, @"invoking 'uninstall' XPC method");
     
     //uninstall
-    [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    [[self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
-          //err msg
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'uninstall' method on helper tool (error: %@)", proxyError]);
-          
-          //invoke block
-          reply([NSNumber numberWithInt:-1]);
-          
-    }] uninstall:[[NSBundle mainBundle] bundlePath] full:full reply:^(NSNumber* result)
+        
+    }] uninstall:[[NSBundle mainBundle] bundlePath] full:full reply:^(NSNumber* xpcResult)
     {
-         //invoke block
-         reply(result);
+         //capture results
+         result = [xpcResult boolValue];
     }];
     
-    return;
+    return result;
 }
 
 //cleanup
--(void)cleanup:(void (^)(NSNumber*))reply
+-(BOOL)cleanup
 {
+    //result
+    __block BOOL result = NO;
+    
     //dbg msg
     logMsg(LOG_DEBUG, @"invoking 'cleanup' XPC method");
     
     //remove
-    [[(NSXPCConnection*)self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    [[(NSXPCConnection*)self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'remove' method on helper tool (error: %@)", proxyError]);
           
-    }] cleanup:^(NSNumber* result)
+    }] cleanup:^(NSNumber* xpcResult)
     {
-        //invoke block
-        reply(result);
+        //capture results
+        result = [xpcResult boolValue];
     }];
     
-    return;
+    return result;
 }
 
 @end

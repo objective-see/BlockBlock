@@ -38,20 +38,6 @@ int main(int argc, const char * argv[])
            goto bail;
         }
         
-        //check for FDA
-        // bail on error
-        if(0 != fdaCheck())
-        {
-            //err msg
-            logMsg(LOG_ERR, @"full disk access: denied");
-            
-            //bye :(
-            return -1;
-        }
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, @"full disk access: ok");
-        
         //init logging
         if(YES != initLogging(logFilePath()))
         {
@@ -102,6 +88,27 @@ int main(int argc, const char * argv[])
 
         //dbg msg
         logMsg(LOG_DEBUG, @"created client XPC listener");
+        
+        //check for FDA
+        // wait till we have it!
+        // do this after prefs and XPC so install/app can check!
+        while(0 != fdaCheck())
+        {
+            //err msg
+            logMsg(LOG_ERR, @"full disk access: denied");
+            
+            //update preferences
+            [preferences update:@{PREF_GOT_FDA:@NO}];
+            
+            //nap
+            [NSThread sleepForTimeInterval:0.50];
+        }
+        
+        //dbg msg
+        logMsg(LOG_DEBUG, @"full disk access: ok");
+        
+        //update preferences
+        [preferences update:@{PREF_GOT_FDA:@YES}];
         
         //load rules
         if(YES != [rules load])

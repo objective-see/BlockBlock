@@ -32,9 +32,6 @@
 //configure (UI)
 -(void)configure
 {
-    //token
-    static dispatch_once_t onceToken = 0;
-    
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"method '%s' invoked", __PRETTY_FUNCTION__]);
     

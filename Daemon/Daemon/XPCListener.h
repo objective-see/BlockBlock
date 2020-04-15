@@ -24,9 +24,6 @@
 //XPC connection for login item
 @property(weak)NSXPCConnection* client;
 
-//XPC connection for main app
-//@property(weak)NSXPCConnection* mainApp;
-
 /* METHODS */
 
 //setup XPC listener

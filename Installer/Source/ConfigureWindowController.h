@@ -40,11 +40,19 @@
 //full disk access view
 @property (strong, nonatomic) IBOutlet NSView *diskAccessView;
 
-//mouse over
-@property (weak, nonatomic) IBOutlet NSView *mouseOver;
-
 //disk access view's button
 @property (weak, nonatomic) IBOutlet NSButton *diskAccessButton;
+
+//spinner for 'waiting for FDA' message
+@property (weak, nonatomic) IBOutlet NSProgressIndicator *fdaActivityIndicator;
+
+//'waiting for FDA' message
+@property (weak, nonatomic) IBOutlet NSTextField *fdaMessage;
+
+//issues button
+@property (weak, nonatomic) IBOutlet NSButton *issuesButton;
+
+/* SUPPORT US */
 
 //support us view
 @property (strong, nonatomic) IBOutlet NSView *supportView;

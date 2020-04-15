@@ -9,37 +9,15 @@
 @class Item;
 @class Event;
 @class PluginBase;
-//@class Process;
 
-
-//#import "Item.h"
-//#import "PluginBase.h"
 #import "FileMonitor.h"
 
 #import <Foundation/Foundation.h>
 #import <Security/AuthSession.h>
 
-
 @interface Event : NSObject
 {
-    //path
-    //NSString* path;
     
-    //matched path
-    ///NSString* match;
-    
-    
-    
-    //flags
-    //NSUInteger flags;
-
-    
-
-    //flag indicating user choose to block
-    //BOOL wasBlocked;
-    
-    //flag indicating user set 'remember' (action) option
-    //BOOL shouldRemember;
 }
 
 /* PROPERTIES */
@@ -53,9 +31,6 @@
 
 //(startup) item
 @property(nonatomic, retain)Item* item;
-
-//message
-//@property(nonatomic, retain)NSString* message;
 
 //(user) action
 @property NSUInteger action;

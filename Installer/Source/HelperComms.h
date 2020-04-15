@@ -23,17 +23,17 @@
 /* METHODS */
 
 //install
--(void)install:(void (^)(NSNumber*))reply;
+-(BOOL)install;
 
 //load/unload launch daemon
--(void)toggleDaemon:(BOOL)shouldLoad reply:(void (^)(NSNumber*))reply;
+-(BOOL)toggleDaemon:(BOOL)shouldLoad;
 
 //uninstall
 // takes flag to indicate full/partial
--(void)uninstall:(BOOL)full reply:(void (^)(NSNumber*))reply;
+-(BOOL)uninstall:(BOOL)full;
 
 //cleanup
 // remove self
--(void)cleanup:(void (^)(NSNumber*))reply;
+-(BOOL)cleanup;
 
 @end

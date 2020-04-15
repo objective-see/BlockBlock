@@ -18,13 +18,14 @@
 #import "XPCUserProto.h"
 #import "XPCDaemonProto.h"
 
+
 #import <bsm/libbsm.h>
 
 //signing auth
 #define SIGNING_AUTH @"Developer ID Application: Objective-See, LLC (VBG97UB4TA)"
 
 //interface for 'extension' to NSXPCConnection
-// ->allows us to access the 'private' auditToken iVar
+// allows us to access the 'private' auditToken iVar
 @interface ExtendedNSXPCConnection : NSXPCConnection
 {
     //private iVar
@@ -163,7 +164,7 @@ bail:
     }
     
     //extract flags
-    csFlags = [((__bridge NSDictionary *)csInfo)[(__bridge NSString *)kSecCodeInfoStatus] intValue];
+    csFlags = [((__bridge NSDictionary *)csInfo)[(__bridge NSString *)kSecCodeInfoStatus] unsignedIntValue];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"code signing flags: %#x", csFlags]);

@@ -42,12 +42,6 @@
 //xpc for daemon comms
 @property(nonatomic, retain)XPCDaemonClient* xpcDaemonClient;
 
-//(main) app observer
-@property(nonatomic, retain)NSObject* appObserver;
-
-//notifcation changed observer
-@property(nonatomic, retain)id prefsChanged;
-
 /* METHODS */
 
 //set app foreground/background

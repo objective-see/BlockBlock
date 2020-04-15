@@ -62,7 +62,7 @@ bail:
     return !xpcError;
 }
 
-//request that a login item is remove
+//request the removal of a login item
 // these are context sensitive, so gotta be done in user's session
 -(void)removeLoginItem:(NSURL*)loginItem reply:(void (^)(NSNumber*))reply;
 {

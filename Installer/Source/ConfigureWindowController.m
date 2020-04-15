@@ -17,9 +17,11 @@
 @implementation ConfigureWindowController
 
 @synthesize statusMsg;
+@synthesize fdaMessage;
 @synthesize configureObj;
 @synthesize diskAccessView;
 @synthesize moreInfoButton;
+@synthesize fdaActivityIndicator;
 @synthesize appActivationObserver;
 
 //automatically called when nib is loaded
@@ -178,46 +180,47 @@
             //show view
             [self showView:self.diskAccessView firstResponder:self.diskAccessButton];
             
-            //register for deactivation
-            // user must launch / interact w/ System Prefs before we enable 'next' button
-            [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(appDeactivated:) name:NSWorkspaceDidDeactivateApplicationNotification object:nil];
+            //in background
+            // wait for daemon to set 'got FDA' preference
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+            ^{
+                //dbg msg
+                logMsg(LOG_DEBUG, @"waiting for 'FDA' to be granted to daemon...");
+                
+                //still need FDA?
+                while(YES == [self.configureObj shouldRequestFDA])
+                {
+                    //nap
+                    [NSThread sleepForTimeInterval:0.25];
+                }
+                
+                //dbg msg
+                logMsg(LOG_DEBUG, @"daemon was granted 'FDA'!");
+                
+                //update UI
+                dispatch_sync(dispatch_get_main_queue(),
+                ^{
+                    //hide spinner
+                    self.fdaActivityIndicator.hidden = YES;
+                    
+                    //hide fda message
+                    self.fdaMessage.hidden = YES;
+                    
+                    //enable 'next' button
+                    ((NSButton*)[self.diskAccessView viewWithTag:ACTION_SHOW_SUPPORT]).enabled = YES;
+                    
+                    //make it first responder
+                    [self.window makeFirstResponder:[self.diskAccessView viewWithTag:ACTION_SHOW_SUPPORT]];
+                });
+            });
             
             break;
         }
         //show 'support' view
-        // a) kick off main app
-        // b) load the launch daemon as we (now) have FDA
         case ACTION_SHOW_SUPPORT:
         {
             //dbg msg
             logMsg(LOG_DEBUG, @"showing 'support' view");
-            
-            //did we have to request for 'FDA'?
-            // if so, try start the deamon now (again)
-            if(YES == self.configureObj.requestFDA)
-            {
-                //load daemon in background
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-                ^{
-                    //load launch daemon
-                    if(YES == [self.configureObj toggleDaemon:YES])
-                    {
-                        //err msg
-                        logMsg(LOG_ERR, @"failed to load launch daemon");
-                        
-                        //helper app will detect error & alert user...
-                    }
-                    //dbg msg
-                    else
-                    {
-                        //dbg msg
-                        logMsg(LOG_DEBUG, @"loaded launch daemon...");
-                    }
-                });
-            }
-                
-            //launch helper app
-            execTask(OPEN, @[[@"/Applications" stringByAppendingPathComponent:APP_NAME], @"--args", INITIAL_LAUNCH], NO, NO);
             
             //show view
             [self showView:self.supportView firstResponder:self.supportButton];
@@ -238,11 +241,23 @@
             // invokes user's default browser
             [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:PATREON_URL]];
         
-            //fall thru as we want to terminate app
+            //fall thru as we want to launch app and terminate
             
-        //close (on error)
+        //close
+        // on non-error, launch login item
         case ACTION_CLOSE_FLAG:
         {
+            //coming from support view?
+            // launch helper/login item
+            if(YES == self.supportView.window.isVisible)
+            {
+                //dbg msg
+                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"now launching: %@", APP_NAME]);
+                
+                //launch helper app
+                execTask(OPEN, @[[@"/Applications" stringByAppendingPathComponent:APP_NAME], @"--args", INITIAL_LAUNCH], NO, NO);
+            }
+            
             //close window
             // triggers cleanup logic
             [self.window close];
@@ -289,20 +304,38 @@
     return;
 }
 
-//callback for 'NSWorkspaceDidDeactivateApplicationNotification'
-// will be trigged when user interacts with 'System Prefs' able, so enable 'Next' button then
--(void)appDeactivated:(NSNotification *)notification
+//button handler for FDA issues
+- (IBAction)fdaIssues:(id)sender
 {
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //alert
+    NSAlert *alert = nil;
     
-    //enable 'next' button after a bit
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-           
-        //enable
+    //alloc
+    alert = [[NSAlert alloc] init];
+    
+    //title
+    alert.messageText = @"Full Disk Access Issues?";
+    
+    //details
+    alert.informativeText =  @"☑️ If 'BlockBlock' added/checked in System Preferenes, but this installer hasn't detected that fact, you may have to manully reboot the system to complete the install!";
+    
+    //add button
+    [alert addButtonWithTitle:@"OK"];
+    
+    //set style
+    alert.alertStyle = NSAlertStyleInformational;
+
+    //show (modally)
+    [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse response)
+    {
+        #pragma unused(response)
+        
+        //enable 'next' button
         ((NSButton*)[self.diskAccessView viewWithTag:ACTION_SHOW_SUPPORT]).enabled = YES;
-           
-    });
+        
+        //make it first responder
+        [self.window makeFirstResponder:[self.diskAccessView viewWithTag:ACTION_SHOW_SUPPORT]];
+    }];
     
     return;
 }
@@ -353,6 +386,15 @@
     
     //disable button
     self.diskAccessButton.enabled = NO;
+    
+    //show FDA message
+    self.fdaMessage.hidden = NO;
+    
+    //show spinner
+    self.fdaActivityIndicator.hidden = NO;
+    
+    //start spinner
+    [self.fdaActivityIndicator startAnimation:self];
     
     //wait till system preferences has finished launching
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -406,7 +448,6 @@
                 }
             }];
         });
-    
      });
 
     return;
@@ -604,13 +645,13 @@
         //next
         self.installButton.title = ACTION_NEXT;
         
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"request FDA? %d", configureObj.requestFDA]);
-    
         //need FDA?
         // configure button for FDA request
-        if(YES == configureObj.requestFDA)
+        if(YES == [self.configureObj shouldRequestFDA])
         {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"need to request FDA...");
+            
             //set tag
             self.installButton.tag = ACTION_SHOW_FDA;
         }
@@ -618,6 +659,9 @@
         // just configure button to show support
         else
         {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"got/have FDA already!");
+            
             //set tag
             self.installButton.tag = ACTION_SHOW_SUPPORT;
         }

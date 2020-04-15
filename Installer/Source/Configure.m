@@ -21,7 +21,6 @@
 
 @synthesize gotHelp;
 @synthesize xpcComms;
-@synthesize requestFDA;
 
 //invokes appropriate install || uninstall logic
 -(BOOL)configure:(NSInteger)parameter
@@ -97,20 +96,13 @@
         //load launch daemon
         [self toggleDaemon:YES];
         
-        //check if FDA (still) needed
-        // unload daemon, until user gives it FDA
-        if(YES == (self.requestFDA = [self shouldRequestFDA]))
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, @"need to request 'FDA' so unloading daemon");
-            
-            //unload daemon
-            [self toggleDaemon:NO];
-        }
-    
+        //give daemon a few seconds to start
+        // as it checks for FDA, etc etc
+        [NSThread sleepForTimeInterval:2.00f];
+        
         //dbg msg
         logMsg(LOG_DEBUG, @"installed!");
-    }
+    }	
     //uninstall
     else if(ACTION_UNINSTALL_FLAG == parameter)
     {
@@ -182,44 +174,29 @@ bail:
     return (YES == [[NSFileManager defaultManager] fileExistsAtPath:launchDaemonBetaPlist]);
 }
 
-//checks if daemon is (still) running
-// no daemon, means it exited cuz of no FDA :(
+//check for FDA
+// has daemon has set FDA flag?
 -(BOOL)shouldRequestFDA
 {
-    //default to ask
+    //flag
     BOOL shouldRequest = YES;
     
-    //path to (launch) daemon
-    NSString* daemonPath = nil;
+    //preferences
+    NSDictionary* preferences = nil;
     
-    //daemon pids
-    NSArray* daemonPIDs = nil;
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
-    
-    //nap
-    // give time for daemon to start
-    [NSThread sleepForTimeInterval:3.0];
-    
-    //init path to (launch) daemon
-    daemonPath = [NSString pathWithComponents:@[INSTALL_DIRECTORY, LAUNCH_DAEMON, @"Contents", @"MacOS", PRODUCT_NAME]];
+    //load prefs and check
+    preferences = [NSDictionary dictionaryWithContentsOfFile:[INSTALL_DIRECTORY stringByAppendingPathComponent:PREFS_FILE]];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"querying process list for %@", daemonPath]);
-
-    //daemon (still) running?
-    // means it didn't exit cuz of FDA error
-    daemonPIDs = getProcessIDs(daemonPath, -1);
-    if(0 != daemonPIDs.count)
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking preferences for 'got FDA' flag: %@", preferences]);
+    
+    //check for flag
+    if(YES == [preferences[PREF_GOT_FDA] boolValue])
     {
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"daemon found (pid(s): %@)", daemonPIDs]);
-        
-        //happy!
+        //no need
         shouldRequest = NO;
     }
-    
+
     return shouldRequest;
 }
 
@@ -364,36 +341,19 @@ bail:
     //return/status var
     __block BOOL wasRemoved = NO;
     
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
     //if needed
     // tell helper to remove itself
     if(YES == self.gotHelp)
     {
         //cleanup
-        [self.xpcComms cleanup:^(NSNumber *result)
-        {
-            //save result
-            wasRemoved = (BOOL)(result.intValue == 0);
-            
-            //unset var
-            if(YES == wasRemoved)
-            {
-                //unset
-                self.gotHelp = NO;
-            }
-            
-            //signal sema
-            dispatch_semaphore_signal(semaphore);
-            
-        }];
+        wasRemoved = [self.xpcComms cleanup];
         
-        //wait for installer logic to be completed by XPC
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        //unset var
+        if(YES == wasRemoved)
+        {
+            //unset
+            self.gotHelp = NO;
+        }
     }
     //didn't need to remove
     // just set ret var to 'ok'
@@ -412,31 +372,12 @@ bail:
     //return/status var
     __block BOOL wasInstalled = NO;
     
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
     //path to login item
     NSString* loginItem = nil;
     
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
-    //define block
-    void(^block)(NSNumber *) = ^(NSNumber *result)
-    {
-        //save result
-        wasInstalled = (BOOL)(result.intValue == 0);
-        
-        //signal sema
-        dispatch_semaphore_signal(semaphore);
-    };
-    
     //install
     // note, this is async
-    [xpcComms install:block];
-    
-    //wait for installer logic to be completed by XPC
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    wasInstalled = [xpcComms install];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"privileged helper item install logic completed (%d)", wasInstalled]);
@@ -521,31 +462,11 @@ bail:
     //return/status var
     __block BOOL wasLoaded = NO;
     
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking XPC message to toggle (%d) launch daemon", shouldLoad]);
     
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
-    //define block
-    void(^block)(NSNumber *) = ^(NSNumber *result)
-    {
-        //save result
-        wasLoaded = (BOOL)(result.intValue == 0);
-        
-        //signal sema
-        dispatch_semaphore_signal(semaphore);
-    };
-    
-    //install
-    // note, this is async
-    [xpcComms toggleDaemon:shouldLoad reply:block];
-    
-    //wait for installer logic to be completed by XPC
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    //toggle
+    wasLoaded = [xpcComms toggleDaemon:shouldLoad];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"privileged helper item 'toggleDaemon' logic completed (%d)", wasLoaded]);
@@ -559,25 +480,9 @@ bail:
     //return/status var
     __block BOOL wasUninstalled = NO;
     
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
     //path to login item
     NSString* loginItem = nil;
-    
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
-    //define block
-    void (^block)(NSNumber *) = ^(NSNumber *result)
-    {
-        //save result
-        wasUninstalled = (BOOL)(result.intValue == 0);
-        
-        //signal sema
-        dispatch_semaphore_signal(semaphore);
-    };
-    
+
     //init path to login item
     loginItem = [@"/Applications" stringByAppendingPathComponent:APP_NAME];
     
@@ -600,11 +505,7 @@ bail:
     #endif
     
     //uninstall
-    // also sets return/var flag
-    [xpcComms uninstall:full reply:block];
-    
-    //wait for install to be completed by XPC
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    wasUninstalled = [xpcComms uninstall:full];
     
     return wasUninstalled;
 }

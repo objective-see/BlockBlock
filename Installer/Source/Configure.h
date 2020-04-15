@@ -23,9 +23,6 @@
 //helper installed & connected
 @property(nonatomic) BOOL gotHelp;
 
-//need to request FDA
-@property(nonatomic) BOOL requestFDA;
-
 //daemom comms object
 @property(nonatomic, retain) HelperComms* xpcComms;
 

@@ -20,8 +20,6 @@ NSMutableDictionary* alerts = nil;
 
 @implementation AppDelegate
 
-@synthesize appObserver;
-@synthesize prefsChanged;
 @synthesize xpcDaemonClient;
 @synthesize aboutWindowController;
 @synthesize prefsWindowController;
@@ -32,6 +30,9 @@ NSMutableDictionary* alerts = nil;
 //app's main interface
 -(void)applicationDidFinishLaunching:(NSNotification *)notification
 {
+    //'no daemon' alert
+    NSAlert* alert = nil;
+    
     //parent
     NSDictionary* parent = nil;
     
@@ -67,6 +68,32 @@ NSMutableDictionary* alerts = nil;
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded preferences: %@", preferences]);
+    
+    //sanity check
+    // make sure daemon has FDA
+    if(YES != [preferences[PREF_GOT_FDA] boolValue])
+    {
+        //init alert
+        alert = [[NSAlert alloc] init];
+        
+        //set style
+        alert.alertStyle = NSAlertStyleInformational;
+        
+        //set main text
+        alert.messageText = @"BlockBlock Not Active!";
+        
+        //set detailed text
+        alert.informativeText = @"Please ensure that the BlockBlock daemon was granted \"Full Disk Access\" via System Preferences.\r\n\r\nIf it was, a manual reboot may fix the issue!";
+        
+        //add button
+        [alert addButtonWithTitle:@"OK"];
+        
+        //show modal
+        [alert runModal];
+        
+        //bail
+        goto bail;
+    }
     
     //when user (manually) runs app
     // show the app's preferences window

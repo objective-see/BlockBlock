@@ -10,7 +10,6 @@
 		4BE4905110445D49006BE471 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE4904D10445D49006BE471 /* main.m */; };
 		4BE4906110445E13006BE471 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE4905510445DDD006BE471 /* Helper.m */; };
 		4BE4906410445F2F006BE471 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE4906310445F2F006BE471 /* Security.framework */; };
-		4BE4906810445F36006BE471 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE4906710445F36006BE471 /* ServiceManagement.framework */; };
 		4BE49092104463A0006BE471 /* com.objective-see.blockblock.installerHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4BE4905D10445E0A006BE471 /* com.objective-see.blockblock.installerHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BF04235611C0531400431286 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF04235511C0531400431286 /* AppDelegate.m */; };
@@ -21,6 +20,7 @@
 		CD17D55020104EE700F798D7 /* ConfigureWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54820104EE700F798D7 /* ConfigureWindowController.m */; };
 		CD17D55120104EE700F798D7 /* ConfigureWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD17D54920104EE700F798D7 /* ConfigureWindowController.xib */; };
 		CD17D55320104EE700F798D7 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54B20104EE700F798D7 /* AboutWindowController.m */; };
+		CD2F801124465F68009C3D77 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = CD2F801024465F68009C3D77 /* patrons.txt */; };
 		CD3307AE203567D500F10D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD3307AD203567D400F10D71 /* Assets.xcassets */; };
 		CD6B484320AD323E00A9BE71 /* Sentry.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = CD6B484220AD323E00A9BE71 /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD73DA912004629D001FFC84 /* HelperInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA902004629D001FFC84 /* HelperInterface.m */; };
@@ -67,16 +67,6 @@
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CD6B484420AD32DF00A9BE71 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +94,8 @@
 		CD17D54920104EE700F798D7 /* ConfigureWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfigureWindowController.xib; sourceTree = "<group>"; };
 		CD17D54B20104EE700F798D7 /* AboutWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutWindowController.m; sourceTree = "<group>"; };
 		CD18D64C200DA301005609F9 /* XPCProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCProtocol.h; path = Shared/XPCProtocol.h; sourceTree = SOURCE_ROOT; };
+		CD2F801024465F68009C3D77 /* patrons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = patrons.txt; path = ../../Shared/patrons.txt; sourceTree = "<group>"; };
+		CD2F8012244670B9009C3D77 /* libbsm.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbsm.tbd; path = usr/lib/libbsm.tbd; sourceTree = SDKROOT; };
 		CD3307AD203567D400F10D71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD6B484220AD323E00A9BE71 /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
 		CD6CAC9120A42D5000188B0A /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
@@ -129,7 +121,6 @@
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				4BE4906410445F2F006BE471 /* Security.framework in Frameworks */,
-				4BE4906810445F36006BE471 /* ServiceManagement.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +153,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD2F8012244670B9009C3D77 /* libbsm.tbd */,
 				CD6B484220AD323E00A9BE71 /* Sentry.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				4BE4906310445F2F006BE471 /* Security.framework */,
@@ -235,6 +227,7 @@
 				CD17D53A20104DD700F798D7 /* logging.h */,
 				CD17D53820104DD700F798D7 /* logging.m */,
 				CD18D64C200DA301005609F9 /* XPCProtocol.h */,
+				CD2F801024465F68009C3D77 /* patrons.txt */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -256,7 +249,6 @@
 			buildConfigurationList = 4BE4906210445E31006BE471 /* Build configuration list for PBXNativeTarget "helper" */;
 			buildPhases = (
 				4BE4905A10445E0A006BE471 /* Sources */,
-				CD6B484420AD32DF00A9BE71 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -339,6 +331,7 @@
 				CD86B6EA23A5BBE7003F6BA4 /* configure.sh in Resources */,
 				BF65C19111B985C0007C20AB /* MainMenu.xib in Resources */,
 				CD17D54E20104EE700F798D7 /* AboutWindow.xib in Resources */,
+				CD2F801124465F68009C3D77 /* patrons.txt in Resources */,
 				CD3307AE203567D500F10D71 /* Assets.xcassets in Resources */,
 				CD17D55120104EE700F798D7 /* ConfigureWindowController.xib in Resources */,
 			);

@@ -27,19 +27,10 @@
 //orginal login items
 @property(nonatomic, retain)NSMutableDictionary* originals;
 
-
 /* METHODS */
 
 //update originals
 // ensures there is always the latest version of the login items saved
 -(void)updateOriginals:(NSString*)path;
-
-//TODO:
-//find's latest login item
-// ->diff's original list of login items with current ones
-//-(NSDictionary*)findLoginItem:(WatchEvent*)watchEvent;
-
-//update the global originals list with contents of login item file
-//-(void)updateOriginals:(NSString*)path;
 
 @end
