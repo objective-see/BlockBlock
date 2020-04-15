@@ -305,7 +305,7 @@
 }
 
 //button handler for FDA issues
-- (IBAction)fdaIssues:(id)sender
+-(IBAction)fdaIssues:(id)sender
 {
     //alert
     NSAlert *alert = nil;

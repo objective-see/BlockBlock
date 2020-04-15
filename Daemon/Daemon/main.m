@@ -170,6 +170,9 @@ bail:
 // returns -1/0, as main() will return this too...
 int fdaCheck()
 {
+    //isse in ESF pre 10.15.4(?0
+    NSOperatingSystemVersion minimumSupportedOSVersion = { .majorVersion = 10, .minorVersion = 15, .patchVersion = 4 };
+    
     //status
     int status = -1;
     
@@ -195,13 +198,20 @@ int fdaCheck()
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"result: %d/%d", result, status]);
     
     //cleanup client
+    // need extra checks for issues with ESF :|
     if(nil != client)
     {
-        //free
-        es_delete_client(client);
-        
-        //unset
-        client = nil;
+        //can't cleanup client on error older versions of 10.15
+        // see: https://twitter.com/patrickwardle/status/1250337659022532610
+        if( (0 == status) ||
+            (YES == [NSProcessInfo.processInfo isOperatingSystemAtLeastVersion:minimumSupportedOSVersion]) )
+        {
+            //free
+            es_delete_client(client);
+            
+            //unset
+            client = nil;
+        }
     }
     
     return status;
