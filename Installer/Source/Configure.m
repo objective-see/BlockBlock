@@ -83,7 +83,7 @@
             }
             
             //dbg msg
-            logMsg(LOG_DEBUG, @"(partially) uninstalled");
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled (type: %@", (uninstallFlag == UNINSTALL_PARTIAL) ? @"partial" : @"full"]);
         }
         
         //install
@@ -391,12 +391,15 @@ bail:
     }
     
     //register daemon
-    if(YES != [self registerDaemon])
+    if(YES != [self lsRegisterDaemon:YES])
     {
         //err msg
         // ...though not fatal
         logMsg(LOG_ERR, @"failed to register daemon");
     }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"registered daemon");
     
     //init path to login item
     loginItem = [@"/Applications" stringByAppendingPathComponent:APP_NAME];
@@ -426,17 +429,33 @@ bail:
     return wasInstalled;
 }
 
-//register the launch daemon with launch services
--(BOOL)registerDaemon
+//un/register daemon with launch services
+-(BOOL)lsRegisterDaemon:(BOOL)shouldRegister
 {
     //flag
-    BOOL wasRegistered = NO;
+    BOOL result = NO;
     
     //task results
     NSDictionary* results = nil;
     
-    //register (via `lsregister`)
-    results = execTask(LSREGISTER, @[[INSTALL_DIRECTORY stringByAppendingPathComponent:LAUNCH_DAEMON]], YES, NO);
+    //args
+    NSArray* arguments = nil;
+    
+    //register?
+    if(YES == shouldRegister)
+    {
+        //args for register
+        arguments = @[[INSTALL_DIRECTORY stringByAppendingPathComponent:LAUNCH_DAEMON]];
+    }
+    //unregister
+    else
+    {
+        //args for unregister
+        arguments = @[@"-u", [INSTALL_DIRECTORY stringByAppendingPathComponent:LAUNCH_DAEMON]];
+    }
+    
+    //exec lsregister
+    results = execTask(LSREGISTER, arguments, YES, NO);
     if( (nil == results[EXIT_CODE]) ||
         (noErr != [results[EXIT_CODE] intValue]) )
     {
@@ -448,11 +467,11 @@ bail:
     }
     
     //happy
-    wasRegistered = YES;
+    result = YES;
     
 bail:
     
-    return wasRegistered;
+    return result;
 }
 
 //load/unload lauch daemon
@@ -503,6 +522,19 @@ bail:
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled login item (%@)", loginItem]);
     }
     #endif
+    
+    /*
+    //unregister daemon
+    if(YES != [self lsRegisterDaemon:NO])
+    {
+        //err msg
+        // ...though not fatal
+        logMsg(LOG_ERR, @"failed to unregister daemon");
+    }
+    */
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"unregistered daemon");
     
     //uninstall
     wasUninstalled = [xpcComms uninstall:full];

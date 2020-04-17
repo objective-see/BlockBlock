@@ -36,7 +36,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="3Oo-ON-R9s"/>
-                            <menuItem title="About BlockBlock" id="RPu-ap-wNj" userLabel="About LuLu">
+                            <menuItem title="About BlockBlock" id="RPu-ap-wNj">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showAbout:" target="Voe-Tx-rLC" id="oP6-qI-N7R"/>

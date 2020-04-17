@@ -10,6 +10,9 @@
 #import "main.h"
 #import "Monitor.h"
 
+//TODO: duplicate rules
+//TODO: SIP check (for alert, can't block those)
+
 /* GLOBALS */
 
 //(file)monitor
@@ -157,7 +160,7 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, @"launch daemon exiting");
-    
+            
     //bye!
     goodbye();
         
@@ -203,7 +206,7 @@ int fdaCheck()
     {
         //can't cleanup client on error older versions of 10.15
         // see: https://twitter.com/patrickwardle/status/1250337659022532610
-        if( (0 == status) ||
+        if( (ES_NEW_CLIENT_RESULT_SUCCESS == status) ||
             (YES == [NSProcessInfo.processInfo isOperatingSystemAtLeastVersion:minimumSupportedOSVersion]) )
         {
             //free

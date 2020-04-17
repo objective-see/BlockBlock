@@ -80,15 +80,22 @@ elif [ "${1}" == "-uninstall" ]; then
 
     echo "uninstalling"
     
-    #beta?
-    # unload/remove launch daemon & agent its plist
-    if [ -n "$user" ]; then
-        launchctl unload "/Users/$user/Library/LaunchAgents/com.objectiveSee.blockblock.plist"
-        rm "/Users/$user/Library/LaunchAgents/com.objectiveSee.blockblock.plist"
+    #uninstall beta?
+    BETA="/Library/LaunchDaemons/com.objectiveSee.blockblock.plist"
+    if test -f "$BETA"; then
+       
+        #unload/remove launch agent
+        if [ -n "$user" ]; then
+            launchctl unload "/Users/$user/Library/LaunchAgents/com.objectiveSee.blockblock.plist"
+            rm "/Users/$user/Library/LaunchAgents/com.objectiveSee.blockblock.plist"
+        fi
+        
+        launchctl unload "/Library/LaunchDaemons/com.objectiveSee.blockblock.plist"
+        rm "/Library/LaunchDaemons/com.objectiveSee.blockblock.plist"
+        
+        #avoid FDA cache issues
+        pkill -HUP -u root -f tccd
     fi
-    
-    launchctl unload "/Library/LaunchDaemons/com.objectiveSee.blockblock.plist"
-    rm "/Library/LaunchDaemons/com.objectiveSee.blockblock.plist"
     
     #unload launch daemon & remove its plist
     launchctl unload "/Library/LaunchDaemons/com.objective-see.blockblock.plist"

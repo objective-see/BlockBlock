@@ -225,9 +225,6 @@
             //show view
             [self showView:self.supportView firstResponder:self.supportButton];
             
-            //(re)enable 'x' button
-            [self.window standardWindowButton:NSWindowCloseButton].enabled = YES;
-            
             //unset window title
             self.window.title = @"";
             

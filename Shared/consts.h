@@ -34,13 +34,6 @@
 //signing auth
 #define SIGNING_AUTH @"Developer ID Application: Objective-See, LLC (VBG97UB4TA)"
 
-//FDA check
-#define CHECK_FDA @"-checkFDA"
-
-//FDA file check
-// let's go with the TCC.db
-#define TCC_DB @"/Library/Application Support/com.apple.TCC/TCC.db"
-
 //log to file flag
 #define LOG_TO_FILE 0x10
 

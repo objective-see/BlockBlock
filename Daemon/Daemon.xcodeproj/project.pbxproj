@@ -51,7 +51,7 @@
 		7D564DA91F18434F00B8AAD6 /* BlockBlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlockBlock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D564DB01F18434F00B8AAD6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Daemon/main.m; sourceTree = "<group>"; };
 		7D564DB51F18434F00B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		7D564DB71F18434F00B8AAD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Daemon/Info.plist; sourceTree = "<group>"; };
+		7D564DB71F18434F00B8AAD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = Daemon/Info.plist; sourceTree = "<group>"; };
 		7D564DC61F18441500B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
 		7D564DC71F18441500B8AAD6 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AboutWindow.xib; path = ../Daemon/AboutWindow.xib; sourceTree = "<group>"; };
 		CD21501720AD222800CEF17B /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
