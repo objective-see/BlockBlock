@@ -130,6 +130,20 @@ bail:
     //log msg
     logMsg(LOG_DEBUG, @"adding rule");
     
+    //existing rule?
+    // can occur if multiple alerts & user approved (entire) process
+    if(nil != (rule = [self find:event]))
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"rule (%@), would be duplicate for event (%@), so not adding", rule, event]);
+        
+        //happy
+        added = YES;
+        
+        //bail
+        goto bail;
+    }
+    
     //create rule
     rule = [[Rule alloc] init:event];
     

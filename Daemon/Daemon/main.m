@@ -10,7 +10,6 @@
 #import "main.h"
 #import "Monitor.h"
 
-//TODO: duplicate rules
 //TODO: SIP check (for alert, can't block those)
 
 /* GLOBALS */
