@@ -50,12 +50,6 @@
 //flag
 @property BOOL shouldFilter;
 
-//loading rules overlay
-@property (weak) IBOutlet NSVisualEffectView *loadingRules;
-
-//loading rules spinner
-@property (weak) IBOutlet NSProgressIndicator *loadingRulesSpinner;
-
 //table items
 // all of the rules
 @property(nonatomic, retain)NSMutableArray* rules;
@@ -66,13 +60,13 @@
 @property(nonatomic, retain)NSMutableArray* rulesFiltered;
 
 //search box
-@property (weak) IBOutlet NSSearchField *searchBox;
+//@property (weak) IBOutlet NSSearchField *searchBox;
 
 //top level view
 @property (weak) IBOutlet NSView *view;
 
 //window toolbar
-@property (weak) IBOutlet NSToolbar *toolbar;
+//@property (weak) IBOutlet NSToolbar *toolbar;
 
 //table view
 @property (weak) IBOutlet NSTableView *tableView;
@@ -81,16 +75,19 @@
 @property (weak) IBOutlet NSView *addRulePanel;
 
 //label for add rules button
-@property (weak) IBOutlet NSTextField *addRuleLabel;
+//@property (weak) IBOutlet NSTextField *addRuleLabel;
 
 //button to add rules
-@property (weak) IBOutlet NSButton *addRuleButton;
+//@property (weak) IBOutlet NSButton *addRuleButton;
 
 //(last) added rule
-@property(nonatomic,retain)NSString* addedRule;
+//@property(nonatomic,retain)NSString* addedRule;
 
-//status message for import/export rules
-@property (weak) IBOutlet NSTextField *rulesStatusMsg;
+//spinnger for refresh
+@property (weak) IBOutlet NSProgressIndicator *refreshingIndicator;
+
+//message for refresh
+@property (weak) IBOutlet NSTextField *refreshing;
 
 /* METHODS */
 

@@ -18,16 +18,18 @@
 @implementation RulesWindowController
 
 @synthesize rules;
-@synthesize toolbar;
-@synthesize addedRule;
-@synthesize searchBox;
-@synthesize addRulePanel;
-@synthesize loadingRules;
-@synthesize shouldFilter;
-@synthesize rulesFiltered;
-@synthesize rulesObserver;
-@synthesize rulesStatusMsg;
-@synthesize loadingRulesSpinner;
+@synthesize refreshing;
+@synthesize refreshingIndicator;
+
+//@synthesize toolbar;
+//@synthesize addedRule;
+//@synthesize searchBox;
+//@synthesize addRulePanel;
+//@synthesize loadingRules;
+//@synthesize shouldFilter;
+//@synthesize rulesFiltered;
+//@synthesize rulesObserver;
+
 
 //configure (UI)
 -(void)configure
@@ -54,8 +56,30 @@
 // just reload rules
 -(IBAction)refresh:(id)sender
 {
-    //load rules
-    [self loadRules];
+    //remove all rules
+    [rules removeAllObjects];
+    
+    //reload table
+    // make it blank...
+    [self.tableView reloadData];
+    
+    //start spinner
+    [self.refreshingIndicator startAnimation:nil];
+    
+    //show message
+    self.refreshing.hidden = NO;
+    
+    //load rules after a bit
+    // ...allows UI to show messag!
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (250 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        
+        //load rules
+        [self loadRules];
+        
+    });
+    
+    
+    return;
 }
 
 //get rules from daemon
@@ -83,17 +107,23 @@
         // ...gotta do this on the main thread
         dispatch_async(dispatch_get_main_queue(), ^{
                
-           //hide overlay
-           //self.loadingRules.hidden = YES;
+            //hide overlay
+            //self.loadingRules.hidden = YES;
           
-           //set 'all' as default selected
-           //self.toolbar.selectedItemIdentifier = @"all";
+            //set 'all' as default selected
+            //self.toolbar.selectedItemIdentifier = @"all";
+           
+            //stop refresh spinner
+            [self.refreshingIndicator stopAnimation:nil];
+            
+            //hide refresh msg
+            self.refreshing.hidden = YES;
           
-           //reload table
-           [self.tableView reloadData];
+            //reload table
+            [self.tableView reloadData];
           
-           //select first row
-           [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+            //select first row
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
              
         });
 

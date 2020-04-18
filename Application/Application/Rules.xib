@@ -8,6 +8,8 @@
         <customObject id="-2" userLabel="File's Owner" customClass="RulesWindowController">
             <connections>
                 <outlet property="addRulePanel" destination="cna-Y1-PEc" id="a7H-3I-8qq"/>
+                <outlet property="refreshing" destination="cbu-EU-t72" id="oUy-SL-skJ"/>
+                <outlet property="refreshingIndicator" destination="hmR-9d-tQz" id="6Fd-Jh-0rj"/>
                 <outlet property="tableView" destination="rpa-sZ-jQp" id="SvF-Yi-OKB"/>
                 <outlet property="view" destination="se5-gp-TjO" id="wqw-Gz-fhe"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -79,7 +81,7 @@
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="101" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w9P-yZ-pho">
                                                             <rect key="frame" x="54" y="13" width="677" height="17"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" editable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="file:" id="EZN-NC-GXx">
-                                                                <font key="font" size="11" name="Menlo-Regular"/>
+                                                                <font key="font" metaFont="fixedUser" size="11"/>
                                                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
@@ -87,7 +89,7 @@
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="102" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mbd-Hf-nyx">
                                                             <rect key="frame" x="54" y="0.0" width="677" height="17"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="item:" id="EzL-3D-hdn">
-                                                                <font key="font" size="11" name="Menlo-Regular"/>
+                                                                <font key="font" metaFont="fixedUser" size="11"/>
                                                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
@@ -217,6 +219,19 @@
                             <action selector="refresh:" target="-2" id="b3e-RO-mVQ"/>
                         </connections>
                     </button>
+                    <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="hmR-9d-tQz">
+                        <rect key="frame" x="51" y="13" width="16" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </progressIndicator>
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cbu-EU-t72">
+                        <rect key="frame" x="74" y="13" width="153" height="15"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="refreshing rules..." id="QYb-zx-KOl">
+                            <font key="font" size="13" name="Menlo-Regular"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="qQ9-BU-evn" firstAttribute="centerX" secondItem="gth-To-Lf2" secondAttribute="centerX" id="2W7-N3-WMW"/>
