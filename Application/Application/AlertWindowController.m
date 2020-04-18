@@ -511,7 +511,7 @@ bail:
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
         
         //refresh rules (window)
-        [((AppDelegate*)[[NSApplication sharedApplication] delegate]).rulesWindowController refresh:nil];
+        [((AppDelegate*)[[NSApplication sharedApplication] delegate]).rulesWindowController loadRules];
         
     });
     

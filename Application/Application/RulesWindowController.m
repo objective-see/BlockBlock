@@ -60,7 +60,7 @@
     [rules removeAllObjects];
     
     //reload table
-    // make it blank...
+    // will clear all data
     [self.tableView reloadData];
     
     //start spinner
@@ -83,7 +83,7 @@
 }
 
 //get rules from daemon
-// then, re-load table
+// then, re-load rules table
 -(void)loadRules
 {
     //dbg msg

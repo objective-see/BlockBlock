@@ -98,6 +98,10 @@
 // just reload rules
 -(IBAction)refresh:(id)sender;
 
+//get rules from daemon
+// then, re-load rules table
+-(void)loadRules;
+
 //TODO: add
 //add a rule
 //-(IBAction)addRule:(id)sender;
