@@ -10,8 +10,6 @@
 #import "main.h"
 #import "Monitor.h"
 
-//TODO: SIP check (for alert, can't block those)
-
 /* GLOBALS */
 
 //(file)monitor

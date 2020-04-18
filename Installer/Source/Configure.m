@@ -83,7 +83,7 @@
             }
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled (type: %@", (uninstallFlag == UNINSTALL_PARTIAL) ? @"partial" : @"full"]);
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled (type: %@)", (uninstallFlag == UNINSTALL_PARTIAL) ? @"partial" : @"full"]);
         }
         
         //install
@@ -510,9 +510,8 @@ bail:
     if(YES != toggleLoginItem([NSURL fileURLWithPath:loginItem], ACTION_UNINSTALL_FLAG))
     {
         //err msg
+        // ...though not fatal
         logMsg(LOG_ERR, @"failed to uninstall login item");
-        
-        //keep going though...
     }
     
     #ifdef DEBUG
@@ -523,7 +522,6 @@ bail:
     }
     #endif
     
-    /*
     //unregister daemon
     if(YES != [self lsRegisterDaemon:NO])
     {
@@ -531,11 +529,15 @@ bail:
         // ...though not fatal
         logMsg(LOG_ERR, @"failed to unregister daemon");
     }
-    */
     
-    //dbg msg
-    logMsg(LOG_DEBUG, @"unregistered daemon");
-    
+    #ifdef DEBUG
+    else
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"unregistered daemon");
+    }
+    #endif
+
     //uninstall
     wasUninstalled = [xpcComms uninstall:full];
     
