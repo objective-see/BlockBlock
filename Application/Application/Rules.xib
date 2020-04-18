@@ -219,13 +219,11 @@
                             <action selector="refresh:" target="-2" id="b3e-RO-mVQ"/>
                         </connections>
                     </button>
-                    <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="hmR-9d-tQz">
+                    <progressIndicator wantsLayer="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="hmR-9d-tQz">
                         <rect key="frame" x="51" y="13" width="16" height="16"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </progressIndicator>
-                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cbu-EU-t72">
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cbu-EU-t72">
                         <rect key="frame" x="74" y="13" width="153" height="15"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="refreshing rules..." id="QYb-zx-KOl">
                             <font key="font" size="13" name="Menlo-Regular"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -235,11 +233,15 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="qQ9-BU-evn" firstAttribute="centerX" secondItem="gth-To-Lf2" secondAttribute="centerX" id="2W7-N3-WMW"/>
+                    <constraint firstAttribute="bottom" secondItem="cbu-EU-t72" secondAttribute="bottom" constant="13" id="2mz-PS-bsW"/>
                     <constraint firstItem="gth-To-Lf2" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="-1" id="44L-X5-eF7"/>
                     <constraint firstItem="gth-To-Lf2" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="-1" id="5t7-SX-3Rs"/>
+                    <constraint firstAttribute="bottom" secondItem="hmR-9d-tQz" secondAttribute="bottom" constant="13" id="AwV-HA-B3M"/>
                     <constraint firstAttribute="bottom" secondItem="dch-dH-0L1" secondAttribute="bottom" constant="4" id="B6u-20-kie"/>
                     <constraint firstItem="qQ9-BU-evn" firstAttribute="top" secondItem="gth-To-Lf2" secondAttribute="bottom" id="DWM-Ik-pz9"/>
+                    <constraint firstItem="hmR-9d-tQz" firstAttribute="leading" secondItem="dch-dH-0L1" secondAttribute="trailing" constant="8" id="EhQ-1c-dhn"/>
                     <constraint firstItem="dch-dH-0L1" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="11" id="OrU-7R-Sb3"/>
+                    <constraint firstItem="cbu-EU-t72" firstAttribute="leading" secondItem="hmR-9d-tQz" secondAttribute="trailing" constant="9" id="SBi-Uv-GsN"/>
                     <constraint firstAttribute="bottom" secondItem="gth-To-Lf2" secondAttribute="bottom" constant="42" id="SbQ-dG-FEs"/>
                     <constraint firstAttribute="trailing" secondItem="gth-To-Lf2" secondAttribute="trailing" constant="-1" id="WvL-Bq-dxN"/>
                     <constraint firstAttribute="bottom" secondItem="qQ9-BU-evn" secondAttribute="bottom" id="zPc-WN-oyQ"/>
