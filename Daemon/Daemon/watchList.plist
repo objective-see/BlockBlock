@@ -50,8 +50,7 @@
 		<string>Cron Job</string>
 		<key>paths</key>
 		<array>
-			<string>/private/var/at/tabs/root</string>
-			<string>/private/var/at/tabs/~</string>
+			<string>/private/var/at/tabs/</string>
 		</array>
 		<key>class</key>
 		<string>CronJob</string>

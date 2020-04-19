@@ -29,6 +29,7 @@
 		CDC592D4243AF99E00C190D9 /* watchList.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D3243AF99E00C190D9 /* watchList.plist */; };
 		CDC592D6243AFE9500C190D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D5243AFE9500C190D9 /* Assets.xcassets */; };
 		CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD5666C23AB547500F51B1F /* libFileMonitor.a */; };
+		CDDC60EF244BDA9D00CC81F1 /* CronJob.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDC60ED244BDA9D00CC81F1 /* CronJob.m */; };
 		CDFE5CF423ACAD4800A7B28B /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFE5CF123ACAD4700A7B28B /* Item.m */; };
 		CDFE5CF523ACAD4800A7B28B /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFE5CF223ACAD4700A7B28B /* Event.m */; };
 /* End PBXBuildFile section */
@@ -92,6 +93,8 @@
 		CDC592D5243AFE9500C190D9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Daemon/Assets.xcassets; sourceTree = "<group>"; };
 		CDD5666B23AB547500F51B1F /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMonitor.h; sourceTree = "<group>"; };
 		CDD5666C23AB547500F51B1F /* libFileMonitor.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFileMonitor.a; sourceTree = "<group>"; };
+		CDDC60ED244BDA9D00CC81F1 /* CronJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CronJob.m; sourceTree = "<group>"; };
+		CDDC60EE244BDA9D00CC81F1 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronJob.h; sourceTree = "<group>"; };
 		CDFE5CF023ACAD4700A7B28B /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = Daemon/Event.h; sourceTree = "<group>"; };
 		CDFE5CF123ACAD4700A7B28B /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Item.m; path = Daemon/Item.m; sourceTree = "<group>"; };
 		CDFE5CF223ACAD4700A7B28B /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Event.m; path = Daemon/Event.m; sourceTree = "<group>"; };
@@ -222,6 +225,8 @@
 		CDAABD50238D01ED005AE212 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				CDDC60EE244BDA9D00CC81F1 /* CronJob.h */,
+				CDDC60ED244BDA9D00CC81F1 /* CronJob.m */,
 				CDAABD51238D0220005AE212 /* Launchd.h */,
 				CDAABD52238D0220005AE212 /* Launchd.m */,
 				CD410452244406EB00069C56 /* LoginItem.h */,
@@ -356,6 +361,7 @@
 				CD3913E62382649F00850CD1 /* XPCListener.m in Sources */,
 				CD3913F72382675300850CD1 /* Rules.m in Sources */,
 				CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */,
+				CDDC60EF244BDA9D00CC81F1 /* CronJob.m in Sources */,
 				CD3913F32382658600850CD1 /* logging.m in Sources */,
 				CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */,
 				CD410454244406EB00069C56 /* LoginItem.m in Sources */,

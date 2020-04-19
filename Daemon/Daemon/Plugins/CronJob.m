@@ -3,350 +3,310 @@
 //  BlockBlock
 //
 //  Created by Patrick Wardle on 9/25/14.
-//  Copyright (c) 2015 Objective-See. All rights reserved.
+//  Copyright (c) 2020 Objective-See. All rights reserved.
 //
 
+#import "Item.h"
+#import "Event.h"
 #import "Consts.h"
 #import "CronJob.h"
 #import "Logging.h"
 #import "Utilities.h"
-#import "WatchEvent.h"
-#import "AppDelegate.h"
-#import "ProcessMonitor.h"
+#import "XPCUserClient.h"
 
 @implementation CronJob
+
+@synthesize snapshot;
+@synthesize watchPath;
 
 //init
 -(id)initWithParams:(NSDictionary*)watchItemInfo
 {
     //init super
-    self = [super initWithParams:watchItemInfo];
+    // not need to init super's params
+    self = [super init];
     if(nil != self)
     {
         //dbg msg
-        #ifdef DEBUG
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
-        #endif
         
         //set type
         self.type = PLUGIN_TYPE_CRON_JOB;
         
-        //save original cron jobs
-        // ->for all non-user paths (i.e. just root's)
-        for(NSString* watchPath in self.watchPaths)
+        //save description from plugin's .plist
+        self.description = watchItemInfo[@"description"];
+        
+        //save alert msg from plugin's .plist
+        self.alertMsg = watchItemInfo[@"alert"];
+        
+        //extract watch path
+        // only one for cron jobs
+        self.watchPath = [watchItemInfo[@"paths"] firstObject];
+        
+        //alloc dictionary for snapshot
+        snapshot = [NSMutableDictionary dictionary];
+        
+        //init all snapshots
+        // for all (existing) crob job files
+        for(NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.watchPath error:nil])
         {
-            //skip user paths
-            // ->handled when a new agent registers
-            if(YES == [watchPath hasSuffix:@"~"])
-            {
-                //skip
-                continue;
-            }
-            
             //update
-            [self updateOriginals:watchPath];
+            [self snapshot:[self.watchPath stringByAppendingPathComponent:path]];
         }
     }
 
     return self;
 }
 
-//take a closer look to make sure watch event is really one we care about
-// ->for cron jobs the creation/modification/rename of crontab files
--(BOOL)shouldIgnore:(WatchEvent*)watchEvent
+/* TODO:
+//new user connected
+// update the saved list of jobs
+-(void)newUser:(NSString *)user
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    
+    //update list of login items
+    [self snapshot:[self.watchPath stringByAppendingPathComponent:user]];
+    
+    return;
+}
+*/
+
+//is a file a match?
+// just check if file has prefix
+-(BOOL)isMatch:(File*)file
+{
+    //has prefix?
+    return [file.destinationPath hasPrefix:self.watchPath];
+}
+
+//check cron jobs
+// was a new one added?
+-(BOOL)shouldIgnore:(File*)file
 {
     //flag
-    // ->default to ignore
+    // default to ignore
     BOOL shouldIgnore = YES;
-    
-    //original cron jobs
-    NSArray* originalCronJobs = nil;
-    
-    //possibly new cron jobs
-    NSArray* newCronJobs = nil;
-    
-    //new cron job
-    NSString* newCronJob = nil;
-    
+ 
     //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"CRON JOB %@ flag: %lu' set", watchEvent.path, (unsigned long)watchEvent.flags]);
-    #endif
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
     
-    //create/modification/rename of file
-    // ->note: OS does a rename
-    if( (FSE_CREATE_FILE == watchEvent.flags) ||
-        (FSE_RENAME == watchEvent.flags) ||
-        (FSE_CONTENT_MODIFIED == watchEvent.flags) )
+    //only care about new jobs
+    // might be other file edits which are ok to ignore...
+    if(nil != [self findNewJob:file.destinationPath])
     {
         //dbg msg
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ has 'FSE_CREATE_FILE/FSE_RENAME/FSE_CONTENT_MODIFIED (%lu)' set (not maybe ignoring)", watchEvent.path, (unsigned long)watchEvent.flags]);
-        
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"current cron jobs: %@", [((AppDelegate*)[[NSApplication sharedApplication] delegate]).orginals objectForKey:watchEvent.path]]);
-        
-        //grab original crob jobs
-        // ->parse into array
-        originalCronJobs = [self parseCronJobs:[((AppDelegate*)[[NSApplication sharedApplication] delegate]).orginals objectForKey:watchEvent.path] includeComments:NO];
-        
-        //dbg msg
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"original jobs: %@", originalCronJobs]);
-        
-        //load new cron jobs
-        // ->parse into array
-        newCronJobs = [self parseCronJobs: [NSData dataWithContentsOfFile:watchEvent.path] includeComments:NO];
-        
-        //dbg msg
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new jobs: %@", newCronJobs]);
-        
-        //find new job
-        newCronJob = [self findNewJob:originalCronJobs newJobs:newCronJobs];
-        
-        //new cron job?
-        if(nil != newCronJob)
-        {
-            //dbg msg
-            //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is a new cron job so NOT ignoring....", newCronJob]);
-            
-            //don't ignore
-            shouldIgnore = NO;
-            
-            //set the command in the watch event
-            // ->done here since we just parsed all the cron jobs etc.
-            watchEvent.itemObject = newCronJob;
-        }
-        /*
-        else
-        {
-            logMsg(LOG_DEBUG, @"no new cron job so NOT ignoring....");
-        }
-        */
+        logMsg(LOG_DEBUG, @"found new cron job, so NOT IGNORING");
+    
+        //don't ignore
+        shouldIgnore = NO;
     }
-    /*
-    //dbg
-    else
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%lu is a flag the %@ plugin doesn't care about....", (unsigned long)watchEvent.flags, NSStringFromClass([self class])]);
-    }
-    */
     
     //if ignoring
-    // ->still update originals
+    // still update snapshot
     if(YES == shouldIgnore)
     {
         //update
-        [self updateOriginals:watchEvent.path];
+        [self snapshot:file.destinationPath];
     }
     
     return shouldIgnore;
 }
 
-//invoked when user clicks 'allow'
-// ->just update originals
--(void)allow:(WatchEvent *)watchEvent
+//get the name
+// since it's a command, just return description
+-(NSString*)itemName:(Event*)event
 {
-    //just update originals
-    [self updateOriginals:watchEvent.path];
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    
+    return self.description;
+}
+
+//already have object
+// so just return it to caller
+-(NSString*)itemObject:(Event*)event
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    
+    //return latest job
+    return [self findNewJob:event.file.destinationPath];
+}
+
+//'allow' event
+// just update snapshot
+-(void)allow:(Event *)event
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked with %@", __PRETTY_FUNCTION__, event]);
+    
+    //just update snapshop
+    [self snapshot:event.file.destinationPath];
     
     return;
-}
-
-//update original cron jobs for user
--(void)newAgent:(NSDictionary*)newUser
-{
-    //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"CRON JOBS, handling new agent %@/%@", newUser, self.watchPaths]);
-    #endif
-    
-    //iterate over plugin's watch paths
-    // ->any that are user specific (~) save original cron jobs for new user
-    for(NSString* watchPath in self.watchPaths)
-    {
-        //save user specific (~) originals
-        if(YES == [watchPath hasSuffix:@"~"])
-        {
-            //dbg msg
-            #ifdef DEBUG
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"CRON JOBS, saving orginals for %@", watchPath]);
-            #endif
-            
-            //matched
-            // ->save orginals
-            [self updateOriginals:[watchPath stringByReplacingCharactersInRange:NSMakeRange(watchPath.length-1, 1) withString:newUser[KEY_USER_NAME]]];
-        }
-    }
-    
-    return;
-}
-
-//update originals
-// ->ensures there is always the latest version of the ok/approved cron jobs saved
--(void)updateOriginals:(NSString*)path
-{
-    //user's cron jobs
-    NSData* cronJobs = nil;
-    
-    //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating orginals of user's cron jobs at: %@", path]);
-    #endif
-    
-    //load login items
-    cronJobs = [NSData dataWithContentsOfFile:path];
-    
-    //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"user's originals: %@", [[NSString alloc] initWithData:cronJobs encoding:NSUTF8StringEncoding]]);
-    #endif
-
-    //save em
-    if(nil != cronJobs)
-    {
-        //load into originals
-        [((AppDelegate*)[[NSApplication sharedApplication] delegate]).orginals setObject:cronJobs forKey:path];
-    }
-
-    return;
-}
-
-//parse cron jobs
-// ->but each into an array
--(NSMutableArray*)parseCronJobs:(NSData*)fileData includeComments:(BOOL)includeComments
-{
-    //parsed jobs
-    NSMutableArray* cronJobs = nil;
-    
-    //lines
-    NSArray* lines = nil;
-    
-    //alloc
-    cronJobs = [NSMutableArray array];
-    
-    //convert data to string
-    // ->and then split into lines
-    lines = [[[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-    
-    //add all jobs
-    // ->ignore any lines that begin w/ '#'
-    for(NSString* line in lines)
-    {
-        //skip comments?
-        if( (YES != includeComments) &&
-            (YES == [line hasPrefix:@"#"]))
-        {
-            //skip
-            continue;
-        }
-        
-        //save job
-        [cronJobs addObject:line];
-    }
-    
-    return cronJobs;
-}
-
-//subtract original crob jobs from current
--(NSString*)findNewJob:(NSArray*)originalCronJobs newJobs:(NSArray*)newCronJobs
-{
-    //new job
-    NSString* newJob = nil;
-    
-    //new jobs
-    NSArray* relativeComplement = nil;
-    
-    //filter
-    // ->returns all new jobs (that didn't exist before)
-    relativeComplement = [newCronJobs filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", originalCronJobs]];
-    
-    //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new jobs: %@", relativeComplement]);
-    #endif
-    
-    //grab first new one
-    //TODO: handle multiple cron jobs?
-    newJob = [relativeComplement firstObject];
-    
-    return newJob;
 }
 
 //invoked when user clicks 'block'
-// ->remove cron job from cron job file
--(BOOL)block:(WatchEvent*)watchEvent;
+// remove cron job from cron job file
+-(BOOL)block:(Event*)event;
 {
     //return var
     BOOL wasBlocked = NO;
     
-    //existing cron jobs
-    // ->will contain the one that should be blocked
-    NSMutableArray* cronJobs = nil;
-    
+    //jobs
+    NSMutableArray* jobs = nil;
+
     //index of cron job to be blocked
     NSUInteger index = NSNotFound;
     
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked with %@", __PRETTY_FUNCTION__, event]);
+    
     //get cron jobs
-    cronJobs = [self parseCronJobs: [NSData dataWithContentsOfFile:watchEvent.path] includeComments:YES];
+    jobs = [self loadJobs:event.file.destinationPath comments:YES];
     
     //find cron job that is to be blocked
-    // ->reported crob job in 'itemBinary' of watch event
-    index = [cronJobs indexOfObject:watchEvent.itemObject];
-    
-    //sanity check
-    // ->make sure item was found
+    // reported crob job in 'itemBinary' of watch event
+    index = [jobs indexOfObject:event.item.object];
     if(NSNotFound == index)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"could not find %@ in %@", watchEvent.itemObject, watchEvent.path]);
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"could not find %@ in %@", event.item.object, event.file.destinationPath]);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"CRON JOBS, found %@ at index %lu", watchEvent.itemObject, (unsigned long)index]);
-    #endif
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"index %lu", (unsigned long)index]);
     
     //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"CRON JOBS, before %@", [cronJobs componentsJoinedByString:@"\n"]]);
-    #endif
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cron jobs, before; %@", [jobs componentsJoinedByString:@"\n"]]);
     
     //remove unwanted cron job
-    [cronJobs removeObjectAtIndex:index];
+    [jobs removeObjectAtIndex:index];
     
     //dbg msg
-    #ifdef DEBUG
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"CRON JOBS, after; %@", [cronJobs componentsJoinedByString:@"\n"]]);
-    #endif
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cron jobs, after; %@", [jobs componentsJoinedByString:@"\n"]]);
     
     //update file
-    [[cronJobs componentsJoinedByString:@"\n"] writeToFile:watchEvent.path atomically:YES];
+    [[jobs componentsJoinedByString:@"\n"] writeToFile:event.file.destinationPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updated %@", event.file.destinationPath]);
     
     //happy
     wasBlocked = YES;
     
-//bail
 bail:
     
-    //always update originals
-    [self updateOriginals:watchEvent.path];
+    //always update snapshot
+    [self snapshot:event.file.destinationPath];
     
     return wasBlocked;
 }
 
-//invoked to get name of item
-// ->since it's a command, just return a hard-coded category name
--(NSString*)startupItemName:(WatchEvent*)watchEvent
+//load cron jobs
+// parses each line into array
+-(NSMutableArray*)loadJobs:(NSString*)path comments:(BOOL)comments
 {
-    return @"crob job";
+    //parsed jobs
+    NSMutableArray* jobs = nil;
+    
+    //lines
+    NSArray* lines = nil;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    
+    //alloc
+    jobs = [NSMutableArray array];
+    
+    //convert data to string
+    // and then split into lines
+    lines = [[[NSString alloc] initWithData:[NSData dataWithContentsOfFile:path] encoding:NSUTF8StringEncoding] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    
+    //add all jobs
+    // possibly ignoring comments
+    for(NSString* line in lines)
+    {
+        //skip blank line(s)
+        if(0 == line.length) continue;
+        
+        //skip comments?
+        if( (YES != comments) &&
+            (YES == [line hasPrefix:@"#"]) )
+        {
+            //skip
+            continue;
+        }
+        
+        //save job
+        [jobs addObject:line];
+    }
+    
+    return jobs;
 }
 
-//invoked to get binary of item
-// ->just return command (binary doesn't make sense for cron jobs) that was prev. stored in watchEvent
--(NSString*)startupItemBinary:(WatchEvent*)watchEvent
+//finds latest crob job
+// diff's snapshot w/ current ones
+-(NSString*)findNewJob:(NSString*)path
 {
-    return watchEvent.itemObject;
+    //new job
+    NSString* newJob = nil;
+    
+    //current (+ new?) jobs
+    NSMutableArray* jobs = nil;
+    
+    //new jobs
+    NSArray* newJobs = nil;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    
+    //load (possibly) new cron jobs
+    jobs = [self loadJobs:path comments:NO];
+    if(nil == jobs) goto bail;
+
+    //filter
+    // returns all new jobs
+    newJobs = [jobs filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", self.snapshot[path]]];
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new jobs: %@", newJobs]);
+    
+    //grab first new one
+    newJob = [newJobs firstObject];
+
+bail:
+    
+    return newJob;
 }
+
+//update list of saved jobs
+-(void)snapshot:(NSString*)path
+{
+    //user's cron jobs
+    NSMutableArray* jobs = nil;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating snapshot (crob jobs) from: %@", path]);
+    
+    //load
+    jobs = [self loadJobs:path comments:NO];
+    if(nil == jobs) goto bail;
+    
+    //update list
+    self.snapshot[path] = jobs;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cron job snapshot: %@", self.snapshot]);
+    
+bail:
+
+    return;
+}
+
 @end
