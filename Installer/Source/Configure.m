@@ -22,7 +22,8 @@
 @synthesize gotHelp;
 @synthesize xpcComms;
 
-//invokes appropriate install || uninstall logic
+//invokes appropriate action
+// either install || uninstall logic
 -(BOOL)configure:(NSInteger)parameter
 {
     //return var
@@ -30,6 +31,10 @@
     
     //uninstall flag
     BOOL uninstallFlag = UNINSTALL_FULL;
+    
+    //before we install helper
+    // kill client, otherwise it will alert
+    execTask(KILL_ALL, @[[APP_NAME stringByDeletingPathExtension]], YES, NO);
     
     //get help
     if(YES != [self initHelper])

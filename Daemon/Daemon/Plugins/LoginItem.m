@@ -213,7 +213,8 @@ bail:
         }
         
         //extact properties
-        // 'resourceValuesForKeys' returns a dictionary, but we want the 'NSURLBookmarkAllPropertiesKey' dictionary inside that
+        // 'resourceValuesForKeys' returns a dictionary
+        // ...but we want the 'NSURLBookmarkAllPropertiesKey' dictionary inside that
         properties = [NSURL resourceValuesForKeys:@[@"NSURLBookmarkAllPropertiesKey"] fromBookmarkData:bookmark][@"NSURLBookmarkAllPropertiesKey"];
         if(nil == properties)
         {
@@ -222,7 +223,7 @@ bail:
         }
         
         //dbg msg
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"bookmark props: %@", properties]);
+        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"bookmark properties: %@", properties]);
     
         //extract path
         path = properties[@"_NSURLPathKey"];
@@ -338,7 +339,7 @@ bail:
         
     }];
     
-    //always update snapshot
+    //(always) update snapshot
     [self snapshot:event.file.destinationPath];
     
     return wasBlocked;

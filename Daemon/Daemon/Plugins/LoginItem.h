@@ -10,8 +10,8 @@
 
 #import "../PluginBase.h"
 
-//TODO: maybe move this into watch path
 //path to login items
+// used to build path for each user
 #define LOGIN_ITEMS @"Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm"
 
 #define LOGIN_ITEM_NAME @"itemName"

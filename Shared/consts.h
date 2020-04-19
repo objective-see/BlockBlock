@@ -312,4 +312,7 @@
 //path to launchctl
 #define LAUNCHCTL @"/bin/launchctl"
 
+//path to killall
+#define KILL_ALL @"/usr/bin/killall"
+
 #endif
