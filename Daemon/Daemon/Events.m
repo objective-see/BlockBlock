@@ -128,14 +128,21 @@ bail:
 }
 
 //via XPC, send an alert
--(void)deliver:(Event*)event
+-(BOOL)deliver:(Event*)event
 {
+    //flag
+    BOOL delivered = NO;
+    
     //send via XPC to user
     // failure likely means no client, so just allow, but save
     if(YES != [xpcUserClient deliverEvent:event])
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"failed to deliver alert to user (no client?)");
+        
+        //can't deliver
+        // ...but should update plugin's snapshot
+        [event.plugin snapshot:event.file.destinationPath];
         
         //TODO: add?
         //save undelivered alert
@@ -145,12 +152,15 @@ bail:
         goto bail;
     }
     
+    //happy
+    delivered = YES;
+    
     //save alert
     [self addShown:event];
     
 bail:
     
-    return;
+    return delivered;
 }
 
 /*

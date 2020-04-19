@@ -54,6 +54,6 @@
 -(void)removeShown:(Event*)event;
 
 //via XPC, send an alert
--(void)deliver:(Event*)event;
+-(BOOL)deliver:(Event*)event;
 
 @end
