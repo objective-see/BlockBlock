@@ -282,10 +282,12 @@ bail:
     logMsg(LOG_DEBUG, @"event appears to be new!, will deliver");
     
     //deliver alert
-    [events deliver:event];
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"alert delivered...");
+    // can fail if not client
+    if(YES == [events deliver:event])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"alert delivered...");
+    }
     
 bail:
 

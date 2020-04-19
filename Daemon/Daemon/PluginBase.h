@@ -66,6 +66,9 @@
 // ->maybe update the original (saved) file?
 -(void)allow:(Event*)event;
 
+//take snapshot
+-(void)snapshot:(NSString*)path;
+
 //extract name of startup item
 // i.e. name of launch item's binary
 -(NSString*)itemName:(Event*)event;

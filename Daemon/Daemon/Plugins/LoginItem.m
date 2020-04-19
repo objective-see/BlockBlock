@@ -28,42 +28,48 @@ extern XPCUserClient* xpcUserClient;
 
 @implementation LoginItem
 
-@synthesize originals;
+@synthesize snapshot;
 
 //init
 -(id)initWithParams:(NSDictionary*)watchItemInfo
 {
+    //(per user) login item path
+    NSString* loginItems = nil;
+    
     //init super
     self = [super initWithParams:watchItemInfo];
     if(nil != self)
     {
         //dbg msg
-        #ifdef DEBUG
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
-        #endif
         
         //set type
         self.type = PLUGIN_TYPE_LOGIN_ITEM;
         
-        //alloc dictionary for originals
-        originals = [NSMutableDictionary dictionary];
+        //alloc dictionary for snapshot
+        snapshot = [NSMutableDictionary dictionary];
         
+        //init all snapshots
+        // for all (existing) crob job files
+        for(NSString* user in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/Users" error:nil])
+        {
+            //init (user) path
+            loginItems = [NSString pathWithComponents:@[@"/Users", user, LOGIN_ITEMS]];
+            if(YES != [[NSFileManager defaultManager] fileExistsAtPath:loginItems])
+            {
+                //skip
+                continue;
+            }
+            
+            //update
+            [self snapshot:loginItems];
+        }
     }
 
     return self;
 }
 
-//new user connected
-// update the list of their login items
--(void)newUser:(NSString *)user
-{
-    //update list of login items
-    [self updateOriginals:[LOGIN_ITEMS stringByReplacingOccurrencesOfString:@"~" withString:NSHomeDirectoryForUser(user)]];
-    
-    return;
-}
-
-//get the name of the launch item
+//get the name of the login item
 -(NSString*)itemName:(Event*)event
 {
     //dbg msg
@@ -72,7 +78,7 @@ extern XPCUserClient* xpcUserClient;
     return [self findLoginItem:event.file][LOGIN_ITEM_NAME];
 }
 
-//get the binary (path) of the launch item
+//get the binary (path) of the login item
 -(NSString*)itemObject:(Event*)event
 {
     //dbg msg
@@ -108,15 +114,14 @@ extern XPCUserClient* xpcUserClient;
     if(YES == shouldIgnore)
     {
         //update
-        [self updateOriginals:file.destinationPath];
+        [self snapshot:file.destinationPath];
     }
     
     return shouldIgnore;
 }
 
-//update originals
-// ensures there is always the latest version of the login items saved
--(void)updateOriginals:(NSString*)path
+//update list of login items
+-(void)snapshot:(NSString*)path
 {
     //plist data
     NSDictionary* plistData = nil;
@@ -125,7 +130,7 @@ extern XPCUserClient* xpcUserClient;
     NSDictionary* loginItems = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating orginals of user's login items at: %@", path]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating snapshot (login items) from: %@", path]);
     
     //sanity check
     if(0 == path.length) goto bail;
@@ -138,8 +143,11 @@ extern XPCUserClient* xpcUserClient;
     loginItems = [self extractFromBookmark:plistData];
     if(nil == loginItems) goto bail;
     
-    //save `em
-    self.originals[path] = loginItems;
+    //update list
+    self.snapshot[path] = loginItems;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"login items snapshot: %@", self.snapshot]);
 
 bail:
 
@@ -149,8 +157,8 @@ bail:
 //invoked when user clicks 'allow'
 -(void)allow:(Event *)event
 {
-    //just update originals
-    [self updateOriginals:event.file.destinationPath];
+    //update snapshot
+    [self snapshot:event.file.destinationPath];
     
     return;
 }
@@ -270,8 +278,8 @@ bail:
     //name of new login item
     NSString* name = nil;
     
-    //grab original login items
-    originalLoginItems = self.originals[file.destinationPath];
+    //grab snapshot
+    originalLoginItems = self.snapshot[file.destinationPath];
     
     //load login items
     plistData = [NSDictionary dictionaryWithContentsOfFile:file.destinationPath];
@@ -329,6 +337,9 @@ bail:
         wasBlocked = (BOOL)(result.intValue == 0);
         
     }];
+    
+    //always update snapshot
+    [self snapshot:event.file.destinationPath];
     
     return wasBlocked;
 }

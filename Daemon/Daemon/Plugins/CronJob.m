@@ -58,21 +58,6 @@
     return self;
 }
 
-/* TODO:
-//new user connected
-// update the saved list of jobs
--(void)newUser:(NSString *)user
-{
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
-    
-    //update list of login items
-    [self snapshot:[self.watchPath stringByAppendingPathComponent:user]];
-    
-    return;
-}
-*/
-
 //is a file a match?
 // just check if file has prefix
 -(BOOL)isMatch:(File*)file

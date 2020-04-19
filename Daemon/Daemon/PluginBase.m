@@ -129,6 +129,12 @@
     return NO;
 }
 
+//take snapshot
+-(void)snapshot:(NSString*)path
+{
+    return;
+}
+
 /* REQUIRED METHODS */
 
 //stubs for inherited methods

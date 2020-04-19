@@ -12,7 +12,7 @@
 
 //TODO: maybe move this into watch path
 //path to login items
-#define LOGIN_ITEMS @"~/Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm"
+#define LOGIN_ITEMS @"Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm"
 
 #define LOGIN_ITEM_NAME @"itemName"
 #define LOGIN_ITEM_PATH @"itemPath"
@@ -25,12 +25,12 @@
 /* PROPERTIES */
 
 //orginal login items
-@property(nonatomic, retain)NSMutableDictionary* originals;
+@property(nonatomic, retain)NSMutableDictionary* snapshot;
 
 /* METHODS */
 
-//update originals
-// ensures there is always the latest version of the login items saved
--(void)updateOriginals:(NSString*)path;
+//take snapshot
+// ensures there is always the latest version of the login items
+-(void)snapshot:(NSString*)path;
 
 @end
