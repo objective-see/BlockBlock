@@ -247,7 +247,7 @@ bail:
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"user selected 'temporary' ...so not saving rule");
+        logMsg(LOG_DEBUG, @"user selected 'temporary' ...won't save rule");
     }
 
 bail:

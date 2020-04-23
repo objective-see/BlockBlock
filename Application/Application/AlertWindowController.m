@@ -21,7 +21,6 @@
 @implementation AlertWindowController
 
 @synthesize alert;
-//@synthesize isTempRule;
 @synthesize processIcon;
 @synthesize processName;
 @synthesize processSummary;
@@ -66,6 +65,12 @@
     
     //init dictionary for title attributes
     titleAttributes = [NSMutableDictionary dictionary];
+    
+    //set target for 'x' button
+    [self.window standardWindowButton:NSWindowCloseButton].target = self;
+    
+    //set action for 'x' button
+    [self.window standardWindowButton:NSWindowCloseButton].action = @selector(handleUserResponse:);
     
     //extract process hierarchy
     self.processHierarchy = alert[ALERT_PROCESS_ANCESTORS];
@@ -478,12 +483,6 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"user clicked: %ld", (long)((NSButton*)sender).tag]);
-
-    //ensure popups are closed
-    [self closePopups];
-    
-    //close window
-    [self.window close];
     
     //init alert response
     // start w/ copy of received alert
@@ -492,20 +491,44 @@ bail:
     //add current user
     alertResponse[ALERT_USER] = [NSNumber numberWithUnsignedInt:getuid()];
     
-    //add action scope
-    alertResponse[ALERT_ACTION_SCOPE] = [NSNumber numberWithInteger:self.actionScope.indexOfSelectedItem];
+    //was a close event?
+    // indicates an ignore, so just say, 'temp allow'
+    if(sender == [self.window standardWindowButton:NSWindowCloseButton])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"handling 'close' event");
+        
+        //say: temp
+        alertResponse[ALERT_TEMPORARY] = [NSNumber numberWithBool:YES];
+        
+        //say: allow
+        alertResponse[ALERT_ACTION] = @ALLOW_EVENT;
+    }
     
-    //add user response
-    alertResponse[ALERT_ACTION] = [NSNumber numberWithLong:((NSButton*)sender).tag];
-    
-    //add button state for 'temp rule'
-    alertResponse[ALERT_TEMPORARY] = [NSNumber numberWithBool:(BOOL)self.tempRule.state];
+    //allow/block event
+    else
+    {
+        //add action scope
+        alertResponse[ALERT_ACTION_SCOPE] = [NSNumber numberWithInteger:self.actionScope.indexOfSelectedItem];
+        
+        //add user response
+        alertResponse[ALERT_ACTION] = [NSNumber numberWithLong:((NSButton*)sender).tag];
+        
+        //add button state for 'temp rule'
+        alertResponse[ALERT_TEMPORARY] = [NSNumber numberWithBool:(BOOL)self.tempRule.state];
+    }
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"responding to daemon, alert: %@", alertResponse]);
-    
+
     //send response to daemon
     [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient alertReply:alertResponse];
+    
+    //close popups
+    [self closePopups];
+    
+    //close window
+    [self.window close];
     
     //(shortly thereafter) refresh rules window
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
