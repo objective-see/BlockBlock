@@ -520,23 +520,29 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"responding to daemon, alert: %@", alertResponse]);
-
-    //send response to daemon
-    [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient alertReply:alertResponse];
     
     //close popups
     [self closePopups];
     
     //close window
     [self.window close];
+
+    //send response to daemon
+    [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient alertReply:alertResponse];
     
-    //(shortly thereafter) refresh rules window
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-        
-        //refresh rules (window)
-        [((AppDelegate*)[[NSApplication sharedApplication] delegate]).rulesWindowController loadRules];
-        
-    });
+    //not temp rule & rules window visible?
+    // then refresh it, as rules have changed
+    if( (YES != [alert[ALERT_TEMPORARY] boolValue]) &&
+        (YES == ((AppDelegate*)[[NSApplication sharedApplication] delegate]).rulesWindowController.window.isVisible) )
+    {
+        //(shortly thereafter) refresh rules window
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+            
+            //refresh rules (window)
+            [((AppDelegate*)[[NSApplication sharedApplication] delegate]).rulesWindowController loadRules];
+            
+        });
+    }
     
     return;
 }
