@@ -20,7 +20,7 @@ PREFERENCES="$INSTALL_DIRECTORY/preferences.plist"
 OSVers="$(sw_vers -productVersion)"
 if [[ ("${OSVers:0:2}" -ne 11) && ("${OSVers:3:2}" -lt 15) ]]; then
     printf "\nERROR: ${OSVers} is currently unsupported"
-    printf "LuLu requires macOS 10.15+\n\n"
+    printf "BlockBlock requires macOS 10.15+\n\n"
     exit -1
 fi
 
