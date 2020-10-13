@@ -203,7 +203,7 @@ bail:
     }
     
     //step 2: validate
-    // check that client is signed with Objective-See's and it's LuLu
+    // check that client is signed with Objective-See's and it's BlockBlock
     if(errSecSuccess != (status = SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement))))
     {
         //bail
