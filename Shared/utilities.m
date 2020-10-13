@@ -1213,7 +1213,6 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag)
                     
                     //bail
                     goto bail;
-                    
                 }
                 
                 //dbg msg

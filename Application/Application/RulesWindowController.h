@@ -102,10 +102,6 @@
 // then, re-load rules table
 -(void)loadRules;
 
-//TODO: add
-//add a rule
-//-(IBAction)addRule:(id)sender;
-
 //delete a rule
 -(IBAction)deleteRule:(id)sender;
 

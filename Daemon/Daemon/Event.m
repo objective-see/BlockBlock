@@ -55,7 +55,7 @@
     return self;
 }
 
-//TODO: convert to coder! 
+//TODO: convert to coder 
 //create an (deliverable) dictionary object
 -(NSMutableDictionary*)toAlert
 {

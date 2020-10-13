@@ -119,11 +119,14 @@ bail:
 
 //automatically invoked
 // allows NSXPCListener to configure/accept/resume a new incoming NSXPCConnection
-// shoutout to: https://blog.obdev.at/what-we-have-learned-from-a-vulnerability/
+// shoutout to writeup: https://blog.obdev.at/what-we-have-learned-from-a-vulnerability
 -(BOOL)listener:(NSXPCListener *)listener shouldAcceptNewConnection:(NSXPCConnection *)newConnection
 {
     //flag
     BOOL shouldAccept = NO;
+    
+    //status
+    OSStatus status = !errSecSuccess;
     
     //audit token
     audit_token_t auditToken = {0};
@@ -143,44 +146,52 @@ bail:
     //signing req string (main app)
     NSString* requirement = nil;
 
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received request to connect to XPC interface from client (pid: %d)", audit_token_to_pid(auditToken)]);
-    
     //extract audit token
     auditToken = ((ExtendedNSXPCConnection*)newConnection).auditToken;
     
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received request to connect to XPC interface from: (%d)%@", audit_token_to_pid(auditToken), getProcessPath(audit_token_to_pid(auditToken))]);
+    
     //obtain dynamic code ref
-    if(errSecSuccess != SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef))
+    status = SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef);
+    if(errSecSuccess != status)
+    {
+        //bail
+        goto bail;
+    }
+    
+    //validate code
+    status = SecCodeCheckValidity(codeRef, kSecCSDefaultFlags, NULL);
+    if(errSecSuccess != status)
     {
         //bail
         goto bail;
     }
     
     //get code signing info
-    if(errSecSuccess != SecCodeCopySigningInformation(codeRef, kSecCSDynamicInformation, &csInfo))
+    status = SecCodeCopySigningInformation(codeRef, kSecCSDynamicInformation, &csInfo);
+    if(errSecSuccess != status)
     {
         //bail
         goto bail;
     }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"client's code signing info: %@", csInfo]);
     
     //extract flags
     csFlags = [((__bridge NSDictionary *)csInfo)[(__bridge NSString *)kSecCodeInfoStatus] unsignedIntValue];
     
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"code signing flags: %#x", csFlags]);
-                    
     //gotta have hardened runtime
-    if(!(CS_RUNTIME & csFlags))
+    if( !(CS_VALID & csFlags) &&
+        !(CS_RUNTIME & csFlags) )
     {
         //bail
         goto bail;
     }
     
-    //dbg msg
-    logMsg(LOG_DEBUG, @"code signing flags, ok (`CS_RUNTIME`)");
-    
     //init signing req string
-    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\"", HELPER_ID, SIGNING_AUTH];
+    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", HELPER_ID, SIGNING_AUTH];
     
     //step 1: create task ref
     // uses NSXPCConnection's (private) 'auditToken' iVar
@@ -192,18 +203,12 @@ bail:
     }
     
     //step 2: validate
-    // check that client is signed with Objective-See's and it's BlockBlock
-    if(errSecSuccess != SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement)))
+    // check that client is signed with Objective-See's and it's LuLu
+    if(errSecSuccess != (status = SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement))))
     {
-        //dbg msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed with validate client (pid: %d)", audit_token_to_pid(auditToken)]);
-        
         //bail
         goto bail;
     }
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"client code signing information, ok");
     
     //set the interface that the exported object implements
     newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(XPCDaemonProtocol)];
@@ -242,9 +247,23 @@ bail:
     {
         //release
         CFRelease(taskRef);
-        
-        //unset
         taskRef = NULL;
+    }
+    
+    //free cs info
+    if(NULL != csInfo)
+    {
+        //free
+        CFRelease(csInfo);
+        csInfo = NULL;
+    }
+    
+    //free code ref
+    if(NULL != codeRef)
+    {
+        //free
+        CFRelease(codeRef);
+        codeRef = NULL;
     }
     
     return shouldAccept;

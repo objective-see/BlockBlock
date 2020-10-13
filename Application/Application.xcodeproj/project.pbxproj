@@ -187,31 +187,25 @@
 		7D7755E51F02E05B00D0017D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CD2F8006244551AB009C3D77 /* NSApplicationKeyEvents.h */,
-				CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */,
 				CD2F800924455333009C3D77 /* AboutWindow.xib */,
 				CD2F800A24455333009C3D77 /* AboutWindowController.h */,
 				CD2F800B24455333009C3D77 /* AboutWindowController.m */,
-				CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */,
-				CD22785C20434CAB00C72C76 /* StatusBarPopoverController.h */,
-				CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */,
+				7DD2BF941F1FF64300B33214 /* AlertWindow.xib */,
 				7DD2BF951F1FF64300B33214 /* AlertWindowController.h */,
 				7DD2BF961F1FF64300B33214 /* AlertWindowController.m */,
 				7D7755E61F02E05B00D0017D /* AppDelegate.h */,
 				7D7755E71F02E05B00D0017D /* AppDelegate.m */,
+				7DD25FEF1F23B73C00277EC4 /* Assets.xcassets */,
+				7D3B75001F13354900568828 /* Base.lproj */,
+				7D7755F11F02E05B00D0017D /* Info.plist */,
+				7D7755EE1F02E05B00D0017D /* MainMenu.xib */,
+				CD2F8006244551AB009C3D77 /* NSApplicationKeyEvents.h */,
+				CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */,
 				7DD2601A1F25600900277EC4 /* ParentsWindowController.h */,
 				7DD2601B1F25600900277EC4 /* ParentsWindowController.m */,
 				CD8FD5D323BAE2D100EFE0FB /* Preferences.xib */,
 				CD8FD5D223BAE2D100EFE0FB /* PrefsWindowController.h */,
 				CD8FD5D423BAE2D200EFE0FB /* PrefsWindowController.m */,
-				7D3B74FF1F13354900568828 /* StatusBarItem.h */,
-				7D3B74FD1F13354900568828 /* StatusBarItem.m */,
-				7DD2600A1F252E0C00277EC4 /* VirusTotal.h */,
-				7DD2600B1F252E0C00277EC4 /* VirusTotal.m */,
-				7DD2600D1F252E8C00277EC4 /* VirusTotalViewController.h */,
-				7DD2600E1F252E8C00277EC4 /* VirusTotalViewController.m */,
-				CD32C2342094062C009CADF6 /* SigningInfoViewController.h */,
-				CD32C2332094062C009CADF6 /* SigningInfoViewController.m */,
 				CD8FD5F123C05AD800EFE0FB /* RuleRow.h */,
 				CD8FD5F023C05AD800EFE0FB /* RuleRow.m */,
 				CD8FD5ED23C05AD800EFE0FB /* RuleRowCell.h */,
@@ -219,12 +213,18 @@
 				CD8FD5F523C05AD900EFE0FB /* Rules.xib */,
 				CD8FD5EE23C05AD800EFE0FB /* RulesWindowController.h */,
 				CD8FD5F323C05AD800EFE0FB /* RulesWindowController.m */,
-				7DD25FEF1F23B73C00277EC4 /* Assets.xcassets */,
-				7DD2BF941F1FF64300B33214 /* AlertWindow.xib */,
-				7D3B75001F13354900568828 /* Base.lproj */,
-				7D7755EE1F02E05B00D0017D /* MainMenu.xib */,
-				7D7755F11F02E05B00D0017D /* Info.plist */,
+				CD32C2342094062C009CADF6 /* SigningInfoViewController.h */,
+				CD32C2332094062C009CADF6 /* SigningInfoViewController.m */,
+				7D3B74FF1F13354900568828 /* StatusBarItem.h */,
+				7D3B74FD1F13354900568828 /* StatusBarItem.m */,
+				CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */,
+				CD22785C20434CAB00C72C76 /* StatusBarPopoverController.h */,
+				CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */,
 				7D7755E91F02E05B00D0017D /* Supporting Files */,
+				7DD2600A1F252E0C00277EC4 /* VirusTotal.h */,
+				7DD2600B1F252E0C00277EC4 /* VirusTotal.m */,
+				7DD2600D1F252E8C00277EC4 /* VirusTotalViewController.h */,
+				7DD2600E1F252E8C00277EC4 /* VirusTotalViewController.m */,
 			);
 			name = Source;
 			path = Application;
@@ -505,14 +505,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.0.2;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				INFOPLIST_FILE = Application/Info.plist;
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";
@@ -527,14 +527,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.0.2;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				INFOPLIST_FILE = Application/Info.plist;
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";

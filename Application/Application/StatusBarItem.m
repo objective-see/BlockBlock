@@ -118,10 +118,10 @@ enum menuItems
     self.popover = [[NSPopover alloc] init];
     
     //don't want highlight for popover
-    self.statusItem.highlightMode = NO;
+    self.statusItem.button.cell.highlighted = NO;
     
     //set target
-    self.statusItem.target = self;
+    self.statusItem.button.target = self;
     
     //set view controller
     self.popover.contentViewController = [[StatusBarPopoverController alloc] initWithNibName:@"StatusBarPopover" bundle:nil];
@@ -154,10 +154,10 @@ enum menuItems
         }
             
         //remove action handler
-        self.statusItem.action = nil;
+        self.statusItem.button.action = nil;
         
         //reset highlight mode
-        self.statusItem.highlightMode = YES;
+        ((NSButtonCell*)self.statusItem.button.cell).highlightsBy = NSContentsCellMask | NSChangeBackgroundCellMask;
     });
     
     return;
@@ -170,7 +170,7 @@ enum menuItems
     self.popover = nil;
     
     //reset highlight mode
-    self.statusItem.highlightMode = YES;
+    ((NSButtonCell*)self.statusItem.button.cell).highlightsBy = NSContentsCellMask | NSChangeBackgroundCellMask;
     
     return;
 }
@@ -197,8 +197,8 @@ enum menuItems
             [self setState];
         
             //update prefs
-            [[[XPCDaemonClient alloc] init] updatePreferences:@{PREF_IS_DISABLED:[NSNumber numberWithBool:self.isDisabled]}];
-        
+            [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient updatePreferences:@{PREF_IS_DISABLED:[NSNumber numberWithBool:self.isDisabled]}];
+            
             break;
             
         //rules

@@ -355,23 +355,6 @@ bail:
     return result;
 }
 
-
-/* TODO: add as feature 
-//add a rule
--(BOOL)add:(NSDictionary*)path signingInfo:(NSDictionary*)signingInfo action:(NSUInteger)action type:(NSUInteger)type user:(NSUInteger)user
-{
-    //result
-    BOOL added = NO;
-    
-    //happy
-    added = YES;
-    
-bail:
-    
-    return added;
-}
-*/
-
 //save to disk
 -(BOOL)save
 {

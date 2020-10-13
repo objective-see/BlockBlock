@@ -90,54 +90,6 @@ extern Preferences* preferences;
     return;
 }
 
-/*
-//TODO: add as a feature
-//add rule
--(void)addRule:(NSString*)path action:(NSUInteger)action user:(NSUInteger)user
-{
-    //binary obj
-    Binary* binary = nil;
-    
-    //default cs flags
-    SecCSFlags flags = kSecCSDefaultFlags | kSecCSCheckNestedCode | kSecCSDoNotValidateResources | kSecCSCheckAllArchitectures;
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: '%s' (path: %@ / action: %lu)", __PRETTY_FUNCTION__, path, action]);
-    
-    //init binary obj w/ path
-    binary = [[Binary alloc] init:path];
-    if(nil == binary)
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed init binary object for %@", path]);
-        
-        //bail
-        goto bail;
-    }
-    
-    //generate signing info
-    [binary generateSigningInfo:flags];
-    
-    //log to file
-    logMsg(LOG_TO_FILE, [NSString stringWithFormat:@"adding rule (path: %@ / action: %lu)", path, action]);
-    
-    //add
-    // type is 'user'
-    if(YES != [rules add:path signingInfo:binary.signingInfo action:action type:RULE_TYPE_USER user:user])
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to add rule for %@", path]);
-        
-        //bail
-        goto bail;
-    }
-
-bail:
-    
-    return;
-}
-*/
-
 //delete rule
 -(void)deleteRule:(Rule*)rule reply:(void (^)(NSData*))reply
 {

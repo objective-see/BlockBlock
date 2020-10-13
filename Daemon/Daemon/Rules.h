@@ -44,27 +44,6 @@
 // args: process path, item (path)
 -(BOOL)delete:(Rule*)rule;
 
-/*
-
-//find
--(Rule*)find:(Process*)process;
-
-//add rule
--(BOOL)add:(NSString*)path signingInfo:(NSDictionary *)signingInfo action:(NSUInteger)action type:(NSUInteger)type user:(NSUInteger)user;
-
-//update rule
--(BOOL)update:(NSString*)path action:(NSUInteger)action user:(NSUInteger)user;
-
-
-
-//delete all rules
--(BOOL)deleteAll;
-
-//convert list of rule objects to dictionary
--(NSMutableDictionary*)serialize;
-
- */
-
 @end
 
 

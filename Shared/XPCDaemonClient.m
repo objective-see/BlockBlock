@@ -197,25 +197,6 @@ extern NSMutableDictionary* alerts;
     return rules;
 }
 
-/* TODO: add as a feature?
-//add rule
--(void)addRule:(NSString*)processPath action:(NSUInteger)action
-{
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
-    
-    //make XPC request to add rule
-    [[self.daemon remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute daemon XPC method '%s' (error: %@)", __PRETTY_FUNCTION__, proxyError]);
-        
-    }] addRule:processPath action:action user:getuid()];
-    
-    return;
-}
-*/
-
 //send alert response back to the deamon
 -(void)alertReply:(NSDictionary*)alert
 {
