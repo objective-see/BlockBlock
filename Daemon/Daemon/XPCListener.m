@@ -191,7 +191,7 @@ bail:
     }
     
     //init signing req string
-    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", HELPER_ID, SIGNING_AUTH];
+    requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", HELPER_ID, SIGNING_AUTH];
     
     //step 1: create task ref
     // uses NSXPCConnection's (private) 'auditToken' iVar

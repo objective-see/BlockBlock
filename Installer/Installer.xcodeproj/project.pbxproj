@@ -22,7 +22,6 @@
 		CD17D55320104EE700F798D7 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54B20104EE700F798D7 /* AboutWindowController.m */; };
 		CD2F801124465F68009C3D77 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = CD2F801024465F68009C3D77 /* patrons.txt */; };
 		CD3307AE203567D500F10D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD3307AD203567D400F10D71 /* Assets.xcassets */; };
-		CD6B484320AD323E00A9BE71 /* Sentry.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = CD6B484220AD323E00A9BE71 /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD73DA912004629D001FFC84 /* HelperInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA902004629D001FFC84 /* HelperInterface.m */; };
 		CD73DA942004633A001FFC84 /* HelperListener.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA9220046339001FFC84 /* HelperListener.m */; };
 		CD73DA9520046548001FFC84 /* HelperInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA902004629D001FFC84 /* HelperInterface.m */; };
@@ -31,6 +30,7 @@
 		CD86B6E823A5BBA5003F6BA4 /* com.objective-see.blockblock.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDAFF43F203E971F00F27635 /* com.objective-see.blockblock.plist */; };
 		CD86B6EA23A5BBE7003F6BA4 /* configure.sh in Resources */ = {isa = PBXBuildFile; fileRef = CD86B6E923A5BBE7003F6BA4 /* configure.sh */; };
 		CDA6E639203B6F1000C78F91 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D53820104DD700F798D7 /* logging.m */; };
+		CDA88A752537CDE100C469BF /* Sentry.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD6B484220AD323E00A9BE71 /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDAAC241202255580032F2E6 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAAC23F202255580032F2E6 /* utilities.m */; };
 		CDAAC243202257D70032F2E6 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAAC23F202255580032F2E6 /* utilities.m */; };
 /* End PBXBuildFile section */
@@ -56,15 +56,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CD21501D20AD318C00CEF17B /* Copy Frameworks */ = {
+		CDA88A722537CD7700C469BF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CD6B484320AD323E00A9BE71 /* Sentry.framework in Copy Frameworks */,
+				CDA88A752537CDE100C469BF /* Sentry.framework in CopyFiles */,
 			);
-			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -268,7 +267,7 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				4BE49098104463C5006BE471 /* CopyFiles */,
 				CD17D55F20115E5E00F798D7 /* ShellScript */,
-				CD21501D20AD318C00CEF17B /* Copy Frameworks */,
+				CDA88A722537CD7700C469BF /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -483,6 +482,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				INFOPLIST_FILE = Source/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0.3;
@@ -509,6 +509,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				INFOPLIST_FILE = Source/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0.3;

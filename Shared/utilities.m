@@ -7,8 +7,6 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
-@import Sentry;
-
 #import "consts.h"
 #import "logging.h"
 #import "utilities.h"
@@ -24,63 +22,6 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-//init crash reporting
-void initCrashReporting()
-{
-    //sentry
-    NSBundle *sentry = nil;
-    
-    //error
-    NSError* error = nil;
-    
-    //class
-    Class SentryClient = nil;
-    
-    //load senty
-    sentry = loadFramework(@"Sentry.framework");
-    if(nil == sentry)
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to load 'Sentry' framework");
-        
-        //bail
-        goto bail;
-    }
-   
-    //get client class
-    SentryClient = NSClassFromString(@"SentryClient");
-    if(nil == SentryClient)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //set shared client
-    [SentryClient setSharedClient:[[SentryClient alloc] initWithDsn:CRASH_REPORTING_URL didFailWithError:&error]];
-    if(nil != error)
-    {
-        //log error
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"initializing 'Sentry' failed with %@", error]);
-        
-        //bail
-        goto bail;
-    }
-    
-    //start crash handler
-    [[SentryClient sharedClient] startCrashHandlerWithError:&error];
-    if(nil != error)
-    {
-        //log error
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"starting 'Sentry' crash handler failed with %@", error]);
-        
-        //bail
-        goto bail;
-    }
-    
-bail:
-    
-    return;
-}
 
 //get app's version
 // extracted from Info.plist
@@ -398,7 +339,7 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
     SecRequirementRef requirementRef = NULL;
     
     //init signing req string
-    requirement = [NSString stringWithFormat:@"anchor trusted and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", INSTALLER_ID, signingAuth];
+    requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", INSTALLER_ID, signingAuth];
     
     //create static code
     status = SecStaticCodeCreateWithPath((__bridge CFURLRef)([NSURL fileURLWithPath:path]), kSecCSDefaultFlags, &staticCode);

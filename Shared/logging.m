@@ -69,16 +69,11 @@ void logMsg(int level, NSString* msg)
         syslog(level, "%s: %s", [logPrefix UTF8String], [msg UTF8String]);
     }
     
-    //when a message is to be logged to file
-    // log it, when logging is enabled
+    //log to file?
     if(YES == shouldLog)
     {
-        //but only when logging is enable
-        if(nil != logFileHandle)
-        {
-            //log
-            log2File(msg);
-        }
+        //log
+        log2File(msg);
     }
     
     return;
@@ -87,12 +82,24 @@ void logMsg(int level, NSString* msg)
 //log to file
 void log2File(NSString* msg)
 {
+    //sanity check
+    if(nil == logFileHandle) return;
+    
     //sync
     @synchronized(logFileHandle)
     {
-        //append timestamp
-        // write msg out to disk
-        [logFileHandle writeData:[[NSString stringWithFormat:@"%@: %@\n", [NSDate date], msg] dataUsingEncoding:NSUTF8StringEncoding]];
+        //wrap in try
+        @try
+        {
+            //append timestamp
+            // write msg out to disk
+            [logFileHandle writeData:[[NSString stringWithFormat:@"%@: %@\n", [NSDate date], msg] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+        //ignore exceptions
+        @catch (NSException *e)
+        {
+            ;
+        }
     }
     
     return;

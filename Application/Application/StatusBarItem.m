@@ -99,9 +99,6 @@ enum menuItems
 //remove status item
 -(void)removeStatusItem
 {
-    //unset
-    self.statusItem.view = nil;
-    
     //remove item
     [[NSStatusBar systemStatusBar] removeStatusItem:self.statusItem];
     

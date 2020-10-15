@@ -14,7 +14,7 @@
 #define PATREON_URL @"https://www.patreon.com/join/objective_see"
 
 //sentry crash reporting URL
-#define CRASH_REPORTING_URL @"https://04a1d345121247f8b62014d801d7bed2@o130950.ingest.sentry.io/1225145"
+#define SENTRY_DSN @"https://04a1d345121247f8b62014d801d7bed2@o130950.ingest.sentry.io/1225145"
 
 //bundle ID
 #define BUNDLE_ID "com.objective-see.blockblock"

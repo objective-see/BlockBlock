@@ -10,6 +10,8 @@
 #import "main.h"
 #import "Monitor.h"
 
+@import Sentry;
+
 /* GLOBALS */
 
 //(file)monitor
@@ -23,16 +25,19 @@ int main(int argc, const char * argv[])
     @autoreleasepool
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launch daemon started with %@", NSProcessInfo.processInfo.arguments]);
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launch daemon %@ started with %@", NSProcessInfo.processInfo.arguments.firstObject.lastPathComponent, NSProcessInfo.processInfo.arguments]);
         
         //init crash reporting
-        initCrashReporting();
+        [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
+            options.dsn = SENTRY_DSN;
+            options.debug = YES;
+        }];
         
         //not root?
         if(0 != geteuid())
         {
            //err msg
-           logMsg(LOG_ERR, @"launch daemon must be run as root");
+           logMsg(LOG_ERR, [NSString stringWithFormat:@"launch daemon must be run as root, not %d", geteuid()]);
            
            //bail
            goto bail;

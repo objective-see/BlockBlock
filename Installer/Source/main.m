@@ -23,7 +23,10 @@ int main(int argc, char *argv[])
     int status = -1;
     
     //init crash reporting
-    initCrashReporting();
+    [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
+        options.dsn = SENTRY_DSN;
+        options.debug = YES;
+    }];
     
     //cmdline install?
     if(YES == [[[NSProcessInfo processInfo] arguments] containsObject:CMD_INSTALL])
