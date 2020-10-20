@@ -27,5 +27,4 @@
 //update list of saved jobs
 -(void)snapshot:(NSString*)path;
 
-
 @end

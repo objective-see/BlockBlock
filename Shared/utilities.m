@@ -1354,6 +1354,51 @@ bail:
     return result;
 }
 
+//wait for file to be written to disk
+void waitForFile(NSString* path, float maxWait)
+{
+    //wait interval
+    float waitInterval = 0.1f;
+    
+    //count var for loop
+    NSUInteger count = 0;
+    
+    //wait for file
+    do
+    {
+        //wait for file
+        if(YES == [[NSFileManager defaultManager] fileExistsAtPath:path])
+        {
+            //happy
+            break;
+        }
+        
+        //nap
+        [NSThread sleepForTimeInterval:waitInterval];
+        
+    //try up to specified max
+    } while(count++ < maxWait/waitInterval);
+}
+
+
+//given a bundle path
+// wait for plist, then load bundle
+NSBundle* getBundle(NSString* path, float maxWait)
+{
+    //plist path
+    NSString* plist = nil;
+    
+    //init path to plist in bundle
+    plist = [NSString pathWithComponents:@[path, @"/Contents/Info.plist"]];
+    
+    //wait for plist
+    // indicator that bundle 'ready'
+    waitForFile(plist, maxWait);
+    
+    //load/return bundle
+    return [NSBundle bundleWithPath:path];
+}
+
 //extract value from plist
 // takes optional wait time...
 id getValueFromPlist(NSString* plistFile, NSString* plistKey, BOOL insensitiveKey, float maxWait)
@@ -1361,41 +1406,14 @@ id getValueFromPlist(NSString* plistFile, NSString* plistKey, BOOL insensitiveKe
     //return var
     id plistValue;
     
-    //wait interval
-    float waitInterval = 0.1f;
-    
-    //count var for loop
-    NSUInteger count = 0;
-    
     //contents of plist
     NSDictionary* plistContents = nil;
     
-    //try/wait for plist to be written to disk
-    // ->then load/parse it to get value for key
-    do
-    {
-        //wait for plist
-        if(YES == [[NSFileManager defaultManager] fileExistsAtPath:plistFile])
-        {
-            //nap for 1/10th of a second
-            // ->just in case its still being saved
-            [NSThread sleepForTimeInterval:waitInterval];
-            
-            //try to load content's of Info.plist
-            plistContents = [NSDictionary dictionaryWithContentsOfFile:plistFile];
-            if(nil != plistContents) break;
-        }
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, @"napping...plist");
-        
-        //nap for 1/10th of a second
-        [NSThread sleepForTimeInterval:waitInterval];
-        
-    //try up to 1 second
-    } while(count++ < maxWait/waitInterval);
+    //wait for file
+    waitForFile(plistFile, maxWait);
     
-    //(still) no plist?
+    //load it
+    plistContents = [NSDictionary dictionaryWithContentsOfFile:plistFile];
     if(nil == plistContents)
     {
         //dbg msg

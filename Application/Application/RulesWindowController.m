@@ -49,6 +49,9 @@
     //remove all rules
     [rules removeAllObjects];
     
+    //set overlay vibility
+    self.overlay.hidden = YES;
+    
     //reload table
     // will clear all data
     [self.tableView reloadData];

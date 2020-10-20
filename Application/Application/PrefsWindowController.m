@@ -222,8 +222,8 @@ bail:
             //dbg msg
             logMsg(LOG_DEBUG, @"no updates available");
             
-            //set lable
-            self.updateLabel.stringValue = @"no new versions";
+            //set label
+            self.updateLabel.stringValue = [NSString stringWithFormat:@"Installed version (%@),\r\nis the latest.", getAppVersion()];
             
             break;
          

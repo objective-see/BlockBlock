@@ -18,7 +18,7 @@
 // breakdown:
 // ^ -> starts with
 // (\/System|\/Users\/.+|) -> "/System" or "/Users/<blah>" or nothing
-// \/Library\/ -> "Library/"
+// \/Library\/ -> "/Library/"
 // (LaunchDaemons|LaunchAgents) -> "LaunchDaemons" or "LaunchAgents"
 // \/.+\.(?i)plist -> "/<blah>.plist" (case insensitive)
 
@@ -135,7 +135,7 @@ bail:
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"PLUGIN %@: blocking %@", NSStringFromClass([self class]), propertyList]);
 
-    
+
     //STEP 1: unload launch item (via launchctl)
     
     //unload via 'launchctl'
