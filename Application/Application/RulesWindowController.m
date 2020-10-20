@@ -21,16 +21,6 @@
 @synthesize refreshing;
 @synthesize refreshingIndicator;
 
-//@synthesize toolbar;
-//@synthesize addedRule;
-//@synthesize searchBox;
-//@synthesize addRulePanel;
-//@synthesize loadingRules;
-//@synthesize shouldFilter;
-//@synthesize rulesFiltered;
-//@synthesize rulesObserver;
-
-
 //configure (UI)
 -(void)configure
 {
@@ -110,9 +100,6 @@
             //hide overlay
             //self.loadingRules.hidden = YES;
           
-            //set 'all' as default selected
-            //self.toolbar.selectedItemIdentifier = @"all";
-           
             //stop refresh spinner
             [self.refreshingIndicator stopAnimation:nil];
             
@@ -124,6 +111,9 @@
           
             //select first row
             [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+            
+            //set overlay vibility
+            self.overlay.hidden = !(0 == self.rules.count);
              
         });
 
@@ -182,11 +172,14 @@
             // ...gotta do this on the main thread
             dispatch_async(dispatch_get_main_queue(), ^{
                 
-               //reload table
-               [self.tableView reloadData];
+                //reload table
+                [self.tableView reloadData];
+                
+                //set overlay vibility
+                self.overlay.hidden = !(0 == self.rules.count);
               
-               //select first row
-               [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+                //select first row
+                [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
                  
             });
             

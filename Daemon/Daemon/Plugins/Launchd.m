@@ -81,7 +81,7 @@
     }
     //when 'ProgramArguments' fails
     // check for just 'Program' key and use that
-    else
+    if(0 == itemBinary.length)
     {
         //get value for 'ProgramArguments'
         //(should always be) a string
@@ -89,7 +89,7 @@
     }
     
     //sanity check
-    if(nil == itemBinary)
+    if(0 == itemBinary.length)
     {
         //bail
         goto bail;

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="RulesWindowController">
             <connections>
                 <outlet property="addRulePanel" destination="cna-Y1-PEc" id="a7H-3I-8qq"/>
+                <outlet property="overlay" destination="hpe-dB-Ek8" id="vIp-9F-c33"/>
                 <outlet property="refreshing" destination="cbu-EU-t72" id="oUy-SL-skJ"/>
                 <outlet property="refreshingIndicator" destination="hmR-9d-tQz" id="6Fd-Jh-0rj"/>
                 <outlet property="tableView" destination="rpa-sZ-jQp" id="SvF-Yi-OKB"/>
@@ -23,7 +24,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1417"/>
             <value key="minSize" type="size" width="1104" height="552"/>
             <view key="contentView" wantsLayer="YES" misplaced="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="1104" height="552"/>
+                <rect key="frame" x="0.0" y="0.0" width="1104" height="529"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qQ9-BU-evn">
@@ -34,7 +35,7 @@
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="BlockBlock" id="Foc-ee-gdz"/>
                     </imageView>
                     <scrollView misplaced="YES" autohidesScrollers="YES" horizontalLineScroll="56" horizontalPageScroll="10" verticalLineScroll="56" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gth-To-Lf2">
-                        <rect key="frame" x="-1" y="42" width="1106" height="511"/>
+                        <rect key="frame" x="-1" y="44" width="1106" height="511"/>
                         <clipView key="contentView" id="ubO-Ur-NA2">
                             <rect key="frame" x="1" y="0.0" width="1104" height="510"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -230,6 +231,24 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="hpe-dB-Ek8" userLabel="Overlay">
+                        <rect key="frame" x="302" y="152" width="500" height="200"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m0M-KX-7D6" userLabel="loading data">
+                                <rect key="frame" x="18" y="87" width="464" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="No Rules..." id="Wjb-RO-P6A">
+                                    <font key="font" size="13" name="Menlo-Bold"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="500" id="7BV-bx-6En"/>
+                            <constraint firstAttribute="height" constant="200" id="zSL-Rb-x0k"/>
+                        </constraints>
+                    </customView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="qQ9-BU-evn" firstAttribute="centerX" secondItem="gth-To-Lf2" secondAttribute="centerX" id="2W7-N3-WMW"/>
@@ -244,13 +263,15 @@
                     <constraint firstItem="cbu-EU-t72" firstAttribute="leading" secondItem="hmR-9d-tQz" secondAttribute="trailing" constant="9" id="SBi-Uv-GsN"/>
                     <constraint firstAttribute="bottom" secondItem="gth-To-Lf2" secondAttribute="bottom" constant="42" id="SbQ-dG-FEs"/>
                     <constraint firstAttribute="trailing" secondItem="gth-To-Lf2" secondAttribute="trailing" constant="-1" id="WvL-Bq-dxN"/>
+                    <constraint firstItem="hpe-dB-Ek8" firstAttribute="centerY" secondItem="se5-gp-TjO" secondAttribute="centerY" id="jWl-Z5-Mfh"/>
+                    <constraint firstItem="hpe-dB-Ek8" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="rCn-Jj-WSh"/>
                     <constraint firstAttribute="bottom" secondItem="qQ9-BU-evn" secondAttribute="bottom" id="zPc-WN-oyQ"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="62" y="469"/>
+            <point key="canvasLocation" x="62" y="468.5"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="pch-yV-NXy" userLabel="Add Rule" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>

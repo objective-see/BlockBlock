@@ -44,6 +44,9 @@
 
 /* PROPERTIES */
 
+//overlay
+@property (weak) IBOutlet NSView *overlay;
+
 //observer for rules changed
 @property(nonatomic, retain)id rulesObserver;
 
@@ -73,15 +76,6 @@
 
 //panel for 'add rule'
 @property (weak) IBOutlet NSView *addRulePanel;
-
-//label for add rules button
-//@property (weak) IBOutlet NSTextField *addRuleLabel;
-
-//button to add rules
-//@property (weak) IBOutlet NSButton *addRuleButton;
-
-//(last) added rule
-//@property(nonatomic,retain)NSString* addedRule;
 
 //spinnger for refresh
 @property (weak) IBOutlet NSProgressIndicator *refreshingIndicator;
