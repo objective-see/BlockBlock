@@ -10,6 +10,12 @@
 #ifndef consts_h
 #define consts_h
 
+//cs consts
+// from: cs_blobs.h
+#define CS_VALID 0x00000001
+#define CS_ADHOC 0x0000002
+#define CS_RUNTIME 0x00010000
+
 //patreon url
 #define PATREON_URL @"https://www.patreon.com/join/objective_see"
 

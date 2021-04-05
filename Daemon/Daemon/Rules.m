@@ -295,8 +295,8 @@ bail:
         [self.rules[key][KEY_RULES] enumerateObjectsUsingBlock:^(Rule* currentRule, NSUInteger index, BOOL* stop)
         {
             //is match?
-            if( (YES == [currentRule.processPath isEqualToString:rule.processPath]) &&
-                (YES == [currentRule.itemFile isEqualToString:rule.itemFile]) )
+            if( (YES == [currentRule.itemFile isEqualToString:rule.itemFile]) &&
+                (YES == [currentRule.itemObject isEqualToString:rule.itemObject]) )
             {
                 //save index
                 ruleIndex = index;
