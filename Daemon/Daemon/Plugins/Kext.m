@@ -43,6 +43,13 @@
     return self;
 }
 
+//ignore StagedExtensions
+// ...should pick up the initial event in /Extensions
+-(BOOL)shouldIgnore:(File*)file
+{
+    return [file.destinationPath containsString:@"StagedExtensions"];
+}
+
 //get the name of the kext
 // load bundle and read 'CFBundleExecutable'
 -(NSString*)itemName:(Event*)event
