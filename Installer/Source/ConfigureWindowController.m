@@ -72,7 +72,7 @@
     [self window].title = [NSString stringWithFormat:@"version %@", getAppVersion()];
     
     //init status msg
-    [self.statusMsg setStringValue:@"Protection against persistent malware 👾"];
+    [self.statusMsg setStringValue:@"Protection against persistent malware! 👾"];
     
     //app already installed?
     // enable 'uninstall' button

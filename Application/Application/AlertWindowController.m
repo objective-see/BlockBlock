@@ -106,8 +106,23 @@ extern XPCDaemonClient* xpcDaemonClient;
     // name and pid
     self.processSummary.stringValue = [NSString stringWithFormat:@"%@ (pid: %@)", self.alert[ALERT_PROCESS_NAME], self.alert[ALERT_PROCESS_ID]];
     
-    //args
-    if(0 != [self.alert[ALERT_PROCESS_ARGS] count])
+    //process args
+    // none? means error
+    if(0 == [self.alert[ALERT_PROCESS_ARGS] count])
+    {
+        //unknown
+        self.processArgs.stringValue = @"unknown";
+    }
+    //process args
+    // only one? means, argv[0] and none
+    else if(1 == [self.alert[ALERT_PROCESS_ARGS] count])
+    {
+        //none
+        self.processArgs.stringValue = @"none";
+    }
+    //process args
+    // more than one? create string of all
+    else
     {
         //add each arg
         // note: skip first, since the process name
@@ -120,12 +135,6 @@ extern XPCDaemonClient* xpcDaemonClient;
             self.processArgs.stringValue = [self.processArgs.stringValue stringByAppendingFormat:@"%@ ", argument];
             
         }];
-    }
-    //no args
-    else
-    {
-        //none
-        self.processArgs.stringValue = @"none";
     }
     
     //process path
@@ -177,18 +186,43 @@ extern XPCDaemonClient* xpcDaemonClient;
     // just hide the rest...
     else if(ALERT_TYPE_PROCESS == [self.alert[ALERT_TYPE] intValue])
     {
-        self.startupItem.hidden = YES;
-        self.startupItemLabel.hidden = YES;
+        //script?
+        // show script (will be argv[1])
+        if( (YES == [self.alert[ALERT_MESSAGE] containsString:@"a non-notarized script"]) &&
+            ([self.alert[ALERT_PROCESS_ARGS] count] > 1) )
+        {
+            //set (main) info
+            self.startupItem.stringValue = @"Script";
+            
+            //set label
+            self.startupItemLabel.stringValue = @"script path:";
+            
+            //set script path
+            self.startupFile.stringValue = self.alert[ALERT_PROCESS_ARGS][1];
+        }
+        //not script
+        // hide startup item info(s)
+        else
+        {
+            //hide startup item
+            self.startupItem.hidden = YES;
+            self.startupItemLabel.hidden = YES;
+            self.startupFile.hidden = YES;
+        }
+        
+        //hide startup obj
         self.startupObjectLabel.hidden = YES;
+        self.startupObject.hidden = YES;
+        
+        //hide action scope
         self.actionScopeLabel.hidden = YES;
         self.actionScope.hidden = YES;
-        
-        //check
+    
+        //check temp rule
         self.tempRule.state = NSControlStateValueOn;
-        
-        //then disable temp
+    
+        //then disable temp rule
         self.tempRule.enabled = NO;
-        
     }
     
     //add timestamp

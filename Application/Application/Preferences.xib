@@ -149,7 +149,7 @@
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="AAL-QY-azK">
                     <rect key="frame" x="72" y="91" width="475" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on (user-launched) un-notarized code." id="SYJ-Qv-cRq">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on (user-launched), un-notarized code." id="SYJ-Qv-cRq">
                         <font key="font" size="13" name="Menlo-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
