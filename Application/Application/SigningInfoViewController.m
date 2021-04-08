@@ -89,14 +89,13 @@
             //append
             [summary appendFormat:@" (by Apple proper)"];
         }
-        
-        //developer id
-        else if (CS_DEV_CODE & csFlags)
+        //developer code
+        else
         {
             //append
-            [summary appendFormat:@" (by a Developer Identity, 'CS_DEV_CODE')"];
+            [summary appendFormat:@" (by a Developer Identity, '!PLATFORM_BINARY')"];
         }
-        
+    
         //bail
         goto bail;
     }
