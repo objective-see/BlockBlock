@@ -41,6 +41,32 @@
     return self;
 }
 
+//(customize) alert message
+// either launch agent, or launch daemon
+-(NSString*)alertMessage:(Event*)event
+{
+    //alert msg
+    NSString* alert = nil;
+    
+    //init to default
+    alert = self.alertMsg;
+    
+    //launch agent?
+    if(YES == [event.file.destinationPath containsString:@"/LaunchAgents/"])
+    {
+        //set
+        alert = @"installed a launch agent";
+    }
+    //launch daemon
+    else if(YES == [event.file.destinationPath containsString:@"/LaunchDaemons/"])
+    {
+        //set
+        alert = @"installed a launch daemon";
+    }
+    
+    return alert;
+}
+
 //get the name of the launch item
 -(NSString*)itemName:(Event*)event
 {

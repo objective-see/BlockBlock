@@ -45,7 +45,7 @@ extern XPCDaemonClient* xpcDaemonClient;
 -(void)awakeFromNib
 {
     //set title
-    self.window.title = [NSString stringWithFormat:@"BlockBlock (v. %@)", getAppVersion()];
+    self.window.title = [NSString stringWithFormat:@"BlockBlock v%@", getAppVersion()];
     
     //get prefs
     self.preferences = [xpcDaemonClient getPreferences];

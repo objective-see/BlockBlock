@@ -51,7 +51,7 @@
         if(YES == [object isKindOfClass:File.class])
         {
             //save file
-            self.file = file;
+            self.file = object;
             
             //save process
             self.process = file.process;
