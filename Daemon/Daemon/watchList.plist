@@ -86,5 +86,15 @@
 		<key>ignoreKids</key>
 		<true/>
 	</dict>
+	<dict>
+		<key>description</key>
+		<string>Process Monitor</string>
+		<key>class</key>
+		<string>Processes</string>
+		<key>alert</key>
+		<string>is a non-notarized process</string>
+		<key>ignoreKids</key>
+		<true/>
+	</dict>
 </array>
 </plist>

@@ -18,9 +18,11 @@
 //alert windows
 NSMutableDictionary* alerts = nil;
 
+//xpc connection to daemon
+XPCDaemonClient* xpcDaemonClient;
+
 @implementation AppDelegate
 
-@synthesize xpcDaemonClient;
 @synthesize aboutWindowController;
 @synthesize prefsWindowController;
 @synthesize rulesWindowController;
@@ -64,7 +66,7 @@ NSMutableDictionary* alerts = nil;
 
     //get preferences
     // sends XPC message to daemon
-    preferences = [self.xpcDaemonClient getPreferences];
+    preferences = [xpcDaemonClient getPreferences];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded preferences: %@", preferences]);

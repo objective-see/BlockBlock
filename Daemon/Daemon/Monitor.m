@@ -18,6 +18,8 @@
 #import "PluginBase.h"
 #import "Preferences.h"
 
+#import "Processes.h"
+
 /* GLOBALS */
 
 //global rules obj
@@ -35,6 +37,7 @@ extern Preferences* preferences;
 @synthesize fileMon;
 @synthesize lastEvent;
 @synthesize userObserver;
+@synthesize endpointProcessClient;
 
 //init function
 -(id)init
@@ -114,9 +117,312 @@ extern Preferences* preferences;
     // pass in block for events
     started = [self.fileMon start:events count:sizeof(events)/sizeof(events[0]) csOption:csNone callback:block];
     
+    //start process monitor
+    if(YES != [self startProcessMonitor])
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to start process monitor");
+        
+        //bail
+        goto bail;
+    }
+    
 bail:
 
     return started;
+}
+
+//start process monitor
+// for now, only ES_EVENT_TYPE_AUTH_EXEC events
+-(BOOL)startProcessMonitor
+{
+    //flag
+    BOOL started = NO;
+    
+    //result
+    es_new_client_result_t result = 0;
+    
+    //events
+    es_event_type_t procEvents[] = {ES_EVENT_TYPE_AUTH_EXEC};
+    
+    //process plugin
+    __block PluginBase* plugin = nil;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"starting process monitor...");
+    
+    //look up processes plugin
+    [plugins enumerateObjectsUsingBlock:^(PluginBase* currentPlugin, NSUInteger index, BOOL* stop)
+    {
+        //is match?
+        if(YES == [currentPlugin isKindOfClass:Processes.class])
+        {
+            //save
+            plugin = currentPlugin;
+            
+            //stop
+            *stop = YES;
+        }
+    }];
+    
+    //create client
+    // and handle process (auth exec) events
+    result = es_new_client(&endpointProcessClient, ^(es_client_t *client, const es_message_t *message)
+    {
+        //event
+        Event* event = nil;
+        
+        //new process event
+        Process* process = nil;
+        
+        //esf deadline
+        uint64_t deadline = 0;
+        
+        //deadline sema
+        dispatch_semaphore_t deadlineSema = 0;
+        
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new process event: %x", message->event_type]);
+        
+        //check prefs
+        // allow if passive mode, or not in notarization mode
+        if( (YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue]) ||
+            (YES != [preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) )
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing process, due to preferences (%@)", preferences.preferences]);
+            
+            //allow
+            if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:NO])
+            {
+                //err msg
+                logMsg(LOG_ERR, @"failed to allow process");
+            }
+            
+            //done
+            return;
+        }
+        
+        //init process obj
+        process = [[Process alloc] init:(es_message_t* _Nonnull)message csOption:csDynamic];
+        if( (nil == process) ||
+            (YES == [plugin shouldIgnore:process]) )
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing %@", process]);
+            
+            //allow
+            if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:NO])
+            {
+                //err msg
+                logMsg(LOG_ERR, @"failed to allow process");
+            }
+            
+            //done
+            return;
+        }
+        
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"alerting user about: %@", process]);
+        
+        //init event
+        event = [[Event alloc] init:process plugin:plugin];
+        
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"alerting user w/: %@", event]);
+        
+        //add client
+        event.esfClient = client;
+        
+        //add msg
+        event.esfMessage = es_copy_message(message);
+        
+        //create deadline semaphore
+        deadlineSema = dispatch_semaphore_create(0);
+        
+        //init deadline
+        deadline = message->deadline - mach_absolute_time();
+        
+        //add to event
+        event.esfSemaphore = deadlineSema;
+        
+        //background
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        
+        //deliver alert
+        // can fail if no client
+        if(YES == [events deliver:event])
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"alert delivered, waiting for response...");
+            
+            //wait till close to timeout
+            // if haven't hit, just allow, otherwise we'll be killed
+            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, deadline - (1 * NSEC_PER_SEC))))
+            {
+                //err msg
+                logMsg(LOG_ERR, @"esf timeout about to be hit, forced to allow process :/");
+                
+                //sync
+                @synchronized(self)
+                {
+                    //allow
+                    if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:YES])
+                    {
+                        //err msg
+                        logMsg(LOG_ERR, @"failed to allow process");
+                    }
+                    
+                    //unset
+                    event.esfClient = NULL;
+                    event.esfMessage = NULL;
+                }
+            }
+            //sema signal'd
+            // handled by user, all good
+            else
+            {
+                //dbg msg
+                logMsg(LOG_DEBUG, @"esf semaphore signaled, alert was handled");
+            }
+        }
+        //failed to deliver
+        // will just allow process
+        else
+        {
+            //err msg
+            logMsg(LOG_ERR, @"failed to deliver message, will allow process :/");
+            
+            //sync
+            @synchronized(self)
+            {
+                //allow
+                if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:YES])
+                {
+                    //err msg
+                    logMsg(LOG_ERR, @"failed to allow process");
+                }
+                
+                //unset
+                event.esfClient = NULL;
+                event.esfMessage = NULL;
+            }
+        }
+            
+        });
+    });
+    
+    //sanity check
+    if(ES_NEW_CLIENT_RESULT_SUCCESS != result)
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_new_client' failed with %x", result]);
+        
+        //bail
+        goto bail;
+    }
+    
+    //subscribe
+    if(ES_RETURN_SUCCESS != es_subscribe(endpointProcessClient, procEvents, sizeof(events)/sizeof(procEvents[0])))
+    {
+        //err msg
+        logMsg(LOG_ERR, @"'es_subscribe' failed");
+        
+        //bail
+        goto bail;
+    }
+
+    //happy
+    started = YES;
+    
+bail:
+    
+    return started;
+}
+
+//allow process event
+-(BOOL)allowProcessEvent:(es_client_t*)client message:(es_message_t*)message shouldFree:(BOOL)shouldFree
+{
+    //flag
+    BOOL allowed = NO;
+    
+    //result
+    __block es_respond_result_t result = !ES_RESPOND_RESULT_SUCCESS;
+    
+    //allow
+    result = es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, false);
+    if(ES_RESPOND_RESULT_SUCCESS != result)
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_respond_auth_result' failed with %x", result]);
+    }
+    //ok!
+    else
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"allowed process via 'es_respond_auth_result/ES_AUTH_RESULT_ALLOW'");
+    }
+    
+    //free?
+    if(YES == shouldFree)
+    {
+        //free msg
+        es_free_message(message);
+        message = NULL;
+    }
+    
+    //happy
+    allowed = YES;
+    
+    return allowed;
+}
+
+//start process monitor
+-(BOOL)stopProcessMonitor
+{
+    //flag
+    BOOL stopped = NO;
+    
+    //sync
+    @synchronized (self) {
+        
+    //dbg msg
+    logMsg(LOG_DEBUG, @"stopping process monitor...");
+        
+    //sanity check
+    if(NULL == endpointProcessClient) goto bail;
+    
+    //unsubscribe
+    if(ES_RETURN_SUCCESS != es_unsubscribe_all(endpointProcessClient))
+    {
+       //err msg
+       logMsg(LOG_ERR, @"'es_unsubscribe_all' failed");
+       
+       //bail
+       goto bail;
+    }
+       
+    //delete client
+    if(ES_RETURN_SUCCESS != es_delete_client(endpointProcessClient))
+    {
+       //err msg
+       logMsg(LOG_ERR, @"'es_delete_client' failed");
+       
+       //bail
+       goto bail;
+    }
+       
+    //unset
+    endpointProcessClient = NULL;
+       
+    //happy
+    stopped = YES;
+            
+    }//sync
+    
+bail:
+    
+    return stopped;
 }
 
 //stop file monitor
@@ -126,7 +432,7 @@ bail:
     BOOL stopped = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"stopping file monitor");
+    logMsg(LOG_DEBUG, @"stopping file monitor...");
     
     //stop
     if(YES != [self.fileMon stop])
@@ -140,6 +446,16 @@ bail:
     
     //unset
     self.fileMon = nil;
+    
+    //stop process monitor
+    if(YES != [self stopProcessMonitor])
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to stop process monitor");
+        
+        //bail
+        goto bail;
+    }
     
     //happy
     stopped = YES;
@@ -348,6 +664,9 @@ bail:
         plugin = [(PluginBase*)([NSClassFromString(watchItem[@"class"]) alloc]) initWithParams:watchItem];
         if(nil == plugin)
         {
+            //err msg
+            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to initialize plugin: %@", watchItem[@"class"]]);
+            
             //skip
             continue;
         }

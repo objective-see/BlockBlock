@@ -12,7 +12,7 @@
 /* CONSTS */
 
 //code signing keys
-#define KEY_SIGNATURE_FLAGS @"csFlags"
+#define KEY_SIGNING_IS_NOTARIZED @"notarized"
 #define KEY_SIGNATURE_STATUS @"signatureStatus"
 #define KEY_SIGNATURE_SIGNER @"signatureSigner"
 #define KEY_SIGNATURE_IDENTIFIER @"signatureID"

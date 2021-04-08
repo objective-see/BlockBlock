@@ -15,6 +15,11 @@
 #import "PrefsWindowController.h"
 #import "UpdateWindowController.h"
 
+/* GLOBALS */
+
+//xpc daemon
+extern XPCDaemonClient* xpcDaemonClient;
+
 @implementation PrefsWindowController
 
 @synthesize toolbar;
@@ -29,8 +34,11 @@
 //'no-icon mode' button
 #define BUTTON_NO_ICON_MODE 2
 
+//'notarization mode' button
+#define BUTTON_NOTARIZATION_MODE 3
+
 //'update mode' button
-#define BUTTON_NO_UPDATE_MODE 3
+#define BUTTON_NO_UPDATE_MODE 4
 
 //init 'general' view
 // add it, and make it selected
@@ -40,7 +48,7 @@
     self.window.title = [NSString stringWithFormat:@"BlockBlock (v. %@)", getAppVersion()];
     
     //get prefs
-    self.preferences = [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient getPreferences];
+    self.preferences = [xpcDaemonClient getPreferences];
     
     //set rules prefs as default
     [self toolbarButtonHandler:nil];
@@ -80,6 +88,9 @@
             
             //set 'no icon' button state
             ((NSButton*)[view viewWithTag:BUTTON_NO_ICON_MODE]).state = [self.preferences[PREF_NO_ICON_MODE] boolValue];
+            
+            //set 'notarization mode' button state
+            ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_MODE]).state = [self.preferences[PREF_NOTARIZATION_MODE] boolValue];
             
             break;
             
@@ -139,6 +150,11 @@ bail:
         case BUTTON_NO_ICON_MODE:
             updatedPreferences[PREF_NO_ICON_MODE] = state;
             break;
+        
+        //notarization mode
+        case BUTTON_NOTARIZATION_MODE:
+            updatedPreferences[PREF_NOTARIZATION_MODE] = state;
+            break;
             
         //no update mode
         case BUTTON_NO_UPDATE_MODE:
@@ -150,11 +166,11 @@ bail:
     }
     
     //send XPC msg to daemon to update prefs
-    [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient updatePreferences:updatedPreferences];
+    [xpcDaemonClient updatePreferences:updatedPreferences];
 
     //get latest prefs
     // note: this will include (all) prefs, which is what we want
-    self.preferences = [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient getPreferences];
+    self.preferences = [xpcDaemonClient getPreferences];
     
     //toggle (status menu) icon
     if(BUTTON_NO_ICON_MODE == ((NSButton*)sender).tag)
@@ -162,6 +178,16 @@ bail:
         //toggle icon
         [((AppDelegate*)[[NSApplication sharedApplication] delegate]) toggleIcon:self.preferences];
     }
+    
+    return;
+}
+
+//'view rules' button handler
+// call helper method to show rule's window
+-(IBAction)viewRules:(id)sender
+{
+    //call into app delegate to show app rules
+    [((AppDelegate*)[[NSApplication sharedApplication] delegate]) showRules:nil];
     
     return;
 }

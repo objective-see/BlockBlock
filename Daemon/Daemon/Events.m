@@ -133,6 +133,9 @@ bail:
     //flag
     BOOL delivered = NO;
     
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"delivering alert to user: %@", event]);
+    
     //send via XPC to user
     // failure likely means no client, so just allow, but save
     if(YES != [xpcUserClient deliverEvent:event])

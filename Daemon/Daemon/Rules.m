@@ -150,6 +150,7 @@ bail:
     //key
     // bundle ID or path
     key = (0 != event.file.process.signingID.length) ? event.file.process.signingID : event.file.process.path;
+    if(NULL == key) goto bail;
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"key for rule: %@", key]);

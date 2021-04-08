@@ -1380,7 +1380,6 @@ void waitForFile(NSString* path, float maxWait)
     } while(count++ < maxWait/waitInterval);
 }
 
-
 //given a bundle path
 // wait for plist, then load bundle
 NSBundle* getBundle(NSString* path, float maxWait)
@@ -1388,12 +1387,17 @@ NSBundle* getBundle(NSString* path, float maxWait)
     //plist path
     NSString* plist = nil;
     
+    //sanity check
+    if(nil == path) goto bail;
+    
     //init path to plist in bundle
     plist = [NSString pathWithComponents:@[path, @"/Contents/Info.plist"]];
     
     //wait for plist
     // indicator that bundle 'ready'
     waitForFile(plist, maxWait);
+    
+bail:
     
     //load/return bundle
     return [NSBundle bundleWithPath:path];
@@ -1683,4 +1687,76 @@ BOOL isFileRestricted(NSString* file)
 BOOL isDarkMode()
 {
     return [[[NSUserDefaults standardUserDefaults] stringForKey:@"AppleInterfaceStyle"] isEqualToString:@"Dark"];
+}
+
+//determine if path is translocated
+// thanks: http://lapcatsoftware.com/articles/detect-app-translocation.html
+BOOL isTranslocated(NSString* path)
+{
+    //flag
+    BOOL isTranslocated = NO;
+    
+    //token
+    static dispatch_once_t onceToken = 0;
+    
+    //framework handle
+    static void* handle = NULL;
+    
+    //fp to 'SecTranslocateIsTranslocatedURL'
+    static Boolean (*SecTranslocateIsTranslocatedURLFP)(CFURLRef path, bool *isTranslocated, CFErrorRef * __nullable error) = NULL;
+    
+    //flag for call
+    bool translocated = false;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ is translocated", path]);
+
+    //load/open framework
+    dispatch_once(&onceToken, ^{
+        
+        //open and resolve 'SecTranslocateIsTranslocatedURLFP'
+        handle = dlopen("/System/Library/Frameworks/Security.framework/Security", RTLD_LAZY);
+        if(NULL != handle)
+        {
+            //resolve 'SecTranslocateIsTranslocatedURLFP'
+            SecTranslocateIsTranslocatedURLFP = dlsym(handle, "SecTranslocateIsTranslocatedURL");
+        }
+        //err
+        else
+        {
+            //err msg
+            logMsg(LOG_ERR, @"failed to 'dlopen' the 'Security.framework'");
+        }
+        
+    });
+    
+    //sanity check
+    if(NULL == SecTranslocateIsTranslocatedURLFP)
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to resolve 'SecTranslocateIsTranslocatedURL'");
+        
+        //bail
+        goto bail;
+    }
+    
+    //call 'SecTranslocateIsTranslocatedURL'
+    if(!SecTranslocateIsTranslocatedURLFP((__bridge CFURLRef)([NSURL fileURLWithPath:path]), &translocated, NULL))
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to invoke 'SecTranslocateIsTranslocatedURLFP'");
+        
+        //bail
+        goto bail;
+    }
+    
+    //log msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"SecTranslocateIsTranslocatedURL succeeded, result: %x", translocated]);
+    
+    //happy
+    isTranslocated = translocated;
+    
+bail:
+
+    return isTranslocated;
 }

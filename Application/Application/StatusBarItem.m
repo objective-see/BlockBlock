@@ -14,6 +14,11 @@
 #import "StatusBarItem.h"
 #import "StatusBarPopoverController.h"
 
+/* GLOBALS */
+
+//xpc daemon
+extern XPCDaemonClient* xpcDaemonClient;
+
 //menu items
 enum menuItems
 {
@@ -35,7 +40,6 @@ enum menuItems
 {
     //token
     static dispatch_once_t onceToken = 0;
-    
     
     //super
     self = [super init];
@@ -194,7 +198,7 @@ enum menuItems
             [self setState];
         
             //update prefs
-            [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient updatePreferences:@{PREF_IS_DISABLED:[NSNumber numberWithBool:self.isDisabled]}];
+            [xpcDaemonClient updatePreferences:@{PREF_IS_DISABLED:[NSNumber numberWithBool:self.isDisabled]}];
             
             break;
             

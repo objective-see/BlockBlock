@@ -22,15 +22,18 @@
 
 @synthesize file;
 @synthesize item;
+@synthesize uuid;
 @synthesize scope;
 @synthesize action;
-
-@synthesize uuid;
 @synthesize plugin;
+@synthesize process;
 @synthesize timestamp;
+@synthesize esfClient;
+@synthesize esfMessage;
+@synthesize esfSemaphore;
 
 //init
--(id)init:(File*)file plugin:(PluginBase*)plugin
+-(id)init:(id)object plugin:(PluginBase*)plugin
 {
     self = [super init];
     if(self)
@@ -41,8 +44,23 @@
         //create timestamp
         timestamp = [NSDate date];
         
-        //save file
-        self.file = file;
+        //set
+        esfMessage = NULL;
+        
+        //file?
+        if(YES == [object isKindOfClass:File.class])
+        {
+            //save file
+            self.file = file;
+            
+            //save process
+            self.process = file.process;
+        }
+        else if(YES == [object isKindOfClass:Process.class])
+        {
+            //save process
+            self.process = object;
+        }
         
         //save plugin
         self.plugin = plugin;
@@ -55,7 +73,6 @@
     return self;
 }
 
-//TODO: convert to coder 
 //create an (deliverable) dictionary object
 -(NSMutableDictionary*)toAlert
 {
@@ -74,25 +91,28 @@
     //add uuid
     alert[ALERT_UUID] = self.uuid;
     
+    //set type
+    alert[ALERT_TYPE] = (nil != self.file) ? @ALERT_TYPE_FILE : @ALERT_TYPE_PROCESS;
+    
     // for top of alert window
     
     //add process name
-    alert[ALERT_PROCESS_NAME] = valueForStringItem(self.file.process.name);
+    alert[ALERT_PROCESS_NAME] = valueForStringItem(self.process.name);
     
     //add alert msg
-    alert[ALERT_MESSAGE] = self.plugin.alertMsg;
+    alert[ALERT_MESSAGE] = [plugin alertMessage:self];
     
     //add pid
-    alert[ALERT_PROCESS_ID] = [NSNumber numberWithUnsignedInt:self.file.process.pid];
+    alert[ALERT_PROCESS_ID] = [NSNumber numberWithUnsignedInt:self.process.pid];
     
     //add path
-    alert[ALERT_PROCESS_PATH] = valueForStringItem(self.file.process.path);
+    alert[ALERT_PROCESS_PATH] = valueForStringItem(self.process.path);
     
     //add args
-    if(0 != self.file.process.arguments.count)
+    if(0 != self.process.arguments.count)
     {
         //add
-        alert[ALERT_PROCESS_ARGS] = self.file.process.arguments;
+        alert[ALERT_PROCESS_ARGS] = self.process.arguments;
     }
     
     //add file (path) of startup item
@@ -109,26 +129,26 @@
     alert[ALERT_ITEM_OBJECT] = valueForStringItem(self.item.object);
     
     //add timestamp
-    alert[ALERT_TIMESTAMP] = self.file.timestamp.description;
+    alert[ALERT_TIMESTAMP] = (nil != self.file.timestamp.description) ? self.file.timestamp.description : self.timestamp.description;
     
     //add cs flags
-    signingInfo[CS_FLAGS] = self.file.process.csFlags;
+    signingInfo[CS_FLAGS] = self.process.csFlags;
     
     //add platform binary
-    signingInfo[PLATFORM_BINARY] = self.file.process.isPlatformBinary;
+    signingInfo[PLATFORM_BINARY] = self.process.isPlatformBinary;
     
     //add team id
-    if(nil != self.file.process.teamID)
+    if(nil != self.process.teamID)
     {
         //add
-        signingInfo[TEAM_ID] = self.file.process.teamID;
+        signingInfo[TEAM_ID] = self.process.teamID;
     }
     
     //add signing id
-    if(nil != self.file.process.signingID)
+    if(nil != self.process.signingID)
     {
         //add
-        signingInfo[SIGNING_ID] = self.file.process.signingID;
+        signingInfo[SIGNING_ID] = self.process.signingID;
     }
     
     //now add signing info
@@ -136,7 +156,7 @@
     
     //init/add process ancestors
     // pid:name mapping for alert window
-    alert[ALERT_PROCESS_ANCESTORS] = [self buildProcessHierarchy:self.file.process];
+    alert[ALERT_PROCESS_ANCESTORS] = [self buildProcessHierarchy:self.process];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"sending alert to user (client): %@", alert]);
@@ -164,7 +184,7 @@
     
     //check #2
     // same (responsible) process path
-    if(YES != [self.file.process.path isEqualToString:lastEvent.file.process.path])
+    if(YES != [self.process.path isEqualToString:lastEvent.process.path])
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"...process paths different");
@@ -228,14 +248,14 @@
     [processHierarchy addObject:[@{@"pid":[NSNumber numberWithInt:process.pid], @"name":valueForStringItem(process.name)} mutableCopy]];
     
     //get name and add each ancestor
-    for(NSUInteger i=0; i<file.process.ancestors.count; i++)
+    for(NSUInteger i=0; i<process.ancestors.count; i++)
     {
         //skip first one (self)
         // already have it (with pid/path!)
         if(0 == i) continue;
         
         //extact ancestor
-        ancestor = file.process.ancestors[i];
+        ancestor = process.ancestors[i];
         
         //add
         [processHierarchy addObject:[@{@"pid":ancestor, @"name":valueForStringItem(getProcessPath(ancestor.intValue))} mutableCopy]];
@@ -313,7 +333,7 @@
 
 //for pretty print
 -(NSString *)description {
-    return [NSString stringWithFormat: @"process=%@, item file path=%@, timestamp=%@, item binary=%@", self.file.process, self.file.destinationPath, self.timestamp, self.item];
+    return [NSString stringWithFormat: @"process=%@, item file path=%@, timestamp=%@, item binary=%@", self.process, self.file.destinationPath, self.timestamp, self.item];
 }
 
 @end

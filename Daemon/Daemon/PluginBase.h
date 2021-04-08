@@ -55,19 +55,22 @@
 -(BOOL)isMatch:(File*)file;
 
 //process an event
-// ->extra processing to decide if an alert should be shown
--(BOOL)shouldIgnore:(File*)file;
+// extra processing to decide if an alert should be shown
+-(BOOL)shouldIgnore:(id)object;
 
 //block an event
-// ->delete binary, files (plist), etc
+// delete binary, files (plist), etc
 -(BOOL)block:(Event*)event;
 
 //allow an event
-// ->maybe update the original (saved) file?
+// maybe update the original (saved) file?
 -(void)allow:(Event*)event;
 
 //take snapshot
 -(void)snapshot:(NSString*)path;
+
+//alert message
+-(NSString*)alertMessage:(Event*)event;
 
 //extract name of startup item
 // i.e. name of launch item's binary

@@ -1,15 +1,17 @@
 //
-//  Watcher.h
+//  Monitor.h
 //  BlockBlock
 //
 //  Created by Patrick Wardle on 9/25/14.
 //  Copyright (c) 2015 Objective-See. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 #import "Event.h"
 #import "FileMonitor.h"
+
+#import <EndpointSecurity/EndpointSecurity.h>
 
 @interface Monitor : NSObject
 {
@@ -17,6 +19,9 @@
 }
 
 /* PROPERTIES */
+
+//endpoint (process) client
+@property es_client_t* endpointProcessClient;
 
 //file monitor
 @property(atomic, retain)FileMonitor* fileMon;

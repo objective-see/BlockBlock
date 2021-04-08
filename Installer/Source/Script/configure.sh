@@ -64,6 +64,7 @@ if [ "${1}" == "-install" ]; then
         /usr/libexec/PlistBuddy -c 'add disabled bool false' $PREFERENCES
         /usr/libexec/PlistBuddy -c 'add noIconMode bool false' $PREFERENCES
         /usr/libexec/PlistBuddy -c 'add noAlertMode bool false' $PREFERENCES
+        /usr/libexec/PlistBuddy -c 'add notarizationMode bool false' $PREFERENCES
         /usr/libexec/PlistBuddy -c 'add noUpdateMode bool false' $PREFERENCES
         /usr/libexec/PlistBuddy -c 'add gotFullDiskAccess bool false' $PREFERENCES
         

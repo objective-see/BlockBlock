@@ -9,7 +9,6 @@
 
 #import <sys/socket.h>
 
-
 #import "consts.h"
 #import "logging.h"
 #import "utilities.h"
@@ -17,6 +16,11 @@
 #import "AppDelegate.h"
 #import "XPCDaemonClient.h"
 #import "AlertWindowController.h"
+
+/* GLOBALS */
+
+//xpc daemon
+extern XPCDaemonClient* xpcDaemonClient;
 
 @implementation AlertWindowController
 
@@ -127,15 +131,65 @@
     //process path
     self.processPath.stringValue = self.alert[ALERT_PROCESS_PATH];
     
-    //start up file/item
-    self.startupItem.stringValue = self.alert[ALERT_ITEM_NAME];
+    //for files
+    // add item info
+    if(ALERT_TYPE_FILE == [self.alert[ALERT_TYPE] intValue])
+    {
+        //start up file/item
+        self.startupItem.stringValue = self.alert[ALERT_ITEM_NAME];
+        
+        //start up item/file path
+        self.startupFile.stringValue = self.alert[ALERT_ITEM_FILE];
+        
+        //start item object
+        // binary, cmd, etc...
+        self.startupObject.stringValue = self.alert[ALERT_ITEM_OBJECT];
+        
+        //restricted file?
+        // configure buttons
+        if(YES == [self.alert[ALERT_ITEM_FILE_RESTRICTED] boolValue])
+        {
+            //disable block
+            self.blockButton.enabled = NO;
+            
+            //change title of allow
+            self.allowButton.title = @"Ok";
+            
+            //disable temp
+            self.tempRule.enabled = NO;
+        }
+        //normal file
+        // (re)set buttons
+        else
+        {
+            //disable block
+            self.blockButton.enabled = YES;
+            
+            //change title of allow
+            self.allowButton.title = @"Allow";
+            
+            //enable temp
+            self.tempRule.enabled = YES;
+        }
+    }
     
-    //start up item/file path
-    self.startupFile.stringValue = self.alert[ALERT_ITEM_FILE];
-    
-    //start item object
-    // binary, cmd, etc...
-    self.startupObject.stringValue = self.alert[ALERT_ITEM_OBJECT];
+    //for process
+    // just hide the rest...
+    else if(ALERT_TYPE_PROCESS == [self.alert[ALERT_TYPE] intValue])
+    {
+        self.startupItem.hidden = YES;
+        self.startupItemLabel.hidden = YES;
+        self.startupObjectLabel.hidden = YES;
+        self.actionScopeLabel.hidden = YES;
+        self.actionScope.hidden = YES;
+        
+        //check
+        self.tempRule.state = NSControlStateValueOn;
+        
+        //then disable temp
+        self.tempRule.enabled = NO;
+        
+    }
     
     //add timestamp
     self.timeStamp.stringValue = self.alert[ALERT_TIMESTAMP];
@@ -158,32 +212,10 @@
     //temp rule button label
     self.tempRule.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" temporarily (pid: %@)", [self.alert[ALERT_PROCESS_ID] stringValue]] attributes:titleAttributes];
     
-    //restricted file?
-    // configure buttons
-    if(YES == [self.alert[ALERT_ITEM_FILE_RESTRICTED] boolValue])
-    {
-        //disable block
-        self.blockButton.enabled = NO;
-        
-        //change title of allow
-        self.allowButton.title = @"Ok";
-        
-        //disable temp
-        self.tempRule.enabled = NO;
-    }
-    //normal file
-    // (re)set buttons
-    else
-    {
-        //disable block
-        self.blockButton.enabled = YES;
-        
-        //change title of allow
-        self.allowButton.title = @"Allow";
-        
-        //enable temp
-        self.tempRule.enabled = YES;
-    }
+    
+
+    
+    
     
     //show touch bar
     [self initTouchBar];
@@ -528,7 +560,7 @@ bail:
     [self.window close];
 
     //send response to daemon
-    [((AppDelegate*)[[NSApplication sharedApplication] delegate]).xpcDaemonClient alertReply:alertResponse];
+    [xpcDaemonClient alertReply:alertResponse];
     
     //not temp rule & rules window visible?
     // then refresh it, as rules have changed

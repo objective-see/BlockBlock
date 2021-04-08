@@ -12,8 +12,10 @@
 
 #import "FileMonitor.h"
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
 #import <Security/AuthSession.h>
+#import <EndpointSecurity/EndpointSecurity.h>
 
 @interface Event : NSObject
 {
@@ -26,11 +28,23 @@
 // that matched
 @property(nonatomic, retain)File* file;
 
+//process object
+@property(nonatomic, retain)Process* process;
+
 //plugin
 @property(nonatomic, retain)PluginBase* plugin;
 
 //(startup) item
 @property(nonatomic, retain)Item* item;
+
+//esf client
+@property es_client_t* esfClient;
+
+//esf message
+@property es_message_t* esfMessage;
+
+//esf sema
+@property dispatch_semaphore_t esfSemaphore;
 
 //(user) action
 @property NSUInteger action;
@@ -41,7 +55,7 @@
 /* METHODS */
 
 //init
--(id)init:(File*)file plugin:(PluginBase*)plugin;
+-(id)init:(id)object plugin:(PluginBase*)plugin;
 
 //determines if a event is related
 // checks things like process path, plugins, paths, etc

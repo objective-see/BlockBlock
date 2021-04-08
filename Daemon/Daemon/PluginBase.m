@@ -6,15 +6,12 @@
 //  Copyright (c) 2015 Objective-See. All rights reserved.
 //
 
-#import "PluginBase.h"
 #import "Event.h"
+#import "PluginBase.h"
 
-//#import "WatchEvent.h"
 
 #define kErrFormat @"%@ not implemented in subclass %@"
 #define kExceptName @"BB Plugin"
-
-
 
 @implementation PluginBase
 
@@ -23,7 +20,6 @@
 @synthesize alertMsg;
 @synthesize ignoreKids;
 @synthesize description;
-
 
 //init
 -(id)initWithParams:(NSDictionary*)watchItemInfo
@@ -41,6 +37,7 @@
         {
             NSRegularExpression* compiledRegex = nil;
             
+            //compile
             compiledRegex = [NSRegularExpression regularExpressionWithPattern:regex options:NSRegularExpressionCaseInsensitive error:NULL];
             if(nil == compiledRegex)
             {
@@ -109,7 +106,7 @@
 /* OPTIONAL METHODS */
 
 //stubs for inherited methods
-// ->these aren't required, so will just return here if not invoked in child classes
+// these aren't required, so will just return here if not invoked in child classes
 
 //new user connected
 -(void)newUser:(NSString*)user
@@ -124,7 +121,7 @@
 }
 
 //give plugin the option to (more) closely examine event
--(BOOL)shouldIgnore:(File*)file
+-(BOOL)shouldIgnore:(id)object
 {
     return NO;
 }
@@ -133,6 +130,13 @@
 -(void)snapshot:(NSString*)path
 {
     return;
+}
+
+//alert message
+// returns default msg
+-(NSString*)alertMessage:(Event*)event
+{
+    return self.alertMsg;
 }
 
 /* REQUIRED METHODS */

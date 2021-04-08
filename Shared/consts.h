@@ -130,6 +130,10 @@
 #define PREF_NO_ICON_MODE @"noIconMode"
 
 //prefs
+// notarizaion mode
+#define PREF_NOTARIZATION_MODE @"notarizationMode"
+
+//prefs
 // update mode
 #define PREF_NO_UPDATE_MODE @"noupdateMode"
 
@@ -267,6 +271,10 @@
 #define TEAM_ID @"teamID"
 #define SIGNING_ID @"signingID"
 
+#define ALERT_TYPE @"alertType"
+#define ALERT_TYPE_FILE 1
+#define ALERT_TYPE_PROCESS 2
+
 #define ALERT_ITEM_NAME @"itemName"
 #define ALERT_ITEM_FILE @"itemFile"
 #define ALERT_ITEM_OBJECT @"itemObject"
@@ -311,6 +319,7 @@
 #define PLUGIN_TYPE_CRON_JOB 4
 #define PLUGIN_TYPE_APP_LOGIN_ITEM 5
 #define PLUGIN_TYPE_EVENT_MONITOR 6
+#define PLUGIN_TYPE_PROCESS_MONITOR 7
 
 //path to kextunload
 #define KEXT_UNLOAD @"/sbin/kextunload"

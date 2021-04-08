@@ -126,12 +126,12 @@ BOOL isDarkMode(void);
 //check if a file is restricted (SIP)
 BOOL isFileRestricted(NSString* file);
 
-//build an array of processes ancestry
-// uses `GetProcessForPID` to try get (real) parent
-//NSMutableArray* generateProcessHierarchy(pid_t pid, NSString* name);
-
 //check if something is nil
 // if so, return a default ('unknown') value
 NSString* valueForStringItem(NSString* item);
+
+//determine if path is translocated
+// thanks: http://lapcatsoftware.com/articles/detect-app-translocation.html
+BOOL isTranslocated(NSString* path);
 
 #endif

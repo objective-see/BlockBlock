@@ -27,6 +27,7 @@
 		CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD49238BA1E1005AE212 /* libbsm.tbd */; };
 		CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD4C238BB1B3005AE212 /* PluginBase.m */; };
 		CDAABD53238D0220005AE212 /* Launchd.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD52238D0220005AE212 /* Launchd.m */; };
+		CDBAE82B261AC6C600D6BD21 /* Processes.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBAE82A261AC6C600D6BD21 /* Processes.m */; };
 		CDC592D4243AF99E00C190D9 /* watchList.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D3243AF99E00C190D9 /* watchList.plist */; };
 		CDC592D6243AFE9500C190D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D5243AFE9500C190D9 /* Assets.xcassets */; };
 		CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD5666C23AB547500F51B1F /* libFileMonitor.a */; };
@@ -91,6 +92,8 @@
 		CDAABD4C238BB1B3005AE212 /* PluginBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PluginBase.m; path = Daemon/PluginBase.m; sourceTree = "<group>"; };
 		CDAABD51238D0220005AE212 /* Launchd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Launchd.h; sourceTree = "<group>"; };
 		CDAABD52238D0220005AE212 /* Launchd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Launchd.m; sourceTree = "<group>"; };
+		CDBAE829261AC6C600D6BD21 /* Processes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Processes.h; sourceTree = "<group>"; };
+		CDBAE82A261AC6C600D6BD21 /* Processes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Processes.m; sourceTree = "<group>"; };
 		CDC592D3243AF99E00C190D9 /* watchList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = watchList.plist; path = Daemon/watchList.plist; sourceTree = SOURCE_ROOT; };
 		CDC592D5243AFE9500C190D9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Daemon/Assets.xcassets; sourceTree = "<group>"; };
 		CDD5666B23AB547500F51B1F /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMonitor.h; sourceTree = "<group>"; };
@@ -227,14 +230,16 @@
 		CDAABD50238D01ED005AE212 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				CD9E04A9253E845300DB3218 /* Kext.h */,
-				CD9E04AA253E845300DB3218 /* Kext.m */,
 				CDDC60EE244BDA9D00CC81F1 /* CronJob.h */,
 				CDDC60ED244BDA9D00CC81F1 /* CronJob.m */,
+				CD9E04A9253E845300DB3218 /* Kext.h */,
+				CD9E04AA253E845300DB3218 /* Kext.m */,
 				CDAABD51238D0220005AE212 /* Launchd.h */,
 				CDAABD52238D0220005AE212 /* Launchd.m */,
 				CD410452244406EB00069C56 /* LoginItem.h */,
 				CD410453244406EB00069C56 /* LoginItem.m */,
+				CDBAE829261AC6C600D6BD21 /* Processes.h */,
+				CDBAE82A261AC6C600D6BD21 /* Processes.m */,
 			);
 			name = Plugins;
 			path = Daemon/Plugins;
@@ -355,6 +360,7 @@
 			files = (
 				CDFE5CF423ACAD4800A7B28B /* Item.m in Sources */,
 				7D564DB11F18434F00B8AAD6 /* main.m in Sources */,
+				CDBAE82B261AC6C600D6BD21 /* Processes.m in Sources */,
 				CD3913E72382649F00850CD1 /* Preferences.m in Sources */,
 				CD3913EA2382649F00850CD1 /* Events.m in Sources */,
 				CDFE5CF523ACAD4800A7B28B /* Event.m in Sources */,

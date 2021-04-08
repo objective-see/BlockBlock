@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="AlertWindowController">
             <connections>
                 <outlet property="actionScope" destination="zhH-7b-Ibz" id="sv5-gi-fD5"/>
+                <outlet property="actionScopeLabel" destination="xbY-Yq-1L8" id="bdf-up-q4m"/>
                 <outlet property="alertMessage" destination="i43-b2-cU0" id="lBm-Xa-2Mi"/>
                 <outlet property="allowButton" destination="yg5-Dg-d1n" id="Vdk-sM-vo1"/>
                 <outlet property="ancestryButton" destination="32G-48-5jq" id="7ng-Oo-qJS"/>
@@ -26,7 +28,9 @@
                 <outlet property="signingInfoPopover" destination="Vmt-MD-3aB" id="j62-vV-hvI"/>
                 <outlet property="startupFile" destination="0yy-0X-fb5" id="yey-3b-993"/>
                 <outlet property="startupItem" destination="VE6-NP-93F" id="qeD-0u-BmL"/>
+                <outlet property="startupItemLabel" destination="sBf-sv-RQG" id="riI-Cg-CZ3"/>
                 <outlet property="startupObject" destination="5Lz-xv-ErN" id="KHx-n1-9YA"/>
+                <outlet property="startupObjectLabel" destination="CvP-W3-IE1" id="taJ-vh-Ceb"/>
                 <outlet property="tempRule" destination="T6r-Lc-cqm" id="Bb5-9g-S6e"/>
                 <outlet property="timeStamp" destination="qWw-SE-uh0" id="9XD-1e-EJI"/>
                 <outlet property="virusTotalButton" destination="PJQ-Iq-93l" id="S5x-rJ-XJD"/>
@@ -39,7 +43,7 @@
         <window title="BlockBlock Alert" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES"/>
             <rect key="contentRect" x="949" y="509" width="745" height="392"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1415"/>
             <value key="minSize" type="size" width="745" height="392"/>
             <value key="maxSize" type="size" width="2000" height="392"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
@@ -227,7 +231,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Aix-a5-CPT">
-                        <rect key="frame" x="505" y="28" width="100" height="32"/>
+                        <rect key="frame" x="504" y="28" width="102" height="33"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="88" id="8Gt-7l-o9R"/>
                             <constraint firstAttribute="height" constant="21" id="kT7-X0-ZYL"/>
@@ -267,9 +271,9 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="T6r-Lc-cqm">
-                        <rect key="frame" x="510" y="8" width="216" height="18"/>
+                        <rect key="frame" x="509" y="9" width="216" height="18"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="212" id="BYE-f6-85S"/>
+                            <constraint firstAttribute="width" constant="214" id="BYE-f6-85S"/>
                         </constraints>
                         <buttonCell key="cell" type="check" title="temporarily (pid: 12345)" bezelStyle="regularSquare" imagePosition="left" alignment="center" inset="2" id="BdA-oU-RlF">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -277,7 +281,7 @@
                         </buttonCell>
                     </button>
                     <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="yg5-Dg-d1n">
-                        <rect key="frame" x="631" y="28" width="100" height="32"/>
+                        <rect key="frame" x="630" y="28" width="102" height="33"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="88" id="8Ta-iC-dxj"/>
                             <constraint firstAttribute="height" constant="21" id="ocU-7k-y48"/>
@@ -303,10 +307,10 @@
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zhH-7b-Ibz">
-                        <rect key="frame" x="315" y="31" width="166" height="25"/>
+                        <rect key="frame" x="316" y="30" width="166" height="25"/>
                         <popUpButtonCell key="cell" type="push" title="Process + File + Item" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="yqR-4V-rQw" id="Uc0-wT-NwU">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" id="pJW-fM-hvs">
                                 <items>
                                     <menuItem title="Process + File + Item" state="on" id="yqR-4V-rQw"/>
@@ -317,7 +321,7 @@
                         </popUpButtonCell>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xbY-Yq-1L8">
-                        <rect key="frame" x="317" y="58" width="72" height="16"/>
+                        <rect key="frame" x="317" y="57" width="72" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="rule scope:" id="LXm-RH-8ox">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -330,7 +334,7 @@
                     <constraint firstItem="AZu-DM-wj7" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="1bn-Ib-j9v"/>
                     <constraint firstItem="i43-b2-cU0" firstAttribute="leading" secondItem="fJv-Iu-3gy" secondAttribute="trailing" constant="9" id="1ie-Km-ATX"/>
                     <constraint firstItem="32G-48-5jq" firstAttribute="leading" secondItem="PJQ-Iq-93l" secondAttribute="trailing" constant="60" id="2RB-oe-ncK"/>
-                    <constraint firstAttribute="trailing" secondItem="T6r-Lc-cqm" secondAttribute="trailing" constant="21" id="38L-k8-5BX"/>
+                    <constraint firstAttribute="trailing" secondItem="T6r-Lc-cqm" secondAttribute="trailing" constant="20" id="38L-k8-5BX"/>
                     <constraint firstItem="CvP-W3-IE1" firstAttribute="top" secondItem="sBf-sv-RQG" secondAttribute="bottom" constant="2" id="3og-jF-Wwd"/>
                     <constraint firstItem="i1i-s4-Q02" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="42" id="8zf-7S-usv"/>
                     <constraint firstItem="hI7-ev-MZU" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="158" id="9Fx-KQ-o7s"/>
@@ -568,7 +572,7 @@
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
-                                    <tableColumn identifier="name" editable="NO" width="300" minWidth="16" maxWidth="1000" id="JFW-5C-nvy">
+                                    <tableColumn identifier="name" editable="NO" width="271" minWidth="16" maxWidth="1000" id="JFW-5C-nvy">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Name">
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>

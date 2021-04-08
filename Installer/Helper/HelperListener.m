@@ -116,6 +116,9 @@ bail:
     //flag
     BOOL shouldAccept = NO;
     
+    //status
+    OSStatus status = !errSecSuccess;
+    
     //audit token
     audit_token_t auditToken = {0};
     
@@ -134,22 +137,41 @@ bail:
     //signing req string (main app)
     NSString* requirement = nil;
     
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received request to connect to XPC interface from client"]);
-    
     //extract audit token
     auditToken = ((ExtendedNSXPCConnection*)newConnection).auditToken;
     
+    //dbg msg
+    logMsg(LOG_DEBUG, @"received request to connect to XPC interface");
+        
     //obtain dynamic code ref
-    if(errSecSuccess != SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef))
+    status = SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef);
+    if(errSecSuccess != status)
     {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecCodeCopyGuestWithAttributes' failed with': %#x", status]);
+        
+        //bail
+        goto bail;
+    }
+    
+    //validate code
+    status = SecCodeCheckValidity(codeRef, kSecCSDefaultFlags, NULL);
+    if(errSecSuccess != status)
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecCodeCheckValidity' failed with': %#x", status]);
+       
         //bail
         goto bail;
     }
     
     //get code signing info
-    if(errSecSuccess != SecCodeCopySigningInformation(codeRef, kSecCSDynamicInformation, &csInfo))
+    status = SecCodeCopySigningInformation(codeRef, kSecCSDynamicInformation, &csInfo);
+    if(errSecSuccess != status)
     {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"'SecCodeCopySigningInformation' failed with': %#x", status]);
+       
         //bail
         goto bail;
     }
@@ -161,14 +183,18 @@ bail:
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"code signing flags: %#x", csFlags]);
                     
     //gotta have hardened runtime
-    if(!(CS_RUNTIME & csFlags))
+    if( !(CS_VALID & csFlags) &&
+        !(CS_RUNTIME & csFlags) )
     {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"invalid code signing flags: %#x", csFlags]);
+        
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"code signing flags, ok (`CS_RUNTIME`)");
+    logMsg(LOG_DEBUG, @"code signing flags, ok (`CS_RUNTIME` is set)");
     
     //init signing req
     requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\"", INSTALLER_ID, SIGNING_AUTH];
@@ -187,7 +213,7 @@ bail:
     if(0 != SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement)))
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to validated against %@", requirement]);
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to validate against %@", requirement]);
         
         //bail
         goto bail;
@@ -215,9 +241,23 @@ bail:
     {
         //release
         CFRelease(taskRef);
-        
-        //unset
         taskRef = NULL;
+    }
+    
+    //free cs info
+    if(NULL != csInfo)
+    {
+        //free
+        CFRelease(csInfo);
+        csInfo = NULL;
+    }
+    
+    //free code ref
+    if(NULL != codeRef)
+    {
+        //free
+        CFRelease(codeRef);
+        codeRef = NULL;
     }
         
     return shouldAccept;

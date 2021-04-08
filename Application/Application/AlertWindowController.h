@@ -74,8 +74,14 @@
 //startup item (i.e. plist)
 @property (weak) IBOutlet NSTextField *startupItem;
 
+//startup item label
+@property (weak) IBOutlet NSTextField *startupItemLabel;
+
 //startup file (full path)
 @property (weak) IBOutlet NSTextField *startupFile;
+
+//startup object label
+@property (weak) IBOutlet NSTextField *startupObjectLabel;
 
 //startup object (binary or cmd)
 @property (weak) IBOutlet NSTextField *startupObject;
@@ -91,6 +97,9 @@
 
 //time stamp
 @property (weak) IBOutlet NSTextField *timeStamp;
+
+//action scope label
+@property (weak) IBOutlet NSTextField *actionScopeLabel;
 
 //action scope dropdown
 @property (weak) IBOutlet NSPopUpButton *actionScope;
