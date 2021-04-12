@@ -13,6 +13,10 @@
 
 /* PROPERTIES */
 
+//array of scripts
 @property(nonatomic, retain)NSArray* scripts;
+
+//last process event
+@property(nonatomic, retain)Process* lastScript;
 
 @end

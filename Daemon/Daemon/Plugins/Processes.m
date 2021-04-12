@@ -1,5 +1,5 @@
 //
-//  kext.m
+//  Processes.m
 //  BlockBlock
 //
 //  Created by Patrick Wardle on 9/25/14.
@@ -8,7 +8,7 @@
 
 #import "Item.h"
 #import "Event.h"
-#import "Consts.h"
+#import "consts.h"
 #import "Logging.h"
 #import "Processes.h"
 #import "utilities.h"
@@ -16,6 +16,8 @@
 #import <EndpointSecurity/EndpointSecurity.h>
 
 @implementation Processes
+
+@synthesize lastScript;
 
 //init
 -(id)initWithParams:(NSDictionary*)watchItemInfo
@@ -31,7 +33,7 @@
         self.type = PLUGIN_TYPE_PROCESS_MONITOR;
         
         //init scripts
-        self.scripts = @[@"com.apple.sh", @"com.apple.ksh", @"com.apple.csh", @"com.apple.zsh", @"com.apple.dash", @"org.python.python", @"com.apple.perl", @"com.apple.ruby", @"com.apple.osascript"];
+        self.scripts = @[@"com.apple.sh", @"com.apple.bash", @"com.apple.ksh", @"com.apple.csh", @"com.apple.zsh", @"com.apple.dash", @"org.python.python", @"com.apple.perl", @"com.apple.ruby", @"com.apple.osascript"];
     }
 
     return self;
@@ -47,6 +49,10 @@
     //flag
     // process (still) alive
     BOOL isAlive = NO;
+    
+    //flag
+    // process is executing a script
+    BOOL isScript = NO;
     
     //item path
     // as might be from arg
@@ -64,22 +70,44 @@
     if(YES == [self.scripts containsObject:process.signingID])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is a script interpreter, will grab argv[1]", process.name]);
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is a script interpreter...", process.name]);
         
-        //check args
-        // then grab arg 1
-        if(process.arguments.count > 1)
+        //has to have at least 2 args
+        // process name, then path to script
+        if(process.arguments.count < 2)
         {
-            //extact arg
-            path = process.arguments[1];
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ doesn't appear to have a script argument, will allow", process.name]);
         }
         
+        //extact 2nd arg
+        // should be path to a script
+        path = process.arguments[1];
+        
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"extracted (potential) script: %@", path]);
+        
         //sanity check
-        // argv[1] is a file?
+        // was argv[1] is a file?
         if(YES != [NSFileManager.defaultManager fileExistsAtPath:path])
         {
             //dbg msg
             logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ doesn't appear to be a path, will allow %@", path, process.name]);
+            
+            //done
+            goto bail;
+        }
+        
+        //now set flag
+        // process w/ script
+        isScript = YES;
+        
+        //check if script event is the "same" as last
+        // avoids situations where sh <script> forks bash <script>
+        if(YES == [self isRelatedScriptEvent:process])
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ was run by %@, thus appears related, so will allow", path, lastScript.name]);
             
             //done
             goto bail;
@@ -148,7 +176,66 @@
 
 bail:
     
+    //script?
+    // save it
+    if(YES == isScript)
+    {
+        //save
+        self.lastScript = process;
+    }
+    
     return ignore;
+}
+
+//check if script event is the "same"
+// avoids situations where sh <script> forks bash <script>
+-(BOOL)isRelatedScriptEvent:(Process*)process
+{
+    //flag
+    BOOL isRelated = NO;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if (script) process event is related: %@ vs %@", process, self.lastScript]);
+    
+    //sanity check
+    if(nil == self.lastScript)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"no previous script event(s), thus obv. not related");
+        
+        //done
+        goto bail;
+    }
+    
+    //paths of script the same?
+    if(YES != [process.arguments[1] isEqualToString:self.lastScript.arguments[1]])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"...script not the same, thus not related");
+        
+        //nope
+        goto bail;
+    }
+    
+    //process path must be different
+    if(YES == [process.path isEqualToString:self.lastScript.path])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"...paths are not different, thus not related");
+        
+        //nope
+        goto bail;
+    }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"script process is different, but script is the same ...appears related!");
+    
+    //set flag
+    isRelated = YES;
+
+bail:
+    
+    return isRelated;
 }
 
 //(customize) alert message
