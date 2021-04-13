@@ -401,6 +401,9 @@ bail:
        //bail
        goto bail;
     }
+        
+    //dbg msg
+    logMsg(LOG_DEBUG, @"unsubscribed from process events");
        
     //delete client
     if(ES_RETURN_SUCCESS != es_delete_client(endpointProcessClient))
@@ -411,6 +414,9 @@ bail:
        //bail
        goto bail;
     }
+        
+    //dbg msg
+    logMsg(LOG_DEBUG, @"deleted endpoint client");
        
     //unset
     endpointProcessClient = NULL;
@@ -444,6 +450,9 @@ bail:
         goto bail;
     }
     
+    //dbg msg
+    logMsg(LOG_DEBUG, @"stopped file monitor");
+    
     //unset
     self.fileMon = nil;
     
@@ -456,6 +465,9 @@ bail:
         //bail
         goto bail;
     }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"stopped process monitor");
     
     //happy
     stopped = YES;

@@ -3,7 +3,7 @@
 //  FileMonitor
 //
 //  Created by Patrick Wardle on 9/1/19.
-//  Copyright © 2019 Objective-See. All rights reserved.
+//  Copyright © 2020 Objective-See. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -24,6 +24,9 @@ enum csOptions{csNone, csStatic, csDynamic};
 
 //signers
 enum Signer{None, Apple, AppStore, DevID, AdHoc};
+
+//architectures
+enum Architectures{ArchUnknown, ArchAppleSilicon, ArchIntel};
 
 //cs options
 #define CS_STATIC_CHECK YES
@@ -89,6 +92,9 @@ typedef void (^FileCallbackBlock)(File* _Nonnull);
 //ppid
 @property pid_t ppid;
 
+//rpid
+@property pid_t rpid;
+
 //user id
 @property uid_t uid;
 
@@ -96,8 +102,14 @@ typedef void (^FileCallbackBlock)(File* _Nonnull);
 // exec, fork, exit
 @property u_int32_t event;
 
+//cpu type
+@property NSUInteger architecture;
+
 //exit code
 @property int exit;
+
+//audit token
+@property(nonatomic, retain)NSData* _Nullable auditToken;
 
 //name
 @property(nonatomic, retain)NSString* _Nullable name;
@@ -118,7 +130,7 @@ typedef void (^FileCallbackBlock)(File* _Nonnull);
 @property(nonatomic, retain)NSNumber* _Nonnull csFlags;
 
 //cd hash
-@property(nonatomic, retain)NSString* _Nonnull cdHash;
+@property(nonatomic, retain)NSData* _Nonnull cdHash;
 
 //signing ID
 @property(nonatomic, retain)NSString* _Nonnull signingID;

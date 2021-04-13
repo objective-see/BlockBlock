@@ -78,6 +78,9 @@
         {
             //dbg msg
             logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ doesn't appear to have a script argument, will allow", process.name]);
+            
+            //done
+            goto bail;
         }
         
         //extact 2nd arg
@@ -198,6 +201,7 @@ bail:
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if (script) process event is related: %@ vs %@", process, self.lastScript]);
     
     //sanity check
+    // no last script
     if(nil == self.lastScript)
     {
         //dbg msg
@@ -207,7 +211,8 @@ bail:
         goto bail;
     }
     
-    //paths of script the same?
+    //check path of script
+    // new path -> not related
     if(YES != [process.arguments[1] isEqualToString:self.lastScript.arguments[1]])
     {
         //dbg msg
@@ -217,18 +222,19 @@ bail:
         goto bail;
     }
     
-    //process path must be different
-    if(YES == [process.path isEqualToString:self.lastScript.path])
+    //was rpid of process
+    // not last script's process -> not related
+    if(process.rpid != self.lastScript.pid)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"...paths are not different, thus not related");
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"responsible pid (%d) doesn't matches last script process (%d)", process.rpid, self.lastScript.pid]);
         
         //nope
         goto bail;
     }
-    
+
     //dbg msg
-    logMsg(LOG_DEBUG, @"script process is different, but script is the same ...appears related!");
+    logMsg(LOG_DEBUG, @"script is the same, with no rpid match...appears related!");
     
     //set flag
     isRelated = YES;
