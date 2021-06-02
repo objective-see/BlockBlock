@@ -895,6 +895,14 @@ NSImage* getIconForProcess(NSString* path)
     appBundle = findAppBundle(path);
     if(nil != appBundle)
     {
+        //extract icon
+        icon = [[NSWorkspace sharedWorkspace] iconForFile:appBundle.bundlePath];
+        if(nil != icon)
+        {
+            //done!
+            goto bail;
+        }
+        
         //get file
         iconFile = appBundle.infoDictionary[@"CFBundleIconFile"];
         
@@ -1384,6 +1392,9 @@ void waitForFile(NSString* path, float maxWait)
 // wait for plist, then load bundle
 NSBundle* getBundle(NSString* path, float maxWait)
 {
+    //bundle
+    NSBundle* bundle = nil;
+    
     //plist path
     NSString* plist = nil;
     
@@ -1397,10 +1408,13 @@ NSBundle* getBundle(NSString* path, float maxWait)
     // indicator that bundle 'ready'
     waitForFile(plist, maxWait);
     
+    //now load bundle
+    bundle = [NSBundle bundleWithPath:path];
+    
 bail:
     
     //load/return bundle
-    return [NSBundle bundleWithPath:path];
+    return bundle;
 }
 
 //extract value from plist
