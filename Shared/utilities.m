@@ -891,7 +891,7 @@ NSImage* getIconForProcess(NSString* path)
     }
     
     //first try grab bundle
-    // ->then extact icon from this
+    // then extact icon from this
     appBundle = findAppBundle(path);
     if(nil != appBundle)
     {

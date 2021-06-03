@@ -260,7 +260,16 @@ bail:
         ((NSTextField*)[tableCell viewWithTag:TABLE_ROW_SUB_TEXT_FILE]).textColor = [NSColor secondaryLabelColor];
         
         //set sub text (item)
-        ((NSTextField*)[tableCell viewWithTag:TABLE_ROW_SUB_TEXT_ITEM]).stringValue = [NSString stringWithFormat:@"item: %@", rule.itemObject];
+        if(nil != rule.itemObject)
+        {
+            //set
+            ((NSTextField*)[tableCell viewWithTag:TABLE_ROW_SUB_TEXT_ITEM]).stringValue = [NSString stringWithFormat:@"item: %@", rule.itemObject];
+        }
+        //unknown / null
+        else
+        {
+            ((NSTextField*)[tableCell viewWithTag:TABLE_ROW_SUB_TEXT_ITEM]).stringValue = @"item: not specified";
+        }
         
         //set text color to gray
         ((NSTextField*)[tableCell viewWithTag:TABLE_ROW_SUB_TEXT_ITEM]).textColor = [NSColor secondaryLabelColor];

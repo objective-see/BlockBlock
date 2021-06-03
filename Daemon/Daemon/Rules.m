@@ -297,7 +297,8 @@ bail:
         {
             //is match?
             if( (YES == [currentRule.itemFile isEqualToString:rule.itemFile]) &&
-                (YES == [currentRule.itemObject isEqualToString:rule.itemObject]) )
+                 ( ((nil == currentRule.itemObject) && (nil == rule.itemObject)) ||
+                   (YES == [currentRule.itemObject isEqualToString:rule.itemObject]) ) )
             {
                 //save index
                 ruleIndex = index;
