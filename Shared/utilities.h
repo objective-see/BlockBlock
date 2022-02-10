@@ -13,6 +13,31 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
+
+#ifdef DAEMON_BUILD
+
+enum qtn_error_code {
+    QTN_NOT_QUARANTINED = -1,
+};
+
+enum qtn_flags {
+    QTN_FLAG_DOWNLOAD = 0x0001,
+    QTN_FLAG_SANDBOX = 0x0002,
+    QTN_FLAG_USER_APPROVED = 0x0040,
+};
+
+typedef struct _qtn_file *qtn_file_t;
+
+qtn_file_t qtn_file_alloc(void);
+void qtn_file_free(qtn_file_t qf);
+uint32_t qtn_file_get_flags(qtn_file_t qf);
+int qtn_file_init_with_path(qtn_file_t qf, const char *path);
+
+//is file quantined ...but not approved by user
+BOOL isQuarantinedAndUnapproved(NSString* path);
+
+#endif
+
 /* FUNCTIONS */
 
 //give path to app
@@ -129,6 +154,9 @@ BOOL isFileRestricted(NSString* file);
 //check if something is nil
 // if so, return a default ('unknown') value
 NSString* valueForStringItem(NSString* item);
+
+//mach time to nano-seconds
+uint64_t machTimeToNanoseconds(uint64_t machTime);
 
 //determine if path is translocated
 // thanks: http://lapcatsoftware.com/articles/detect-app-translocation.html

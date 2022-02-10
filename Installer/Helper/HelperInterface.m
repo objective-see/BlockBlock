@@ -125,7 +125,7 @@ dispatch_source_t dispatchSource = nil;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"validated %@", app]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"validated: %@", app]);
 
     //exec script
     result = [self execScript:validatedApp arguments:args];

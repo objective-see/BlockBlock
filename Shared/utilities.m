@@ -1774,3 +1774,140 @@ bail:
 
     return isTranslocated;
 }
+
+//mach time to nanoseconds
+// from: https://developer.apple.com/documentation/apple-silicon/addressing-architectural-differences-in-your-macos-code
+uint64_t machTimeToNanoseconds(uint64_t machTime)
+{
+    uint64_t nanoseconds = 0;
+    static mach_timebase_info_data_t sTimebase;
+    if (sTimebase.denom == 0)
+        (void)mach_timebase_info(&sTimebase);
+
+    nanoseconds = ((machTime * sTimebase.numer) / sTimebase.denom);
+
+    return nanoseconds;
+}
+
+#ifdef DAEMON_BUILD
+
+//check if item is quarantined, and not approved
+// thanks: https://trac.webkit.org/changeset/281056/webkit
+BOOL isQuarantinedAndUnapproved(NSString* path)
+{
+    //flag
+    BOOL isQuarantinedAndUnapproved = NO;
+    
+    //error
+    int error = noErr;
+    
+    //flags
+    uint32_t flags = 0;
+    
+    //once token
+    static dispatch_once_t onceToken = 0;
+    
+    //dylib handle
+    static void* handle = NULL;
+    
+    //function pointers
+    static qtn_file_t(*qtn_file_alloc_FP)(void) = NULL;
+    static void (*qtn_file_free_FP)(qtn_file_t qf) = NULL;
+    static uint32_t (*qtn_file_get_flags_FP)(qtn_file_t qf) = NULL;
+    static int (*qtn_file_init_with_path_FP)(qtn_file_t qf, const char *path) = NULL;
+    
+    //quarantine file
+    qtn_file_t quarantineFile = NULL;
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ is quarantined", path]);
+
+    //load/open framework
+    dispatch_once(&onceToken, ^{
+        
+        //open quarantine dylib
+        handle = dlopen("/usr/lib/system/libquarantine.dylib", RTLD_LAZY);
+        if(NULL != handle)
+        {
+            //resolve function pointers
+            qtn_file_free_FP = dlsym(handle, "_qtn_file_free");
+            qtn_file_alloc_FP = dlsym(handle, "_qtn_file_alloc");
+            qtn_file_get_flags_FP = dlsym(handle, "_qtn_file_get_flags");
+            qtn_file_init_with_path_FP = dlsym(handle, "_qtn_file_init_with_path");
+        }
+        //err
+        else
+        {
+            //err msg
+            logMsg(LOG_ERR, @"failed to 'dlopen' the 'libquarantine.dylib'");
+        }
+        
+    });
+    
+    //sanity check(s)
+    if( (NULL == qtn_file_free_FP) ||
+        (NULL == qtn_file_alloc_FP) ||
+        (NULL == qtn_file_get_flags_FP) ||
+        (NULL == qtn_file_init_with_path_FP) )
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to resolve 'libquarantine' function pointers");
+        
+        //bail
+        goto bail;
+    }
+    
+    
+    //alloc file
+    quarantineFile = qtn_file_alloc_FP();
+    if(NULL == quarantineFile)
+    {
+        //bail
+        goto bail;
+    }
+    
+    //init file
+    error = qtn_file_init_with_path_FP(quarantineFile, [NSURL fileURLWithPath:path].path.fileSystemRepresentation);
+    if(ENOENT == error)
+    {
+        //bail
+        goto bail;
+    }
+    
+    //not quarantined?
+    if(QTN_NOT_QUARANTINED == error)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is *not* quarantined", path]);
+        
+        //bail
+        goto bail;
+    }
+    
+    //get flags
+    flags = qtn_file_get_flags_FP(quarantineFile);
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"flags: %#x", flags]);
+    
+    //unapproved?
+    if(0 == (flags & QTN_FLAG_USER_APPROVED))
+    {
+        //yes
+        isQuarantinedAndUnapproved = YES;
+    }
+            
+bail:
+    
+    //cleanup
+    if(NULL != quarantineFile)
+    {
+        //free
+        qtn_file_free_FP(quarantineFile);
+        quarantineFile = NULL;
+    }
+
+    return isQuarantinedAndUnapproved;
+}
+
+#endif

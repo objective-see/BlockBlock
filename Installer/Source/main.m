@@ -28,8 +28,11 @@ int main(int argc, char *argv[])
         options.debug = YES;
     }];
     
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"BlockBlock (in/unin)staller launched with %@", NSProcessInfo.processInfo.arguments]);
+    
     //cmdline install?
-    if(YES == [[[NSProcessInfo processInfo] arguments] containsObject:CMD_INSTALL])
+    if(YES == [NSProcessInfo.processInfo.arguments containsObject:CMD_INSTALL])
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"performing commandline install");
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
     }
     
     //cmdline uninstall?
-    else if(YES == [[[NSProcessInfo processInfo] arguments] containsObject:CMD_UNINSTALL])
+    else if(YES == [NSProcessInfo.processInfo.arguments containsObject:CMD_UNINSTALL])
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"performing commandline uninstall");
@@ -122,7 +125,6 @@ BOOL cmdlineInterface(int action)
         //bail
         goto bail;
     }
-    
     
     //happy
     wasConfigured = YES;

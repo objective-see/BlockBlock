@@ -100,6 +100,8 @@
 		CDD5666C23AB547500F51B1F /* libFileMonitor.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFileMonitor.a; sourceTree = "<group>"; };
 		CDDC60ED244BDA9D00CC81F1 /* CronJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CronJob.m; sourceTree = "<group>"; };
 		CDDC60EE244BDA9D00CC81F1 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronJob.h; sourceTree = "<group>"; };
+		CDE3875427B39ACF00752C50 /* libquarantine.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libquarantine.tbd; path = usr/lib/system/libquarantine.tbd; sourceTree = SDKROOT; };
+		CDE3875627B39B6600752C50 /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = ../../../../../System/Library/Frameworks/System.framework; sourceTree = "<group>"; };
 		CDFE5CF023ACAD4700A7B28B /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = Daemon/Event.h; sourceTree = "<group>"; };
 		CDFE5CF123ACAD4700A7B28B /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Item.m; path = Daemon/Item.m; sourceTree = "<group>"; };
 		CDFE5CF223ACAD4700A7B28B /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Event.m; path = Daemon/Event.m; sourceTree = "<group>"; };
@@ -220,6 +222,8 @@
 		CD21501920AD224A00CEF17B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDE3875627B39B6600752C50 /* System.framework */,
+				CDE3875427B39ACF00752C50 /* libquarantine.tbd */,
 				CDAABD49238BA1E1005AE212 /* libbsm.tbd */,
 				CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */,
 				CD21501720AD222800CEF17B /* Sentry.framework */,
@@ -516,7 +520,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.0.5;
+				CURRENT_PROJECT_VERSION = 2.1.0;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -525,10 +529,11 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../shared/Libraries",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.0.5;
-				ONLY_ACTIVE_ARCH = YES;
+				MARKETING_VERSION = 2.1.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";
 				PRODUCT_NAME = BlockBlock;
@@ -544,7 +549,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.0.5;
+				CURRENT_PROJECT_VERSION = 2.1.0;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -553,9 +558,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../shared/Libraries",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.0.5;
+				MARKETING_VERSION = 2.1.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";

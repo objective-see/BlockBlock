@@ -258,10 +258,10 @@ bail:
             
             //wait till close to timeout
             // if haven't hit, just allow, otherwise we'll be killed
-            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, deadline - (1 * NSEC_PER_SEC))))
+            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, machTimeToNanoseconds(deadline) - (1 * NSEC_PER_SEC))))
             {
                 //err msg
-                logMsg(LOG_ERR, @"esf timeout about to be hit, forced to allow process :/");
+                logMsg(LOG_ERR, [NSString stringWithFormat:@"esf timeout (%llx seconds) about to be hit, forced to allow process :/", machTimeToNanoseconds(deadline) / NSEC_PER_SEC]);
                 
                 //sync
                 @synchronized(self)

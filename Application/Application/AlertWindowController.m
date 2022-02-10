@@ -246,11 +246,6 @@ extern XPCDaemonClient* xpcDaemonClient;
     //temp rule button label
     self.tempRule.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" temporarily (pid: %@)", [self.alert[ALERT_PROCESS_ID] stringValue]] attributes:titleAttributes];
     
-    
-
-    
-    
-    
     //show touch bar
     [self initTouchBar];
     

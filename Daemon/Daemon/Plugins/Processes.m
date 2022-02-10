@@ -40,7 +40,7 @@
 }
 
 //should process be ignored?
-// for now, yes, unless it's non-notarized translocated
+// for now, yes, unless it's non-notarized translocated/quarantined (and not user approved)
 -(BOOL)shouldIgnore:(Process*)process
 {
     //flag
@@ -134,14 +134,18 @@
     
     //not translocated?
     // just allow (always)
-    if(YES != isTranslocated(path))
+    if( (YES != isTranslocated(path)) &&
+        (YES != isQuarantinedAndUnapproved(path)) )
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not app translocated, will allow", path]);
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not app translocated nor quarantined (and not user approved), will allow", path]);
         
         //done
         goto bail;
     }
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is translocated or quarantined", process.name]);
     
     //dbg
     logMsg(LOG_DEBUG, @"checking if process is still alive...");
@@ -172,7 +176,7 @@
     }
     
     //process is:
-    // translocated
+    // translocated/quarantine (and unapproved)
     // non-notarized
     // and is still alive
     ignore = NO;

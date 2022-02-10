@@ -26,6 +26,7 @@ enum menuItems
     toggle,
     rules,
     prefs,
+    uninstall,
     end
 };
 
@@ -217,6 +218,38 @@ enum menuItems
             [((AppDelegate*)[[NSApplication sharedApplication] delegate]) showPreferences:nil];
             
             break;
+        
+        //uninstall
+        case uninstall:
+        {
+            //installer path
+            NSURL* installer = nil;
+            
+            //config options
+            NSWorkspaceOpenConfiguration* configuration = nil;
+            
+            //init path
+            installer = [NSBundle.mainBundle URLForResource:@"BlockBlock Installer" withExtension:@".app"];
+            
+            //init configuration
+            configuration = [[NSWorkspaceOpenConfiguration alloc] init];
+            
+            //set args
+            configuration.arguments = @[CMD_UNINSTALL_VIA_UI];
+        
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launching (un)installer %@", installer]);
+            
+            //launch (in)/(un)installer
+            [NSWorkspace.sharedWorkspace openApplicationAtURL:installer configuration:configuration completionHandler:^(NSRunningApplication * _Nullable app, NSError * _Nullable error) {
+                
+                //dbg msg
+                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launched (un)installer: %@ (error: %@)", app, error]);
+                
+            }];
+            
+            break;
+        }
             
         default:
             

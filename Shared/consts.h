@@ -94,6 +94,9 @@
 //uninstall cmd
 #define CMD_UNINSTALL @"-uninstall"
 
+//uninstall via UI
+#define CMD_UNINSTALL_VIA_UI @"-uninstallViaUI"
+
 //flag to uninstall
 #define ACTION_UNINSTALL_FLAG 0
 
