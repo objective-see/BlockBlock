@@ -33,8 +33,8 @@ void qtn_file_free(qtn_file_t qf);
 uint32_t qtn_file_get_flags(qtn_file_t qf);
 int qtn_file_init_with_path(qtn_file_t qf, const char *path);
 
-//is file quantined ...but not approved by user
-BOOL isQuarantinedAndUnapproved(NSString* path);
+//get quarantine flags
+uint32_t getQuarantineFlags(NSString* path);
 
 #endif
 

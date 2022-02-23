@@ -281,7 +281,7 @@
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" alphaValue="0.66000000000000003" id="DFQ-dM-v5o">
                     <rect key="frame" x="676" y="64" width="122" height="36"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="FriendsKollide" id="pXi-1R-DCM"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="FriendsKolide" id="pXi-1R-DCM"/>
                 </imageView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" alphaValue="0.59999999999999998" id="WiA-pD-bqV">
                     <rect key="frame" x="305" y="120" width="203" height="29"/>
@@ -311,7 +311,7 @@
         <image name="BlockBlock" width="1230" height="193"/>
         <image name="FriendsJamf" width="328" height="114"/>
         <image name="FriendsKandji" width="1200" height="303"/>
-        <image name="FriendsKollide" width="636" height="216"/>
+        <image name="FriendsKolide" width="636" height="216"/>
         <image name="FriendsMacPaw" width="2034" height="335"/>
         <image name="FriendsMosyle" width="925" height="242"/>
         <image name="Icon" width="769" height="769"/>

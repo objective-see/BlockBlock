@@ -1791,18 +1791,15 @@ uint64_t machTimeToNanoseconds(uint64_t machTime)
 
 #ifdef DAEMON_BUILD
 
-//check if item is quarantined, and not approved
+//get items quarantine flags
 // thanks: https://trac.webkit.org/changeset/281056/webkit
-BOOL isQuarantinedAndUnapproved(NSString* path)
+uint32_t getQuarantineFlags(NSString* path)
 {
-    //flag
-    BOOL isQuarantinedAndUnapproved = NO;
-    
     //error
     int error = noErr;
     
     //flags
-    uint32_t flags = 0;
+    uint32_t flags = QTN_NOT_QUARANTINED;
     
     //once token
     static dispatch_once_t onceToken = 0;
@@ -1821,6 +1818,16 @@ BOOL isQuarantinedAndUnapproved(NSString* path)
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ is quarantined", path]);
+    
+    //sanity check(s)
+    if(0 == path.length)
+    {
+        //err msg
+        logMsg(LOG_DEBUG, @"invalid path");
+        
+        //bail
+        goto bail;
+    }
 
     //load/open framework
     dispatch_once(&onceToken, ^{
@@ -1857,7 +1864,6 @@ BOOL isQuarantinedAndUnapproved(NSString* path)
         goto bail;
     }
     
-    
     //alloc file
     quarantineFile = qtn_file_alloc_FP();
     if(NULL == quarantineFile)
@@ -1878,7 +1884,7 @@ BOOL isQuarantinedAndUnapproved(NSString* path)
     if(QTN_NOT_QUARANTINED == error)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is *not* quarantined", path]);
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is *not* quarantined (QTN_NOT_QUARANTINED)", path]);
         
         //bail
         goto bail;
@@ -1888,15 +1894,8 @@ BOOL isQuarantinedAndUnapproved(NSString* path)
     flags = qtn_file_get_flags_FP(quarantineFile);
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"flags: %#x", flags]);
-    
-    //unapproved?
-    if(0 == (flags & QTN_FLAG_USER_APPROVED))
-    {
-        //yes
-        isQuarantinedAndUnapproved = YES;
-    }
-            
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"quarantine flags: %#x", flags]);
+
 bail:
     
     //cleanup
@@ -1907,7 +1906,7 @@ bail:
         quarantineFile = NULL;
     }
 
-    return isQuarantinedAndUnapproved;
+    return flags;
 }
 
 #endif

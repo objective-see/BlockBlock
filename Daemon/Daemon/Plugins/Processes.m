@@ -55,8 +55,13 @@
     BOOL isScript = NO;
     
     //item path
-    // as might be from arg
     NSString* path = nil;
+    
+    //app's path
+    NSString* appPath = nil;
+    
+    //quarantine flags
+    uint32_t quarantineFlags = QTN_NOT_QUARANTINED;
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ should be allowed", process]);
@@ -131,21 +136,59 @@
 
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"using path: %@", path]);
-    
-    //not translocated?
-    // just allow (always)
-    if( (YES != isTranslocated(path)) &&
-        (YES != isQuarantinedAndUnapproved(path)) )
+
+    //not translocated
+    // ...if quarantined, make sure it's user approved
+    if(YES != isTranslocated(path))
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not app translocated nor quarantined (and not user approved), will allow", path]);
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not app translocated ...checking quarantine attributes", path]);
         
-        //done
-        goto bail;
+        //get quarantine flags
+        quarantineFlags = getQuarantineFlags(path);
+        
+        //not quarantined?
+        // ok, safe to allow
+        if(QTN_NOT_QUARANTINED == quarantineFlags)
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not quarantined ...will allow", path]);
+            
+            //done
+            goto bail;
+        }
+           
+        //quarantined, but user is approved?
+        // ok, safe to allow
+        if(QTN_FLAG_USER_APPROVED & quarantineFlags)
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is quarantined, but user approved ...will allow", path]);
+            
+            //done
+            goto bail;
+        }
+           
+        
+        //get app bundle
+        appPath = findAppBundle(path).bundlePath;
+        
+        //also check app bundle
+        // to see if it has been approved
+        quarantineFlags = getQuarantineFlags(appPath);
+        if( (QTN_NOT_QUARANTINED != quarantineFlags) &&
+            (QTN_FLAG_USER_APPROVED & quarantineFlags) )
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"app bundle, %@, is user approved ...will allow", appPath]);
+            
+            //done
+            goto bail;
+        }
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is translocated or quarantined", process.name]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is translocated or quarantined (and not user approved)", process.name]);
     
     //dbg
     logMsg(LOG_DEBUG, @"checking if process is still alive...");
