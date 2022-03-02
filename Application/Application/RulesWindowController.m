@@ -43,6 +43,9 @@ extern XPCDaemonClient* xpcDaemonClient;
     
     //make it key window
     [self.window makeKeyAndOrderFront:self];
+    
+    //table resizing settings
+    [self.tableView sizeLastColumnToFit];
 
     return;
 }

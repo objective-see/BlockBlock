@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,31 +24,25 @@
             <rect key="contentRect" x="913" y="419" width="1104" height="552"/>
             <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1415"/>
             <value key="minSize" type="size" width="1104" height="552"/>
-            <view key="contentView" wantsLayer="YES" misplaced="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="1104" height="552"/>
+            <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="1104" height="529"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qQ9-BU-evn">
-                        <rect key="frame" x="484" y="0.0" width="137" height="42"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="137" id="xbv-ZD-7Vu"/>
-                        </constraints>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="BlockBlock" id="Foc-ee-gdz"/>
-                    </imageView>
-                    <scrollView misplaced="YES" autohidesScrollers="YES" horizontalLineScroll="56" horizontalPageScroll="10" verticalLineScroll="56" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gth-To-Lf2">
-                        <rect key="frame" x="-1" y="67" width="1106" height="511"/>
+                    <scrollView autohidesScrollers="YES" horizontalLineScroll="56" horizontalPageScroll="10" verticalLineScroll="56" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="gth-To-Lf2">
+                        <rect key="frame" x="-1" y="57" width="1106" height="472"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="ubO-Ur-NA2">
-                            <rect key="frame" x="1" y="1" width="1104" height="509"/>
+                            <rect key="frame" x="1" y="1" width="1104" height="470"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="54" rowSizeStyle="automatic" headerView="MjO-gV-r1W" viewBased="YES" id="rpa-sZ-jQp">
-                                    <rect key="frame" x="0.0" y="0.0" width="1104" height="486"/>
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="54" rowSizeStyle="automatic" headerView="MjO-gV-r1W" viewBased="YES" id="rpa-sZ-jQp">
+                                    <rect key="frame" x="0.0" y="0.0" width="1104" height="447"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn editable="NO" width="694" minWidth="40" maxWidth="1500" id="ocl-vV-SZu">
+                                        <tableColumn editable="NO" width="694" minWidth="40" maxWidth="2000" id="ocl-vV-SZu">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title=" Process">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -58,10 +52,10 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView identifier="processCell" id="moN-VP-hzI" userLabel="Process Row Cell" customClass="RuleRowCell">
-                                                    <rect key="frame" x="11" y="1" width="699" height="54"/>
+                                                    <rect key="frame" x="1" y="1" width="699" height="54"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <imageView translatesAutoresizingMaskIntoConstraints="NO" id="JiF-Nx-dl5">
@@ -131,10 +125,9 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView identifier="ruleCell" id="cqk-B9-OZf" customClass="RuleRowCell">
-                                                    <rect key="frame" x="713" y="1" width="370" height="54"/>
+                                                    <rect key="frame" x="703" y="1" width="370" height="54"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <button verticalHuggingPriority="750" tag="110" translatesAutoresizingMaskIntoConstraints="NO" id="ygq-ha-4ac">
@@ -207,25 +200,19 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
-                    <button toolTip="Refresh Rules" tag="10001" translatesAutoresizingMaskIntoConstraints="NO" id="dch-dH-0L1">
-                        <rect key="frame" x="11" y="4" width="32" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="32" id="Zsz-6O-tmy"/>
-                            <constraint firstAttribute="width" constant="32" id="m00-wM-T8b"/>
-                        </constraints>
-                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="refresh" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="USG-J4-Dcw">
-                            <behavior key="behavior" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="refresh:" target="-2" id="b3e-RO-mVQ"/>
-                        </connections>
-                    </button>
                     <progressIndicator wantsLayer="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="hmR-9d-tQz">
-                        <rect key="frame" x="51" y="13" width="16" height="16"/>
+                        <rect key="frame" x="59" y="13" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="hkN-0C-4et"/>
+                            <constraint firstAttribute="height" constant="16" id="mLs-wi-Vls"/>
+                        </constraints>
                     </progressIndicator>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cbu-EU-t72">
-                        <rect key="frame" x="74" y="13" width="153" height="15"/>
+                        <rect key="frame" x="82" y="15" width="153" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="15" id="3sn-dJ-o0a"/>
+                            <constraint firstAttribute="width" constant="149" id="kXd-56-BJf"/>
+                        </constraints>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="refreshing rules..." id="QYb-zx-KOl">
                             <font key="font" size="13" name="Menlo-Regular"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -250,29 +237,46 @@
                             <constraint firstAttribute="height" constant="200" id="zSL-Rb-x0k"/>
                         </constraints>
                     </customView>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qQ9-BU-evn">
+                        <rect key="frame" x="228" y="9" width="648" height="36"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="648" id="5Xc-fh-kMa"/>
+                            <constraint firstAttribute="height" constant="36" id="rXa-Mx-has"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="BlockBlock" id="Foc-ee-gdz"/>
+                    </imageView>
+                    <button toolTip="Refresh Rules" tag="10001" translatesAutoresizingMaskIntoConstraints="NO" id="dch-dH-0L1">
+                        <rect key="frame" x="20" y="5" width="32" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="32" id="Zsz-6O-tmy"/>
+                            <constraint firstAttribute="width" constant="32" id="m00-wM-T8b"/>
+                        </constraints>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="refresh" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="USG-J4-Dcw">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="refresh:" target="-2" id="b3e-RO-mVQ"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="qQ9-BU-evn" firstAttribute="centerX" secondItem="gth-To-Lf2" secondAttribute="centerX" id="2W7-N3-WMW"/>
-                    <constraint firstAttribute="bottom" secondItem="cbu-EU-t72" secondAttribute="bottom" constant="13" id="2mz-PS-bsW"/>
-                    <constraint firstItem="gth-To-Lf2" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="-1" id="44L-X5-eF7"/>
-                    <constraint firstItem="gth-To-Lf2" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="-1" id="5t7-SX-3Rs"/>
-                    <constraint firstAttribute="bottom" secondItem="hmR-9d-tQz" secondAttribute="bottom" constant="13" id="AwV-HA-B3M"/>
-                    <constraint firstAttribute="bottom" secondItem="dch-dH-0L1" secondAttribute="bottom" constant="4" id="B6u-20-kie"/>
-                    <constraint firstItem="qQ9-BU-evn" firstAttribute="top" secondItem="gth-To-Lf2" secondAttribute="bottom" id="DWM-Ik-pz9"/>
-                    <constraint firstItem="hmR-9d-tQz" firstAttribute="leading" secondItem="dch-dH-0L1" secondAttribute="trailing" constant="8" id="EhQ-1c-dhn"/>
-                    <constraint firstItem="dch-dH-0L1" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="11" id="OrU-7R-Sb3"/>
+                    <constraint firstItem="hpe-dB-Ek8" firstAttribute="centerY" secondItem="se5-gp-TjO" secondAttribute="centerY" id="4t0-zq-Fwu"/>
+                    <constraint firstItem="hpe-dB-Ek8" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="GL9-r8-MyB"/>
+                    <constraint firstItem="hmR-9d-tQz" firstAttribute="leading" secondItem="dch-dH-0L1" secondAttribute="trailing" constant="7" id="RGS-dF-ba9"/>
                     <constraint firstItem="cbu-EU-t72" firstAttribute="leading" secondItem="hmR-9d-tQz" secondAttribute="trailing" constant="9" id="SBi-Uv-GsN"/>
-                    <constraint firstAttribute="bottom" secondItem="gth-To-Lf2" secondAttribute="bottom" constant="42" id="SbQ-dG-FEs"/>
-                    <constraint firstAttribute="trailing" secondItem="gth-To-Lf2" secondAttribute="trailing" constant="-1" id="WvL-Bq-dxN"/>
-                    <constraint firstItem="hpe-dB-Ek8" firstAttribute="centerY" secondItem="se5-gp-TjO" secondAttribute="centerY" id="jWl-Z5-Mfh"/>
-                    <constraint firstItem="hpe-dB-Ek8" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="rCn-Jj-WSh"/>
-                    <constraint firstAttribute="bottom" secondItem="qQ9-BU-evn" secondAttribute="bottom" id="zPc-WN-oyQ"/>
+                    <constraint firstItem="dch-dH-0L1" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="SXv-L4-Lmp"/>
+                    <constraint firstAttribute="bottom" secondItem="qQ9-BU-evn" secondAttribute="bottom" constant="9" id="YY0-6B-uFM"/>
+                    <constraint firstAttribute="bottom" secondItem="hmR-9d-tQz" secondAttribute="bottom" constant="13" id="egW-Hf-Duh"/>
+                    <constraint firstItem="qQ9-BU-evn" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="hBm-km-4XJ"/>
+                    <constraint firstAttribute="bottom" secondItem="cbu-EU-t72" secondAttribute="bottom" constant="15" id="hg5-dk-XbS"/>
+                    <constraint firstAttribute="bottom" secondItem="dch-dH-0L1" secondAttribute="bottom" constant="5" id="w87-xq-oXG"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="62" y="468.5"/>
+            <point key="canvasLocation" x="62" y="467.5"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="pch-yV-NXy" userLabel="Add Rule" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
