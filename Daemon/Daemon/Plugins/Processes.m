@@ -57,6 +57,9 @@
     //item path
     NSString* path = nil;
     
+    //app bundle
+    NSBundle* appBundle = nil;
+    
     //app's path
     NSString* appPath = nil;
     
@@ -123,7 +126,7 @@
     }
     
     //not a script
-    // ignore apple / notarized processes
+    // ignore here if it's an apple or notarized processes
     else if( (YES == process.isPlatformBinary.boolValue) ||
              (YES == [process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) )
     {
@@ -133,9 +136,33 @@
         //done
         goto bail;
     }
-
+    
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"using path: %@", path]);
+    
+    //not a script?
+    // grab app bundle (for subsequent checks)
+    if(YES != isScript)
+    {
+        //find app bundle
+        appBundle = findAppBundle(path);
+        if(nil != appBundle)
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"is app, with bundle...");
+        }
+    }
+    
+    //is from app store?
+    // ignore, as it's trusted (though not 'notarized' per se)
+    if(nil != appBundle.appStoreReceiptURL)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ has an app store receipt, will allow", process.name]);
+        
+        //done
+        goto bail;
+    }
 
     //not translocated
     // ...if quarantined, make sure it's user approved
@@ -169,9 +196,8 @@
             goto bail;
         }
            
-        
-        //get app bundle
-        appPath = findAppBundle(path).bundlePath;
+        //get app path
+        appPath = appBundle.bundlePath;
         
         //also check app bundle
         // to see if it has been approved

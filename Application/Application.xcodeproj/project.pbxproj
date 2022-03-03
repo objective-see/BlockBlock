@@ -31,7 +31,6 @@
 		CD2F801724468A8C009C3D77 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = CD2F801624468A8C009C3D77 /* patrons.txt */; };
 		CD32C2352094062D009CADF6 /* SigningInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD32C2332094062C009CADF6 /* SigningInfoViewController.m */; };
 		CD6836682391DB6F00CF19C1 /* security.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD6836672391DB6F00CF19C1 /* security.plist */; };
-		CD80B7E527C6E4A300AD7BC1 /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CD80B7E427C6E4A300AD7BC1 /* BlockBlock Installer.app */; };
 		CD8FD5D523BAE2D200EFE0FB /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5D323BAE2D100EFE0FB /* Preferences.xib */; };
 		CD8FD5D623BAE2D200EFE0FB /* PrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5D423BAE2D200EFE0FB /* PrefsWindowController.m */; };
 		CD8FD5F623C05AD900EFE0FB /* RuleRow.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5F023C05AD800EFE0FB /* RuleRow.m */; };
@@ -40,6 +39,7 @@
 		CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5F523C05AD900EFE0FB /* Rules.xib */; };
 		CD8FD5FD23C05C6900EFE0FB /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5FC23C05C6900EFE0FB /* Rule.m */; };
 		CDA88A792537CE2400C469BF /* Sentry.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD21501B20AD2EE000CEF17B /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CDB964CE27D0774800A9674E /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDB964CD27D0774800A9674E /* BlockBlock Installer.app */; };
 		CDFA08E1214900BF0089758C /* XPCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA08DF214900BF0089758C /* XPCUser.m */; };
 /* End PBXBuildFile section */
 
@@ -101,7 +101,6 @@
 		CD32C2332094062C009CADF6 /* SigningInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SigningInfoViewController.m; sourceTree = "<group>"; };
 		CD32C2342094062C009CADF6 /* SigningInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigningInfoViewController.h; sourceTree = "<group>"; };
 		CD6836672391DB6F00CF19C1 /* security.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = security.plist; sourceTree = "<group>"; };
-		CD80B7E427C6E4A300AD7BC1 /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = "BlockBlock Installer.app"; path = "../DerivedData/BlockBlock/Build/Products/Release/BlockBlock Installer.app"; sourceTree = "<group>"; };
 		CD8FD5D123B585FE00EFE0FB /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMonitor.h; path = ../Shared/Libraries/FileMonitor.h; sourceTree = "<group>"; };
 		CD8FD5D223BAE2D100EFE0FB /* PrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsWindowController.h; sourceTree = "<group>"; };
 		CD8FD5D323BAE2D100EFE0FB /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
@@ -115,6 +114,7 @@
 		CD8FD5F523C05AD900EFE0FB /* Rules.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Rules.xib; sourceTree = "<group>"; };
 		CD8FD5FB23C05C6900EFE0FB /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
 		CD8FD5FC23C05C6900EFE0FB /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
+		CDB964CD27D0774800A9674E /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = "BlockBlock Installer.app"; path = "../DerivedData/BlockBlock/Build/Products/Release/BlockBlock Installer.app"; sourceTree = "<group>"; };
 		CDFA08D7214606DB0089758C /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
 		CDFA08DB21460A400089758C /* XPCUserProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserProto.h; path = ../Shared/XPCUserProto.h; sourceTree = "<group>"; };
 		CDFA08DF214900BF0089758C /* XPCUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCUser.m; path = ../Shared/XPCUser.m; sourceTree = "<group>"; };
@@ -244,7 +244,7 @@
 		CD80B7E327C6E49100AD7BC1 /* Uninstaller */ = {
 			isa = PBXGroup;
 			children = (
-				CD80B7E427C6E4A300AD7BC1 /* BlockBlock Installer.app */,
+				CDB964CD27D0774800A9674E /* BlockBlock Installer.app */,
 			);
 			name = Uninstaller;
 			sourceTree = "<group>";
@@ -346,7 +346,7 @@
 				CD2F801724468A8C009C3D77 /* patrons.txt in Resources */,
 				CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */,
 				7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */,
-				CD80B7E527C6E4A300AD7BC1 /* BlockBlock Installer.app in Resources */,
+				CDB964CE27D0774800A9674E /* BlockBlock Installer.app in Resources */,
 				7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -516,7 +516,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.1.2;
+				CURRENT_PROJECT_VERSION = 2.1.3;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -524,7 +524,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.1.3;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";
@@ -538,7 +538,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.1.2;
+				CURRENT_PROJECT_VERSION = 2.1.3;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -546,7 +546,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.1.3;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";

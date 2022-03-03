@@ -16,6 +16,16 @@
 #import "utilities.h"
 #import "Configure.h"
 
+/* To build:
+ 
+ 1. Comment out Installer's 'Run Script' (no need to copy in app/helper)
+ 2. Build Installer in 'Release Mode'
+ 3. Copy Installer to Application
+ 4. Comment in Installer's 'Run Script'
+ 5. Build Installer in 'Achive Mode'
+ 
+ */
+
 //main interface
 int main(int argc, char *argv[])
 {

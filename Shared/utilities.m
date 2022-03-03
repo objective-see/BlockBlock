@@ -436,42 +436,54 @@ NSString* getProcessName(NSString* path)
 
 //given a path to binary
 // parse it back up to find app's bundle
-NSBundle* findAppBundle(NSString* binaryPath)
+NSBundle* findAppBundle(NSString* path)
 {
     //app's bundle
     NSBundle* appBundle = nil;
     
+    //standarized path
+    NSString* standardedPath = nil;
+    
     //app's path
     NSString* appPath = nil;
     
-    //first just try full path
-    appPath = [[binaryPath stringByStandardizingPath] stringByResolvingSymlinksInPath];
+    //standardize path
+    standardedPath = [[path stringByStandardizingPath] stringByResolvingSymlinksInPath];
     
-    //try to find the app's bundle/info dictionary
+    //first just try full path
+    appPath = standardedPath;
+    
+    //try to find the app's bundle
     do
     {
         //try to load app's bundle
         appBundle = [NSBundle bundleWithPath:appPath];
         
-        //check for match
-        // ->binary path's match
-        if( (nil != appBundle) &&
-            (YES == [appBundle.executablePath isEqualToString:binaryPath]))
+        //was an app passed in?
+        if(YES == [appBundle.bundlePath isEqualToString:standardedPath])
         {
             //all done
             break;
         }
         
-        //always unset bundle var since it's being returned
-        // ->and at this point, its not a match
+        //check for match
+        // binary path's match
+        if( (nil != appBundle) &&
+            (YES == [appBundle.executablePath isEqualToString:standardedPath]))
+        {
+            //all done
+            break;
+        }
+        
+        //unset
         appBundle = nil;
         
         //remove last part
-        // ->will try this next
+        // will try this next
         appPath = [appPath stringByDeletingLastPathComponent];
         
     //scan until we get to root
-    // ->of course, loop will exit if app info dictionary is found/loaded
+    // of course, loop will exit if app info dictionary is found/loaded
     } while( (nil != appPath) &&
              (YES != [appPath isEqualToString:@"/"]) &&
              (YES != [appPath isEqualToString:@""]) );
