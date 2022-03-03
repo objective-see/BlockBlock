@@ -153,12 +153,13 @@
         }
     }
     
-    //is from app store?
+    //is an app store app?
     // ignore, as it's trusted (though not 'notarized' per se)
-    if(nil != appBundle.appStoreReceiptURL)
+    if( (noErr == [process.signingInfo[KEY_SIGNATURE_STATUS] intValue]) &&
+        (AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) )
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ has an app store receipt, will allow", process.name]);
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is from the app store ...will allow", process.name]);
         
         //done
         goto bail;

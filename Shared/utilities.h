@@ -36,6 +36,9 @@ int qtn_file_init_with_path(qtn_file_t qf, const char *path);
 //get quarantine flags
 uint32_t getQuarantineFlags(NSString* path);
 
+//mach time to nano-seconds
+uint64_t machTimeToNanoseconds(uint64_t machTime);
+
 #endif
 
 /* FUNCTIONS */
@@ -154,9 +157,6 @@ BOOL isFileRestricted(NSString* file);
 //check if something is nil
 // if so, return a default ('unknown') value
 NSString* valueForStringItem(NSString* item);
-
-//mach time to nano-seconds
-uint64_t machTimeToNanoseconds(uint64_t machTime);
 
 //determine if path is translocated
 // thanks: http://lapcatsoftware.com/articles/detect-app-translocation.html

@@ -1787,6 +1787,8 @@ bail:
     return isTranslocated;
 }
 
+#ifdef DAEMON_BUILD
+
 //mach time to nanoseconds
 // from: https://developer.apple.com/documentation/apple-silicon/addressing-architectural-differences-in-your-macos-code
 uint64_t machTimeToNanoseconds(uint64_t machTime)
@@ -1800,8 +1802,6 @@ uint64_t machTimeToNanoseconds(uint64_t machTime)
 
     return nanoseconds;
 }
-
-#ifdef DAEMON_BUILD
 
 //get items quarantine flags
 // thanks: https://trac.webkit.org/changeset/281056/webkit

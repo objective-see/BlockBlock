@@ -39,7 +39,7 @@
 		CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5F523C05AD900EFE0FB /* Rules.xib */; };
 		CD8FD5FD23C05C6900EFE0FB /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5FC23C05C6900EFE0FB /* Rule.m */; };
 		CDA88A792537CE2400C469BF /* Sentry.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD21501B20AD2EE000CEF17B /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CDB964CE27D0774800A9674E /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDB964CD27D0774800A9674E /* BlockBlock Installer.app */; };
+		CDB964D027D0871D00A9674E /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDB964CF27D0871D00A9674E /* BlockBlock Installer.app */; };
 		CDFA08E1214900BF0089758C /* XPCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA08DF214900BF0089758C /* XPCUser.m */; };
 /* End PBXBuildFile section */
 
@@ -114,7 +114,7 @@
 		CD8FD5F523C05AD900EFE0FB /* Rules.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Rules.xib; sourceTree = "<group>"; };
 		CD8FD5FB23C05C6900EFE0FB /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
 		CD8FD5FC23C05C6900EFE0FB /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
-		CDB964CD27D0774800A9674E /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = "BlockBlock Installer.app"; path = "../DerivedData/BlockBlock/Build/Products/Release/BlockBlock Installer.app"; sourceTree = "<group>"; };
+		CDB964CF27D0871D00A9674E /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = "BlockBlock Installer.app"; path = "../DerivedData/BlockBlock/Build/Products/Release/BlockBlock Installer.app"; sourceTree = "<group>"; };
 		CDFA08D7214606DB0089758C /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
 		CDFA08DB21460A400089758C /* XPCUserProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserProto.h; path = ../Shared/XPCUserProto.h; sourceTree = "<group>"; };
 		CDFA08DF214900BF0089758C /* XPCUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCUser.m; path = ../Shared/XPCUser.m; sourceTree = "<group>"; };
@@ -244,7 +244,7 @@
 		CD80B7E327C6E49100AD7BC1 /* Uninstaller */ = {
 			isa = PBXGroup;
 			children = (
-				CDB964CD27D0774800A9674E /* BlockBlock Installer.app */,
+				CDB964CF27D0871D00A9674E /* BlockBlock Installer.app */,
 			);
 			name = Uninstaller;
 			sourceTree = "<group>";
@@ -346,7 +346,7 @@
 				CD2F801724468A8C009C3D77 /* patrons.txt in Resources */,
 				CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */,
 				7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */,
-				CDB964CE27D0774800A9674E /* BlockBlock Installer.app in Resources */,
+				CDB964D027D0871D00A9674E /* BlockBlock Installer.app in Resources */,
 				7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
