@@ -21,7 +21,7 @@
 		<string>Launch D &amp; A</string>
 		<key>paths</key>
 		<array>
-			<string>^(\/System|\/Users\/.+|)\/Library\/(LaunchDaemons|LaunchAgents)\/.+\.(?i)plist$</string>
+			<string>^(\/System|\/Users\/[^\/]+|)\/Library\/(LaunchDaemons|LaunchAgents)\/.+\.(?i)plist$</string>
 		</array>
 		<key>class</key>
 		<string>Launchd</string>
@@ -35,7 +35,7 @@
 		<string>Login Item</string>
 		<key>paths</key>
 		<array>
-			<string>^(\/Users\/.+|)\/Library\/Application Support\/com.apple.backgroundtaskmanagementagent\/backgrounditems.btm$</string>
+			<string>^(\/Users\/[^\/]+|)\/Library\/Application Support\/com.apple.backgroundtaskmanagementagent\/backgrounditems.btm$</string>
 		</array>
 		<key>class</key>
 		<string>LoginItem</string>
