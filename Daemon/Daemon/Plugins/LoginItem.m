@@ -18,10 +18,10 @@
 extern XPCUserClient* xpcUserClient;
 
 // REGEX
-// ^(\/Users\/.+|)\/Library\/Application Support\/com.apple.backgroundtaskmanagementagent\/backgrounditems.btm$
+// ^(\/Users\/[^\/]+|)\/Library\/Application Support\/com.apple.backgroundtaskmanagementagent\/backgrounditems.btm$
 // breakdown:
 // ^ -> starts with
-// (\/Users\/.+) -> "/Users/<blah>"
+// (\/Users\/[^\/]+) -> "/Users/<blah>"
 // ...then just /Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm
 
 // path: ~/Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm

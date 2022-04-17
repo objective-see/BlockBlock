@@ -14,10 +14,10 @@
 #import "Utilities.h"
 
 // REGEX
-// ^(\/System|\/Users\/.+|)\/Library\/(LaunchDaemons|LaunchAgents)\/.+\.(?i)plist$
+// ^(\/System|\/Users\/[^\/]+|)\/Library\/(LaunchDaemons|LaunchAgents)\/.+\.(?i)plist$
 // breakdown:
 // ^ -> starts with
-// (\/System|\/Users\/.+|) -> "/System" or "/Users/<blah>" or nothing
+// (\/System|\/Users\/[^\/]+|) -> "/System" or "/Users/<blah>" or nothing
 // \/Library\/ -> "/Library/"
 // (LaunchDaemons|LaunchAgents) -> "LaunchDaemons" or "LaunchAgents"
 // \/.+\.(?i)plist -> "/<blah>.plist" (case insensitive)
