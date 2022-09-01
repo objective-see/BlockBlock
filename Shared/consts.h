@@ -74,13 +74,13 @@
 #define RULE_STATE_ALLOW 1
 
 //product version url
-#define PRODUCT_VERSIONS_URL @"https://objective-see.com/products.json"
+#define PRODUCT_VERSIONS_URL @"https://objective-see.org/products.json"
 
 //product url
-#define PRODUCT_URL @"https://objective-see.com/products/blockblock.html"
+#define PRODUCT_URL @"https://objective-see.org/products/blockblock.html"
 
 //error(s) url
-#define ERRORS_URL @"https://objective-see.com/errors.html"
+#define ERRORS_URL @"https://objective-see.org/errors.html"
 
 //support us button tag
 #define BUTTON_SUPPORT_US 100
@@ -144,7 +144,7 @@
 #define LOG_FILE_NAME @"BlockBlock.log"
 
 //general error URL
-#define FATAL_ERROR_URL @"https://objective-see.com/errors.html"
+#define FATAL_ERROR_URL @"https://objective-see.org/errors.html"
 
 //key for exit code
 #define EXIT_CODE @"exitCode"
