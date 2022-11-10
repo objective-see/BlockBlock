@@ -240,13 +240,24 @@ enum menuItems
             //dbg msg
             logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launching (un)installer %@", installer]);
             
-            //launch (in)/(un)installer
-            [NSWorkspace.sharedWorkspace openApplicationAtURL:installer configuration:configuration completionHandler:^(NSRunningApplication * _Nullable app, NSError * _Nullable error) {
-                
+            //wrap
+            @try
+            {
+                //launch (in)/(un)installer
+                [NSWorkspace.sharedWorkspace openApplicationAtURL:installer configuration:configuration completionHandler:^(NSRunningApplication * _Nullable app, NSError * _Nullable error) {
+                    
+                    //dbg msg
+                    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launched (un)installer: %@ (error: %@)", app, error]);
+                }];
+            }
+            @catch(NSException *exception)
+            {
                 //dbg msg
-                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launched (un)installer: %@ (error: %@)", app, error]);
+                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"failed to launch (un)installer: %@ (error: %@)", installer, exception]);
                 
-            }];
+                //bail
+                goto bail;
+            }
             
             break;
         }

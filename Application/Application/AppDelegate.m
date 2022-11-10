@@ -35,6 +35,9 @@ XPCDaemonClient* xpcDaemonClient;
     //'no daemon' alert
     NSAlert* alert = nil;
     
+    //os version
+    NSOperatingSystemVersion osVersion = {0};
+    
     //parent
     NSDictionary* parent = nil;
     
@@ -75,6 +78,9 @@ XPCDaemonClient* xpcDaemonClient;
     // make sure daemon has FDA
     if(YES != [preferences[PREF_GOT_FDA] boolValue])
     {
+        //grab os version
+        osVersion = NSProcessInfo.processInfo.operatingSystemVersion;
+        
         //init alert
         alert = [[NSAlert alloc] init];
         
@@ -84,8 +90,19 @@ XPCDaemonClient* xpcDaemonClient;
         //set main text
         alert.messageText = @"BlockBlock Not Active!";
         
-        //set detailed text
-        alert.informativeText = @"Please ensure that the BlockBlock daemon was granted \"Full Disk Access\" via System Preferences.\r\n\r\nIf it was, a manual reboot may fix the issue!";
+        //macOS Ventura base was buggy
+        if( (13 == osVersion.majorVersion) &&
+            (0 == osVersion.minorVersion) &&
+            (0 == osVersion.patchVersion) )
+        {
+            //set detailed text
+            alert.informativeText = @"Please update your Mac to the latest version to fix this issue.\r\n\r\n(The orginal release of macOS Ventura contained a bug, that Apple has now fixed).";
+        }
+        else
+        {
+            //set detailed text
+            alert.informativeText = @"Please ensure that the BlockBlock was granted \"Full Disk Access\" via System Preferences.\r\n\r\nIf it was, a manual reboot may fix the issue.";
+        }
         
         //add button
         [alert addButtonWithTitle:@"OK"];
