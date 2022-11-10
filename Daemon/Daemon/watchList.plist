@@ -7,7 +7,7 @@
 		<string>Kernel Extension</string>
 		<key>paths</key>
 		<array>
-			<string>^(\/System|)\/Library\/.+\.(?i)kext$</string>
+			<string>^(\/System|)\/Library\/Extensions\/[^\/]+\.(?i)kext$</string>
 		</array>
 		<key>class</key>
 		<string>Kext</string>
