@@ -20,7 +20,7 @@ PREFERENCES="$INSTALL_DIRECTORY/preferences.plist"
 OSVers="$(sw_vers -productVersion)"
 
 if [[ ("${OSVers:0:2}" -eq 10) ]]; then
-    if [[ "$OSVers" != 10.15.* ]]; then
+    if [[ "$OSVers" != 10.15* ]]; then
         printf "\nERROR: ${OSVers} is currently unsupported\n"
         printf "      BlockBlock requires macOS 10.15+\n\n"
         exit -1

@@ -158,8 +158,6 @@ enum menuItems
         //remove action handler
         self.statusItem.button.action = nil;
         
-        //reset highlight mode
-        ((NSButtonCell*)self.statusItem.button.cell).highlightsBy = NSContentsCellMask | NSChangeBackgroundCellMask;
     });
     
     return;
@@ -170,10 +168,7 @@ enum menuItems
 {
     //unset
     self.popover = nil;
-    
-    //reset highlight mode
-    ((NSButtonCell*)self.statusItem.button.cell).highlightsBy = NSContentsCellMask | NSChangeBackgroundCellMask;
-    
+
     return;
 }
 
@@ -287,6 +282,7 @@ bail:
         
         //set icon
         self.statusItem.button.image = [NSImage imageNamed:@"StatusInactive"];
+        self.statusItem.button.image.template = YES;
         
         //change toggle text
         [self.statusItem.menu itemWithTag:toggle].title = @"Enable";
@@ -300,6 +296,7 @@ bail:
         
         //set icon
         self.statusItem.button.image = [NSImage imageNamed:@"StatusActive"];
+        self.statusItem.button.image.template = YES;
         
         //change toggle text
         [self.statusItem.menu itemWithTag:toggle].title = @"Disable";
