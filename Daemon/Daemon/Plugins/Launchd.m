@@ -97,7 +97,7 @@
             //extract path to binary
             itemBinary = [(NSArray*)programArgs firstObject];
         }
-        //otherwise, its likely a string
+        //otherwise, likely a string
         // just use as is (assume no args)
         else if(YES == [programArgs isKindOfClass:[NSString class]])
         {
@@ -105,35 +105,23 @@
             itemBinary = (NSString*)programArgs;
         }
     }
-    //when 'ProgramArguments' fails
-    // check for just 'Program' key and use that
-    if(0 == itemBinary.length)
+    
+    //no string from 'ProgramArguments'?
+    // try to extract string from 'Program'
+    if( (YES != [itemBinary isKindOfClass:[NSString class]]) ||
+        (0 == itemBinary.length) )
     {
-        //get value for 'ProgramArguments'
-        //(should always be) a string
         itemBinary = getValueFromPlist(event.file.destinationPath, @"Program", YES, 1.0f);
+        if(YES != [itemBinary isKindOfClass:[NSString class]])
+        {
+            //unset
+            itemBinary = nil;
+            
+            //bail
+            goto bail;
+        }
     }
-    
-    //sanity check
-    if(0 == itemBinary.length)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //sanity check
-    if(YES != [itemBinary isKindOfClass:[NSString class]])
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"launch item's binary path, %@, is not a string (but: %@)", itemBinary, itemBinary.className]);
-        
-        //unset
-        itemBinary = nil;
-        
-        //bail
-        goto bail;
-    }
-    
+
 bail:
     
     return itemBinary;
