@@ -556,19 +556,13 @@ bail:
     __block PluginBase* plugin = nil;
     
     //look for plugin that can handle path
-    [plugins enumerateObjectsUsingBlock:^(PluginBase* currentPlugin, NSUInteger index, BOOL* stop)
-    {
+    NSUInteger idx = [plugins indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(PluginBase * _Nonnull currentPlugin, NSUInteger idx, BOOL * _Nonnull stop) {
         //is match?
-        if(YES == [currentPlugin isMatch:file])
-        {
-            //save
-            plugin = currentPlugin;
-            
-            //stop
-            *stop = YES;
-        }
+        return [currentPlugin isMatch:file];
     }];
-    
+    if (idx != NSNotFound) {
+        plugin = plugins[idx];
+    }
     return plugin;
 }
 
