@@ -19,9 +19,6 @@
 //patreon url
 #define PATREON_URL @"https://www.patreon.com/join/objective_see"
 
-//sentry crash reporting URL
-#define SENTRY_DSN @"https://04a1d345121247f8b62014d801d7bed2@o130950.ingest.sentry.io/1225145"
-
 //bundle ID
 #define BUNDLE_ID "com.objective-see.blockblock"
 
@@ -323,6 +320,7 @@
 #define PLUGIN_TYPE_APP_LOGIN_ITEM 5
 #define PLUGIN_TYPE_EVENT_MONITOR 6
 #define PLUGIN_TYPE_PROCESS_MONITOR 7
+#define PLUGIN_TYPE_BACKGROUND_TASK 8
 
 //path to kextunload
 #define KEXT_UNLOAD @"/sbin/kextunload"

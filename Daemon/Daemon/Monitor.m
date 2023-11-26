@@ -1,5 +1,5 @@
 //
-//  Watcher.m
+//  Monitor.m
 //  BlockBlock
 //
 //  Created by Patrick Wardle on 9/25/14.
@@ -36,6 +36,7 @@ extern Preferences* preferences;
 @synthesize plugins;
 @synthesize fileMon;
 @synthesize lastEvent;
+@synthesize btmMonitor;
 @synthesize userObserver;
 @synthesize endpointProcessClient;
 
@@ -77,28 +78,19 @@ extern Preferences* preferences;
     //flag
     BOOL started = NO;
     
-    //dbg msg
-    logMsg(LOG_DEBUG, @"starting file monitor");
-    
-    //events of interest
+    //events of interest for file monitor
     // also pass in process exec/exit to capture args
     es_event_type_t events[] = {ES_EVENT_TYPE_NOTIFY_CREATE, ES_EVENT_TYPE_NOTIFY_WRITE, ES_EVENT_TYPE_NOTIFY_RENAME, ES_EVENT_TYPE_NOTIFY_EXEC, ES_EVENT_TYPE_NOTIFY_EXIT};
     
-    //init monitor
-    fileMon = [[FileMonitor alloc] init];
-    
-    //define block
+    //define block for file monitor
     // automatically invoked upon file events
     FileCallbackBlock block = ^(File* file)
     {
-        //dbg msg
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"file event: %@", file]);
-        
         @autoreleasepool
         {
             //process file event
             // match alert, etc...
-            [self processEvent:file];
+            [self processEvent:file plugin:nil message:nil];
         }
     };
     
@@ -112,13 +104,30 @@ extern Preferences* preferences;
         //bail
         goto bail;
     }
-        
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"starting file monitor...");
+    
+    //init monitor
+    fileMon = [[FileMonitor alloc] init];
+
     //start monitoring
     // pass in block for events
     started = [self.fileMon start:events count:sizeof(events)/sizeof(events[0]) csOption:csNone callback:block];
+    if(YES != started)
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to start file monitor");
+        
+        //bail
+        goto bail;
+    }
+    
+    //alloc
+    self.processMonitor = [[ProcessMonitor alloc] init];
     
     //start process monitor
-    if(YES != [self startProcessMonitor])
+    if(YES != [self.processMonitor start: [self findPluginByName:@"Process"]])
     {
         //err msg
         logMsg(LOG_ERR, @"failed to start process monitor");
@@ -127,311 +136,37 @@ extern Preferences* preferences;
         goto bail;
     }
     
-bail:
-
-    return started;
-}
-
-//start process monitor
-// for now, only ES_EVENT_TYPE_AUTH_EXEC events
--(BOOL)startProcessMonitor
-{
-    //flag
-    BOOL started = NO;
-    
-    //result
-    es_new_client_result_t result = 0;
-    
-    //events
-    es_event_type_t procEvents[] = {ES_EVENT_TYPE_AUTH_EXEC};
-    
-    //process plugin
-    __block PluginBase* plugin = nil;
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"starting process monitor...");
-    
-    //look up processes plugin
-    [plugins enumerateObjectsUsingBlock:^(PluginBase* currentPlugin, NSUInteger index, BOOL* stop)
+    //macOS 14+
+    // can use BTM events
+    if(@available(macOS 14, *))
     {
-        //is match?
-        if(YES == [currentPlugin isKindOfClass:Processes.class])
-        {
-            //save
-            plugin = currentPlugin;
-            
-            //stop
-            *stop = YES;
-        }
-    }];
-    
-    //create client
-    // and handle process (auth exec) events
-    result = es_new_client(&endpointProcessClient, ^(es_client_t *client, const es_message_t *message)
-    {
-        //event
-        Event* event = nil;
+        //alloc
+        self.btmMonitor = [[BTMMonitor alloc] init];
         
-        //new process event
-        Process* process = nil;
-        
-        //esf deadline
-        uint64_t deadline = 0;
-        
-        //deadline sema
-        dispatch_semaphore_t deadlineSema = 0;
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new process event: %x", message->event_type]);
-        
-        //check prefs
-        // allow if passive mode, or not in notarization mode
-        if( (YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue]) ||
-            (YES != [preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) )
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing process, due to preferences (%@)", preferences.preferences]);
-            
-            //allow
-            if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:NO])
-            {
-                //err msg
-                logMsg(LOG_ERR, @"failed to allow process");
-            }
-            
-            //done
-            return;
-        }
-        
-        //init process obj
-        process = [[Process alloc] init:(es_message_t* _Nonnull)message csOption:csDynamic];
-        if( (nil == process) ||
-            (YES == [plugin shouldIgnore:process]) )
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing %@", process]);
-            
-            //allow
-            if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:NO])
-            {
-                //err msg
-                logMsg(LOG_ERR, @"failed to allow process");
-            }
-            
-            //done
-            return;
-        }
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"alerting user about: %@", process]);
-        
-        //init event
-        event = [[Event alloc] init:process plugin:plugin];
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"alerting user w/: %@", event]);
-        
-        //add client
-        event.esfClient = client;
-        
-        //add msg
-        event.esfMessage = es_copy_message(message);
-        
-        //create deadline semaphore
-        deadlineSema = dispatch_semaphore_create(0);
-        
-        //init deadline
-        deadline = message->deadline - mach_absolute_time();
-        
-        //add to event
-        event.esfSemaphore = deadlineSema;
-        
-        //background
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
-        
-        //deliver alert
-        // can fail if no client
-        if(YES == [events deliver:event])
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, @"alert delivered, waiting for response...");
-            
-            //wait till close to timeout
-            // if haven't hit, just allow, otherwise we'll be killed
-            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, machTimeToNanoseconds(deadline) - (1 * NSEC_PER_SEC))))
-            {
-                //err msg
-                logMsg(LOG_ERR, [NSString stringWithFormat:@"esf timeout (%llx seconds) about to be hit, forced to allow process :/", machTimeToNanoseconds(deadline) / NSEC_PER_SEC]);
-                
-                //sync
-                @synchronized(self)
-                {
-                    //allow
-                    if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:YES])
-                    {
-                        //err msg
-                        logMsg(LOG_ERR, @"failed to allow process");
-                    }
-                    
-                    //unset
-                    event.esfClient = NULL;
-                    event.esfMessage = NULL;
-                }
-            }
-            //sema signal'd
-            // handled by user, all good
-            else
-            {
-                //dbg msg
-                logMsg(LOG_DEBUG, @"esf semaphore signaled, alert was handled");
-            }
-        }
-        //failed to deliver
-        // will just allow process
-        else
+        //start
+        if(YES != [self.btmMonitor start:[self findPluginByName:@"Btm"]])
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to deliver message, will allow process :/");
+            logMsg(LOG_ERR, @"failed to start btm monitor");
             
-            //sync
-            @synchronized(self)
-            {
-                //allow
-                if(YES != [self allowProcessEvent:client message:(es_message_t*)message shouldFree:YES])
-                {
-                    //err msg
-                    logMsg(LOG_ERR, @"failed to allow process");
-                }
-                
-                //unset
-                event.esfClient = NULL;
-                event.esfMessage = NULL;
-            }
+            //bail
+            goto bail;
         }
-            
-        });
-    });
-    
-    //sanity check
-    if(ES_NEW_CLIENT_RESULT_SUCCESS != result)
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_new_client' failed with %x", result]);
         
-        //bail
-        goto bail;
+        //dbg msg
+        logMsg(LOG_DEBUG, @"started btm monitor");
     }
     
-    //subscribe
-    if(ES_RETURN_SUCCESS != es_subscribe(endpointProcessClient, procEvents, sizeof(events)/sizeof(procEvents[0])))
-    {
-        //err msg
-        logMsg(LOG_ERR, @"'es_subscribe' failed");
-        
-        //bail
-        goto bail;
-    }
-
     //happy
     started = YES;
     
 bail:
-    
+
     return started;
 }
 
-//allow process event
--(BOOL)allowProcessEvent:(es_client_t*)client message:(es_message_t*)message shouldFree:(BOOL)shouldFree
-{
-    //flag
-    BOOL allowed = NO;
-    
-    //result
-    __block es_respond_result_t result = !ES_RESPOND_RESULT_SUCCESS;
-    
-    //allow
-    result = es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, false);
-    if(ES_RESPOND_RESULT_SUCCESS != result)
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_respond_auth_result' failed with %x", result]);
-    }
-    //ok!
-    else
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"allowed process via 'es_respond_auth_result/ES_AUTH_RESULT_ALLOW'");
-    }
-    
-    //free?
-    if(YES == shouldFree)
-    {
-        //free msg
-        es_free_message(message);
-        message = NULL;
-    }
-    
-    //happy
-    allowed = YES;
-    
-    return allowed;
-}
 
-//start process monitor
--(BOOL)stopProcessMonitor
-{
-    //flag
-    BOOL stopped = NO;
-    
-    //sync
-    @synchronized (self) {
-        
-    //dbg msg
-    logMsg(LOG_DEBUG, @"stopping process monitor...");
-        
-    //sanity check
-    if(NULL == endpointProcessClient) goto bail;
-    
-    //unsubscribe
-    if(ES_RETURN_SUCCESS != es_unsubscribe_all(endpointProcessClient))
-    {
-       //err msg
-       logMsg(LOG_ERR, @"'es_unsubscribe_all' failed");
-       
-       //bail
-       goto bail;
-    }
-        
-    //dbg msg
-    logMsg(LOG_DEBUG, @"unsubscribed from process events");
-       
-    //delete client
-    if(ES_RETURN_SUCCESS != es_delete_client(endpointProcessClient))
-    {
-       //err msg
-       logMsg(LOG_ERR, @"'es_delete_client' failed");
-       
-       //bail
-       goto bail;
-    }
-        
-    //dbg msg
-    logMsg(LOG_DEBUG, @"deleted endpoint client");
-       
-    //unset
-    endpointProcessClient = NULL;
-       
-    //happy
-    stopped = YES;
-            
-    }//sync
-    
-bail:
-    
-    return stopped;
-}
-
-//stop file monitor
+//stop monitors
 -(BOOL)stop
 {
     //flag
@@ -450,14 +185,17 @@ bail:
         goto bail;
     }
     
-    //dbg msg
-    logMsg(LOG_DEBUG, @"stopped file monitor");
-    
     //unset
     self.fileMon = nil;
     
+    //dbg msg
+    logMsg(LOG_DEBUG, @"stopped file monitor");
+    
+    //dbg msg
+    logMsg(LOG_DEBUG, @"stopping process monitor...");
+    
     //stop process monitor
-    if(YES != [self stopProcessMonitor])
+    if(YES != [self.processMonitor stop])
     {
         //err msg
         logMsg(LOG_ERR, @"failed to stop process monitor");
@@ -466,8 +204,27 @@ bail:
         goto bail;
     }
     
+    //unset
+    self.processMonitor = nil;
+    
     //dbg msg
     logMsg(LOG_DEBUG, @"stopped process monitor");
+    
+    //stop BTM monitor
+    if(nil != self.btmMonitor)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"stopping btm monitor...");
+        
+        //stop
+        [self.btmMonitor stop];
+        
+        //unset
+        self.btmMonitor = nil;
+        
+        //dbg msg
+        logMsg(LOG_DEBUG, @"stopped btm monitor");
+    }
     
     //happy
     stopped = YES;
@@ -477,11 +234,14 @@ bail:
     return stopped;
 }
 
-//process a file event
+//process an event
 // a) determine if it's an event of interest
 // b) then, build and deliver alert to the user
--(void)processEvent:(File*)file
+-(void)processEvent:(File*)file plugin:(PluginBase*)plugin message:(es_message_t*)message
 {
+    //flag
+    BOOL wasDelivered = NO;
+    
     //event
     Event* event = nil;
     
@@ -489,7 +249,7 @@ bail:
     Rule* matchingRule = nil;
     
     //plugin
-    PluginBase* plugin = nil;
+    PluginBase* matchingPlugin = nil;
     
     //skip if event was caused by self
     // e.g. blocking an item by editing a watched file
@@ -506,28 +266,48 @@ bail:
         goto bail;
     }
 
-    //find plugin
-    // ...that cares about the path/file that was just created
-    plugin = [self findPlugin:file];
-    if(nil == plugin)
+    //plugin provided?
+    if(nil != plugin)
     {
-        //bail
-        goto bail;
+        //save
+        matchingPlugin = plugin;
     }
-    
+    //otherwise find plugin
+    // ...that cares about the path/file that was just created
+    else
+    {
+        //find
+        matchingPlugin = [self findPlugin:file];
+        if(nil == matchingPlugin)
+        {
+            //bail
+            goto bail;
+        }
+    }
+
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found plugin %@ for %@", plugin, file]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found plugin %@ for %@", matchingPlugin, file]);
     
     //allow the plugin to closely examine the event
     // it will know more about the details so can determine if it should be ignored
-    if(YES == [plugin shouldIgnore:file])
+    if(YES == [matchingPlugin shouldIgnore:file])
     {
         //ignore
         goto bail;
     }
     
     //create event
-    event = [[Event alloc] init:file plugin:plugin];
+    event = [Event alloc];
+        
+    //add message
+    if(nil != message)
+    {
+        //add msg
+        event.esMessage = message;
+    }
+    
+    //complete initialization
+    event = [event init:file plugin:matchingPlugin];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"created event: %@", event]);
@@ -553,7 +333,7 @@ bail:
             logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"matching rule says, 'block', so blocking %@", event]);
             
             //block
-            if(YES != [event.plugin block:event])
+            if(YES != [matchingPlugin block:event])
             {
                 //err msg
                 logMsg(LOG_ERR, @"failed to block event!");
@@ -610,14 +390,26 @@ bail:
     logMsg(LOG_DEBUG, @"event appears to be new!, will deliver");
     
     //deliver alert
-    // can fail if not client
+    // can fail if no client
     if(YES == [events deliver:event])
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"alert delivered...");
+        
+        //set flag
+        wasDelivered = YES;
     }
     
 bail:
+    
+    //not delivered?
+    // free es message
+    if( (YES != wasDelivered) &&
+        (nil != event.esMessage) )
+    {
+        es_free_message(event.esMessage);
+        event.esMessage = NULL;
+    }
 
     return;
 }
@@ -639,12 +431,18 @@ bail:
     //plugin obj
     PluginBase* plugin = nil;
     
+    //plugin min OS
+    NSNumber* pluginMinOS = 0;
+    
+    //plugin max OS
+    NSNumber* pluginMaxOS = 0;
+    
     //get path to watch list
     watchListPath = [[NSBundle mainBundle] pathForResource:@"watchList" ofType:@"plist"];
     if(nil == watchListPath)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to load watch list path");
+        logMsg(LOG_ERR, @"failed to load watch list");
         
         //bail
         goto bail;
@@ -655,7 +453,7 @@ bail:
     if(nil == watchList)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to load watch list");
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to load watch list from %@", watchListPath]);
         
         //bail
         goto bail;
@@ -670,6 +468,34 @@ bail:
     {
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"watch item: %@/%@", watchItem, NSClassFromString(watchItem[@"class"])]);
+        
+        //grab min/max supported OS
+        pluginMinOS = watchItem[@"minOSVersion"];
+        pluginMaxOS = watchItem[@"maxOSVersion"];
+        
+        //check:
+        // is system's OS version new enough to support plugin?
+        if( (nil != pluginMinOS) &&
+            (pluginMinOS.unsignedIntValue < NSProcessInfo.processInfo.operatingSystemVersion.majorVersion) )
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"macOS %ld too old for plugin %@ (min: %@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMinOS]);
+            
+            //skip this plugin
+            continue;
+        }
+        
+        //check
+        // is system's OS version too new to support plugin?
+        if( (nil != pluginMaxOS) &&
+            (pluginMaxOS.unsignedIntValue < NSProcessInfo.processInfo.operatingSystemVersion.majorVersion) )
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"macOS %ld too new for plugin %@ (max: %@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMaxOS]);
+            
+            //skip this plugin
+            continue;
+        }
         
         //init plugin
         // will also init paths
@@ -696,6 +522,31 @@ bail:
 bail:
     
     return bRet;
+}
+
+
+//find loaded plugin by name
+-(PluginBase*)findPluginByName:(NSString*)name
+{
+    //plugin
+    __block PluginBase* plugin = nil;
+    
+    //look for plugin that can handle path
+    [plugins enumerateObjectsUsingBlock:^(PluginBase* currentPlugin, NSUInteger index, BOOL* stop)
+    {
+        //is match?
+        if(NSOrderedSame == [currentPlugin.className caseInsensitiveCompare:name])
+        {
+            //save
+            plugin = currentPlugin;
+            
+            //stop
+            *stop = YES;
+        }
+    }];
+    
+    return plugin;
+    
 }
 
 //find the plugin (or none) that's intersted in the path

@@ -14,7 +14,7 @@
 NSFileHandle* logFileHandle = nil;
 
 //get path to log file
-NSString* logFilePath()
+NSString* logFilePath(void)
 {
     return [INSTALL_DIRECTORY stringByAppendingPathComponent:LOG_FILE_NAME];
 }
@@ -106,7 +106,7 @@ void log2File(NSString* msg)
 }
 
 //de-init logging
-void deinitLogging()
+void deinitLogging(void)
 {
     //dbg msg
     // ->and to file

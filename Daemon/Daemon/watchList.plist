@@ -29,6 +29,8 @@
 		<string>installed a launch daemon or agent</string>
 		<key>ignoreKids</key>
 		<true/>
+        <key>maxOSVersion</key>
+        <integer>13</integer>
 	</dict>
 	<dict>
 		<key>description</key>
@@ -43,6 +45,8 @@
 		<string>installed a login item</string>
 		<key>ignoreKids</key>
 		<true/>
+        <key>maxOSVersion</key>
+        <integer>13</integer>
 	</dict>
 	<dict>
 		<key>description</key>
@@ -71,6 +75,8 @@
 		<string>created an application helper login item</string>
 		<key>ignoreKids</key>
 		<false/>
+        <key>maxOSVersion</key>
+        <integer>13</integer>
 	</dict>
 	<dict>
 		<key>description</key>
@@ -86,6 +92,20 @@
 		<key>ignoreKids</key>
 		<true/>
 	</dict>
+    <dict>
+        <key>description</key>
+        <string>Background Task Management</string>
+        <key>paths</key>
+        <array></array>
+        <key>class</key>
+        <string>Btm</string>
+        <key>alert</key>
+        <string>created an background task item</string>
+        <key>ignoreKids</key>
+        <true/>
+        <key>minOSVersion</key>
+        <integer>14</integer>
+    </dict>
 	<dict>
 		<key>description</key>
 		<string>Process Monitor</string>

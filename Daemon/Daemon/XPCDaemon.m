@@ -204,6 +204,14 @@ bail:
 
 bail:
     
+    //free es message
+    if(nil != event.esMessage)
+    {
+        //free
+        es_free_message(event.esMessage);
+        event.esMessage = NULL;
+    }
+    
     return;
 }
 

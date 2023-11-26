@@ -204,7 +204,8 @@ bail:
     
     //step 2: validate
     // check that client is signed with Objective-See's and it's BlockBlock
-    if(errSecSuccess != (status = SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement))))
+    status = SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement));
+    if(errSecSuccess != status)
     {
         //bail
         goto bail;

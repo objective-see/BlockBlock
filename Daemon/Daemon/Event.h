@@ -38,13 +38,13 @@
 @property(nonatomic, retain)Item* item;
 
 //esf client
-@property es_client_t* esfClient;
+@property es_client_t* esClient;
 
 //esf message
-@property es_message_t* esfMessage;
+@property es_message_t* esMessage;
 
 //esf sema
-@property dispatch_semaphore_t esfSemaphore;
+@property dispatch_semaphore_t esSemaphore;
 
 //(user) action
 @property NSUInteger action;

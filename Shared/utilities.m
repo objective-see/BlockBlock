@@ -25,7 +25,7 @@
 
 //get app's version
 // extracted from Info.plist
-NSString* getAppVersion()
+NSString* getAppVersion(void)
 {
     //read and return 'CFBundleVersion' from bundle
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
@@ -106,7 +106,7 @@ NSString* getBinaryName(NSString* path)
 
 //get path to (main) app of a login item
 // login item is in app bundle, so parse up to get main app
-NSString* getMainAppPath()
+NSString* getMainAppPath(void)
 {
     //path components
     NSArray *pathComponents = nil;
@@ -399,7 +399,7 @@ bail:
 }
 
 //get name of logged in user
-NSString* getConsoleUser()
+NSString* getConsoleUser(void)
 {
     //copy/return user
     return CFBridgingRelease(SCDynamicStoreCopyConsoleUser(NULL, NULL, NULL));
@@ -1710,7 +1710,7 @@ BOOL isFileRestricted(NSString* file)
 }
 
 //in dark mode?
-BOOL isDarkMode()
+BOOL isDarkMode(void)
 {
     return [[[NSUserDefaults standardUserDefaults] stringForKey:@"AppleInterfaceStyle"] isEqualToString:@"Dark"];
 }
@@ -1719,9 +1719,6 @@ BOOL isDarkMode()
 // thanks: http://lapcatsoftware.com/articles/detect-app-translocation.html
 BOOL isTranslocated(NSString* path)
 {
-    //flag
-    BOOL isTranslocated = NO;
-    
     //token
     static dispatch_once_t onceToken = 0;
     
@@ -1729,10 +1726,10 @@ BOOL isTranslocated(NSString* path)
     static void* handle = NULL;
     
     //fp to 'SecTranslocateIsTranslocatedURL'
-    static Boolean (*SecTranslocateIsTranslocatedURLFP)(CFURLRef path, bool *isTranslocated, CFErrorRef * __nullable error) = NULL;
+    static Boolean (*SecTranslocateIsTranslocatedURL)(CFURLRef path, bool *isTranslocated, CFErrorRef * __nullable error) = NULL;
     
     //flag for call
-    bool translocated = false;
+    bool isTranslocated = false;
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ is translocated", path]);
@@ -1745,7 +1742,7 @@ BOOL isTranslocated(NSString* path)
         if(NULL != handle)
         {
             //resolve 'SecTranslocateIsTranslocatedURLFP'
-            SecTranslocateIsTranslocatedURLFP = dlsym(handle, "SecTranslocateIsTranslocatedURL");
+            SecTranslocateIsTranslocatedURL = dlsym(handle, "SecTranslocateIsTranslocatedURL");
         }
         //err
         else
@@ -1757,7 +1754,7 @@ BOOL isTranslocated(NSString* path)
     });
     
     //sanity check
-    if(NULL == SecTranslocateIsTranslocatedURLFP)
+    if(NULL == SecTranslocateIsTranslocatedURL)
     {
         //err msg
         logMsg(LOG_ERR, @"failed to resolve 'SecTranslocateIsTranslocatedURL'");
@@ -1767,7 +1764,7 @@ BOOL isTranslocated(NSString* path)
     }
     
     //call 'SecTranslocateIsTranslocatedURL'
-    if(!SecTranslocateIsTranslocatedURLFP((__bridge CFURLRef)([NSURL fileURLWithPath:path]), &translocated, NULL))
+    if(!SecTranslocateIsTranslocatedURL((__bridge CFURLRef)([NSURL fileURLWithPath:path]), &isTranslocated, NULL))
     {
         //err msg
         logMsg(LOG_ERR, @"failed to invoke 'SecTranslocateIsTranslocatedURLFP'");
@@ -1777,15 +1774,37 @@ BOOL isTranslocated(NSString* path)
     }
     
     //log msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"SecTranslocateIsTranslocatedURL succeeded, result: %x", translocated]);
-    
-    //happy
-    isTranslocated = translocated;
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"SecTranslocateIsTranslocatedURL succeeded, result: %x", isTranslocated]);
     
 bail:
 
     return isTranslocated;
 }
+
+
+//convert es_string_token_t to string
+NSString* convertStringToken(es_string_token_t* stringToken)
+{
+    //string
+    NSString* string = nil;
+    
+    //sanity check(s)
+    if( (NULL == stringToken) ||
+        (NULL == stringToken->data) ||
+        (stringToken->length <= 0) )
+    {
+        //bail
+        goto bail;
+    }
+        
+    //convert to data, then to string
+    string = [[NSString alloc] initWithBytes:stringToken->data length:stringToken->length encoding:NSUTF8StringEncoding];
+    
+bail:
+    
+    return string;
+}
+
 
 #ifdef DAEMON_BUILD
 

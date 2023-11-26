@@ -351,8 +351,8 @@ bail:
     return event.process.path;
 }
 
-//for kext
-// unload, then delete entire kext directory
+//block
+// invoke helper w/ ES_AUTH_RESULT_DENY
 -(BOOL)block:(Event*)event
 {
     //flag
@@ -371,6 +371,7 @@ bail:
 }
 
 //allow
+// invoke helper w/ ES_AUTH_RESULT_ALLOW
 -(void)allow:(Event*)event
 {
     //allow
@@ -400,8 +401,8 @@ bail:
     @synchronized(event)
     {
         //sanity check(s)
-        if( (NULL == event.esfClient) ||
-            (NULL == event.esfMessage) )
+        if( (NULL == event.esClient) ||
+            (NULL == event.esMessage) )
         {
             //dbg msg
             logMsg(LOG_DEBUG, @"esf client/message was unset ...timeout hit?");
@@ -411,7 +412,7 @@ bail:
         }
             
         //take action
-        result = es_respond_auth_result(event.esfClient, event.esfMessage, action, false);
+        result = es_respond_auth_result(event.esClient, event.esMessage, action, false);
         if(ES_RESPOND_RESULT_SUCCESS != result)
         {
             //err msg
@@ -425,13 +426,13 @@ bail:
         }
         
         //free/unset message
-        es_free_message(event.esfMessage);
-        event.esfMessage = NULL;
-        event.esfClient = NULL;
+        es_free_message(event.esMessage);
+        event.esMessage = NULL;
+        event.esClient = NULL;
         
         //signal
         // as we've avoid the esf timeout
-        dispatch_semaphore_signal(event.esfSemaphore);
+        dispatch_semaphore_signal(event.esSemaphore);
 
     } //sync
     

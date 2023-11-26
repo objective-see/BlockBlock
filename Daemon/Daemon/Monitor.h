@@ -11,6 +11,9 @@
 #import "Event.h"
 #import "FileMonitor.h"
 
+#import "Monitors/BTMMonitor.h"
+#import "Monitors/ProcessMonitor.h"
+
 #import <EndpointSecurity/EndpointSecurity.h>
 
 @interface Monitor : NSObject
@@ -26,6 +29,12 @@
 //file monitor
 @property(atomic, retain)FileMonitor* fileMon;
 
+//btm monitor
+@property(nonatomic, retain)BTMMonitor* btmMonitor;
+
+//process monitor
+@property(nonatomic, retain)ProcessMonitor* processMonitor;
+
 //plugin (objects)
 @property (nonatomic, retain)NSMutableArray* plugins;
 
@@ -40,6 +49,9 @@
 
 //load watch list and enable watches
 -(BOOL)start;
+
+//process event
+-(void)processEvent:(File*)file plugin:(PluginBase*)plugin message:(es_message_t*)message;
 
 //stop
 -(BOOL)stop;

@@ -10,8 +10,6 @@
 #import "main.h"
 #import "Monitor.h"
 
-@import Sentry;
-
 /* GLOBALS */
 
 //(file)monitor
@@ -26,12 +24,6 @@ int main(int argc, const char * argv[])
     {
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launch daemon %@ started with %@", NSProcessInfo.processInfo.arguments.firstObject.lastPathComponent, NSProcessInfo.processInfo.arguments]);
-        
-        //init crash reporting
-        [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
-            options.dsn = SENTRY_DSN;
-            options.debug = YES;
-        }];
         
         //not root?
         if(0 != geteuid())
@@ -173,7 +165,7 @@ bail:
 
 //check for full disk access via ESF
 // returns -1/0, as main() will return this too...
-int fdaCheck()
+int fdaCheck(void)
 {
     //isse in ESF pre 10.15.4(?0
     NSOperatingSystemVersion minimumSupportedOSVersion = { .majorVersion = 10, .minorVersion = 15, .patchVersion = 4 };
@@ -222,8 +214,8 @@ int fdaCheck()
     return status;
 }
 
-//close login
-void goodbye()
+//close logging
+void goodbye(void)
 {
     //close logging
     deinitLogging();
@@ -233,7 +225,7 @@ void goodbye()
 
 //init a handler for SIGTERM
 // can perform actions such as disabling firewall and closing logging
-void register4Shutdown()
+void register4Shutdown(void)
 {
     //ignore sigterm
     // handling it via GCD dispatch

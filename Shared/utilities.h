@@ -12,7 +12,7 @@
 
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
-
+#import <EndpointSecurity/EndpointSecurity.h>
 
 #ifdef DAEMON_BUILD
 
@@ -161,5 +161,8 @@ NSString* valueForStringItem(NSString* item);
 //determine if path is translocated
 // thanks: http://lapcatsoftware.com/articles/detect-app-translocation.html
 BOOL isTranslocated(NSString* path);
+
+//convert es_string_token_t to string
+NSString* convertStringToken(es_string_token_t* stringToken);
 
 #endif

@@ -28,9 +28,9 @@
 @synthesize plugin;
 @synthesize process;
 @synthesize timestamp;
-@synthesize esfClient;
-@synthesize esfMessage;
-@synthesize esfSemaphore;
+@synthesize esClient;
+@synthesize esMessage;
+@synthesize esSemaphore;
 
 //init
 -(id)init:(id)object plugin:(PluginBase*)plugin
@@ -44,10 +44,7 @@
         //create timestamp
         timestamp = [NSDate date];
         
-        //set
-        esfMessage = NULL;
-        
-        //file?
+        //file obj?
         if(YES == [object isKindOfClass:File.class])
         {
             //save file
@@ -56,6 +53,7 @@
             //save process
             self.process = file.process;
         }
+        //process obj?
         else if(YES == [object isKindOfClass:Process.class])
         {
             //save process

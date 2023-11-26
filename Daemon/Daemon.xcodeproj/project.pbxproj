@@ -21,7 +21,6 @@
 		CD3913FD238268B300850CD1 /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913FB238268B300850CD1 /* Rule.m */; };
 		CD410454244406EB00069C56 /* LoginItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CD410453244406EB00069C56 /* LoginItem.m */; };
 		CD9E04AB253E845300DB3218 /* Kext.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9E04AA253E845300DB3218 /* Kext.m */; };
-		CDA88A772537CE0500C469BF /* Sentry.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD21501720AD222800CEF17B /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDAABD3E238BA077005AE212 /* Monitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD3D238BA077005AE212 /* Monitor.m */; };
 		CDAABD48238BA1D3005AE212 /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */; };
 		CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD49238BA1E1005AE212 /* libbsm.tbd */; };
@@ -32,6 +31,9 @@
 		CDC592D6243AFE9500C190D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D5243AFE9500C190D9 /* Assets.xcassets */; };
 		CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD5666C23AB547500F51B1F /* libFileMonitor.a */; };
 		CDDC60EF244BDA9D00CC81F1 /* CronJob.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDC60ED244BDA9D00CC81F1 /* CronJob.m */; };
+		CDE4C11E2B12DD5E001521CE /* BTMMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE4C11D2B12DD5E001521CE /* BTMMonitor.m */; };
+		CDE4C1212B12DD7B001521CE /* ProcessMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE4C11F2B12DD7A001521CE /* ProcessMonitor.m */; };
+		CDE4C1242B12E4FA001521CE /* Btm.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE4C1222B12E4FA001521CE /* Btm.m */; };
 		CDFE5CF423ACAD4800A7B28B /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFE5CF123ACAD4700A7B28B /* Item.m */; };
 		CDFE5CF523ACAD4800A7B28B /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFE5CF223ACAD4700A7B28B /* Event.m */; };
 /* End PBXBuildFile section */
@@ -43,7 +45,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CDA88A772537CE0500C469BF /* Sentry.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +57,6 @@
 		7D564DB71F18434F00B8AAD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = Daemon/Info.plist; sourceTree = "<group>"; };
 		7D564DC61F18441500B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
 		7D564DC71F18441500B8AAD6 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AboutWindow.xib; path = ../Daemon/AboutWindow.xib; sourceTree = "<group>"; };
-		CD21501720AD222800CEF17B /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
 		CD30BADD22174FAF00E5D96A /* BlockBlock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BlockBlock.entitlements; path = Daemon/BlockBlock.entitlements; sourceTree = "<group>"; };
 		CD3913DA2382649E00850CD1 /* XPCListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCListener.m; path = Daemon/XPCListener.m; sourceTree = "<group>"; };
 		CD3913DB2382649E00850CD1 /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Daemon/Preferences.m; sourceTree = "<group>"; };
@@ -102,6 +102,12 @@
 		CDDC60EE244BDA9D00CC81F1 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronJob.h; sourceTree = "<group>"; };
 		CDE3875427B39ACF00752C50 /* libquarantine.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libquarantine.tbd; path = usr/lib/system/libquarantine.tbd; sourceTree = SDKROOT; };
 		CDE3875627B39B6600752C50 /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = ../../../../../System/Library/Frameworks/System.framework; sourceTree = "<group>"; };
+		CDE4C11C2B12DD5E001521CE /* BTMMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTMMonitor.h; sourceTree = "<group>"; };
+		CDE4C11D2B12DD5E001521CE /* BTMMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTMMonitor.m; sourceTree = "<group>"; };
+		CDE4C11F2B12DD7A001521CE /* ProcessMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProcessMonitor.m; sourceTree = "<group>"; };
+		CDE4C1202B12DD7A001521CE /* ProcessMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessMonitor.h; sourceTree = "<group>"; };
+		CDE4C1222B12E4FA001521CE /* Btm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Btm.m; sourceTree = "<group>"; };
+		CDE4C1232B12E4FA001521CE /* Btm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Btm.h; sourceTree = "<group>"; };
 		CDFE5CF023ACAD4700A7B28B /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = Daemon/Event.h; sourceTree = "<group>"; };
 		CDFE5CF123ACAD4700A7B28B /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Item.m; path = Daemon/Item.m; sourceTree = "<group>"; };
 		CDFE5CF223ACAD4700A7B28B /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Event.m; path = Daemon/Event.m; sourceTree = "<group>"; };
@@ -134,35 +140,36 @@
 		7D564DA01F18434F00B8AAD6 = {
 			isa = PBXGroup;
 			children = (
-				CDAABD50238D01ED005AE212 /* Plugins */,
-				CDAABD4B238BB1B3005AE212 /* PluginBase.h */,
-				CDAABD4C238BB1B3005AE212 /* PluginBase.m */,
-				CD3913F52382675300850CD1 /* Rules.h */,
-				CD3913F62382675300850CD1 /* Rules.m */,
-				CD3913DD2382649E00850CD1 /* Events.h */,
-				CD3913E22382649F00850CD1 /* Events.m */,
+				CDC592D5243AFE9500C190D9 /* Assets.xcassets */,
+				CD30BADD22174FAF00E5D96A /* BlockBlock.entitlements */,
 				CDFE5CF023ACAD4700A7B28B /* Event.h */,
 				CDFE5CF223ACAD4700A7B28B /* Event.m */,
+				CD3913DD2382649E00850CD1 /* Events.h */,
+				CD3913E22382649F00850CD1 /* Events.m */,
+				CD21501920AD224A00CEF17B /* Frameworks */,
 				CDFE5CF323ACAD4700A7B28B /* Item.h */,
 				CDFE5CF123ACAD4700A7B28B /* Item.m */,
-				7D564DB01F18434F00B8AAD6 /* main.m */,
 				CD3913DC2382649E00850CD1 /* main.h */,
-				CD3913E42382649F00850CD1 /* Preferences.h */,
-				CD3913DB2382649E00850CD1 /* Preferences.m */,
+				7D564DB01F18434F00B8AAD6 /* main.m */,
 				CDAABD3C238BA077005AE212 /* Monitor.h */,
 				CDAABD3D238BA077005AE212 /* Monitor.m */,
+				CDAABD4B238BB1B3005AE212 /* PluginBase.h */,
+				CDAABD4C238BB1B3005AE212 /* PluginBase.m */,
+				CDE4C11B2B12DD5E001521CE /* Monitors */,
+				CDAABD50238D01ED005AE212 /* Plugins */,
+				CD3913E42382649F00850CD1 /* Preferences.h */,
+				CD3913DB2382649E00850CD1 /* Preferences.m */,
+				7D564DAA1F18434F00B8AAD6 /* Products */,
+				CD3913F52382675300850CD1 /* Rules.h */,
+				CD3913F62382675300850CD1 /* Rules.m */,
+				7D564DE21F18445400B8AAD6 /* Shared */,
+				7D564DAB1F18434F00B8AAD6 /* Source */,
 				CD3913DE2382649E00850CD1 /* XPCDaemon.h */,
 				CD3913DF2382649E00850CD1 /* XPCDaemon.m */,
 				CD3913E02382649E00850CD1 /* XPCListener.h */,
 				CD3913DA2382649E00850CD1 /* XPCListener.m */,
 				CD3913E52382649F00850CD1 /* XPCUserClient.h */,
 				CD3913E12382649F00850CD1 /* XPCUserClient.m */,
-				CD30BADD22174FAF00E5D96A /* BlockBlock.entitlements */,
-				CDC592D5243AFE9500C190D9 /* Assets.xcassets */,
-				7D564DE21F18445400B8AAD6 /* Shared */,
-				7D564DAB1F18434F00B8AAD6 /* Source */,
-				CD21501920AD224A00CEF17B /* Frameworks */,
-				7D564DAA1F18434F00B8AAD6 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -226,7 +233,6 @@
 				CDE3875427B39ACF00752C50 /* libquarantine.tbd */,
 				CDAABD49238BA1E1005AE212 /* libbsm.tbd */,
 				CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */,
-				CD21501720AD222800CEF17B /* Sentry.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -234,6 +240,8 @@
 		CDAABD50238D01ED005AE212 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				CDE4C1232B12E4FA001521CE /* Btm.h */,
+				CDE4C1222B12E4FA001521CE /* Btm.m */,
 				CDDC60EE244BDA9D00CC81F1 /* CronJob.h */,
 				CDDC60ED244BDA9D00CC81F1 /* CronJob.m */,
 				CD9E04A9253E845300DB3218 /* Kext.h */,
@@ -257,6 +265,18 @@
 			);
 			name = Libraries;
 			path = ../Shared/Libraries;
+			sourceTree = "<group>";
+		};
+		CDE4C11B2B12DD5E001521CE /* Monitors */ = {
+			isa = PBXGroup;
+			children = (
+				CDE4C11C2B12DD5E001521CE /* BTMMonitor.h */,
+				CDE4C11D2B12DD5E001521CE /* BTMMonitor.m */,
+				CDE4C1202B12DD7A001521CE /* ProcessMonitor.h */,
+				CDE4C11F2B12DD7A001521CE /* ProcessMonitor.m */,
+			);
+			name = Monitors;
+			path = Daemon/Monitors;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,10 +388,12 @@
 				CD3913E72382649F00850CD1 /* Preferences.m in Sources */,
 				CD3913EA2382649F00850CD1 /* Events.m in Sources */,
 				CDFE5CF523ACAD4800A7B28B /* Event.m in Sources */,
+				CDE4C1242B12E4FA001521CE /* Btm.m in Sources */,
 				CD3913E92382649F00850CD1 /* XPCUserClient.m in Sources */,
 				CD3913F42382658600850CD1 /* utilities.m in Sources */,
 				CDAABD53238D0220005AE212 /* Launchd.m in Sources */,
 				CDAABD3E238BA077005AE212 /* Monitor.m in Sources */,
+				CDE4C11E2B12DD5E001521CE /* BTMMonitor.m in Sources */,
 				CD3913E62382649F00850CD1 /* XPCListener.m in Sources */,
 				CD3913F72382675300850CD1 /* Rules.m in Sources */,
 				CD9E04AB253E845300DB3218 /* Kext.m in Sources */,
@@ -380,6 +402,7 @@
 				CD3913F32382658600850CD1 /* logging.m in Sources */,
 				CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */,
 				CD410454244406EB00069C56 /* LoginItem.m in Sources */,
+				CDE4C1212B12DD7B001521CE /* ProcessMonitor.m in Sources */,
 				CD3913FD238268B300850CD1 /* Rule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
