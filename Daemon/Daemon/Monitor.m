@@ -323,6 +323,31 @@ bail:
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"created event: %@", event]);
     
+    //matches last event?
+    // if so, ignore the event
+    if(YES == [event isRelated:self.lastEvent])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"matches last event, so ignoring");
+
+        //update
+        self.lastEvent = event;
+
+        //skip
+        goto bail;
+    }
+
+    //ignore (closely) matched alerts
+    // ...that were already shown to user
+    if(YES == [events wasShown:event])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"event %@ matches/is related to a shown alert, so ignoring", event]);
+
+        //skip
+        goto bail;
+    }
+
     //any matching rules?
     // do this here, since we need an event and plugin obj
     matchingRule = [rules find:event];
@@ -357,34 +382,9 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, @"no matching rule found...");
-        
-    //matches last event?
-    // if so, ignore the event
-    if(YES == [event isRelated:self.lastEvent])
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"matches last event, so ignoring");
-        
-        //update
-        self.lastEvent = event;
-        
-        //skip
-        goto bail;
-    }
     
     //update
     self.lastEvent = event;
-    
-    //ignore (closely) matched alerts
-    // ...that were already shown to user
-    if(YES == [events wasShown:event])
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"event %@ matches/is related to a shown alert, so ignoring", event]);
-        
-        //skip
-        goto bail;
-    }
     
     //dbg msg
     logMsg(LOG_DEBUG, @"event appears to be new!, will deliver");
