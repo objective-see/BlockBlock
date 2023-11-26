@@ -10,8 +10,6 @@
 #import "main.h"
 #import "Monitor.h"
 
-@import Sentry;
-
 /* GLOBALS */
 
 //(file)monitor
@@ -26,12 +24,6 @@ int main(int argc, const char * argv[])
     {
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launch daemon %@ started with %@", NSProcessInfo.processInfo.arguments.firstObject.lastPathComponent, NSProcessInfo.processInfo.arguments]);
-        
-        //init crash reporting
-        [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
-            options.dsn = SENTRY_DSN;
-            options.debug = YES;
-        }];
         
         //not root?
         if(0 != geteuid())

@@ -8,7 +8,6 @@
 //
 
 @import Cocoa;
-@import Sentry;
 
 #import "consts.h"
 #import "logging.h"
@@ -29,12 +28,6 @@ int main(int argc, const char * argv[])
     //dbg msg(s)
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"started: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleNameKey]]);
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"arguments: %@", [[NSProcessInfo processInfo] arguments]]);
-    
-    //init crash reporting
-    [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
-        options.dsn = SENTRY_DSN;
-        options.debug = YES;
-    }];
     
     //launch app normally
     status = NSApplicationMain(argc, argv);

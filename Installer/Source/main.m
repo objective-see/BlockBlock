@@ -8,7 +8,6 @@
 //
 
 @import Cocoa;
-@import Sentry;
 
 #import "main.h"
 #import "consts.h"
@@ -31,12 +30,6 @@ int main(int argc, char *argv[])
 {
     //status
     int status = -1;
-    
-    //init crash reporting
-    [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
-        options.dsn = SENTRY_DSN;
-        options.debug = YES;
-    }];
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"BlockBlock (in/unin)staller launched with %@", NSProcessInfo.processInfo.arguments]);

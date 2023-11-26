@@ -21,7 +21,6 @@
 		CD3913FD238268B300850CD1 /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913FB238268B300850CD1 /* Rule.m */; };
 		CD410454244406EB00069C56 /* LoginItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CD410453244406EB00069C56 /* LoginItem.m */; };
 		CD9E04AB253E845300DB3218 /* Kext.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9E04AA253E845300DB3218 /* Kext.m */; };
-		CDA88A772537CE0500C469BF /* Sentry.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD21501720AD222800CEF17B /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDAABD3E238BA077005AE212 /* Monitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAABD3D238BA077005AE212 /* Monitor.m */; };
 		CDAABD48238BA1D3005AE212 /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */; };
 		CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAABD49238BA1E1005AE212 /* libbsm.tbd */; };
@@ -43,7 +42,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CDA88A772537CE0500C469BF /* Sentry.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +54,6 @@
 		7D564DB71F18434F00B8AAD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = Daemon/Info.plist; sourceTree = "<group>"; };
 		7D564DC61F18441500B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
 		7D564DC71F18441500B8AAD6 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AboutWindow.xib; path = ../Daemon/AboutWindow.xib; sourceTree = "<group>"; };
-		CD21501720AD222800CEF17B /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
 		CD30BADD22174FAF00E5D96A /* BlockBlock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BlockBlock.entitlements; path = Daemon/BlockBlock.entitlements; sourceTree = "<group>"; };
 		CD3913DA2382649E00850CD1 /* XPCListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCListener.m; path = Daemon/XPCListener.m; sourceTree = "<group>"; };
 		CD3913DB2382649E00850CD1 /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Daemon/Preferences.m; sourceTree = "<group>"; };
@@ -226,7 +223,6 @@
 				CDE3875427B39ACF00752C50 /* libquarantine.tbd */,
 				CDAABD49238BA1E1005AE212 /* libbsm.tbd */,
 				CDAABD47238BA1D3005AE212 /* libEndpointSecurity.tbd */,
-				CD21501720AD222800CEF17B /* Sentry.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
