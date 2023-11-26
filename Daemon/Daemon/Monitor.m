@@ -265,6 +265,17 @@ bail:
         //bail
         goto bail;
     }
+    
+    //passive mode
+    // ...can allow all the things
+    if(YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue])
+    {
+        //dbg/log msg
+        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"client in passive mode, so allowing %@", file.destinationPath]);
+    
+        //done!
+        goto bail;
+    }
 
     //plugin provided?
     if(nil != plugin)
@@ -346,17 +357,6 @@ bail:
     
     //dbg msg
     logMsg(LOG_DEBUG, @"no matching rule found...");
-    
-    //passive mode?
-    // no rule, just allow (but log)
-    if(YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue])
-    {
-        //dbg/log msg
-        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"client in passive mode, so allowing %@", event]);
-    
-        //done!
-        goto bail;
-    }
         
     //matches last event?
     // if so, ignore the event
