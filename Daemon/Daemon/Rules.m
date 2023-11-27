@@ -221,8 +221,8 @@ bail:
         //check all (process's) rules
         // same startup item and same path
         // note: * is a wildcard, meaning any match
-        for(Rule* rule in self.rules[key][KEY_RULES])
-        {
+        NSArray<Rule *> *rules = self.rules[key][KEY_RULES];
+        NSUInteger idx = [rules indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^BOOL(Rule * _Nonnull rule, NSUInteger idx, BOOL * _Nonnull stop) {
             //rule has signing id?
             //  make sure if was valid, still is
             if(0 != rule.processSigningID.length)
@@ -233,38 +233,38 @@ bail:
                 {
                     //err msg
                     logMsg(LOG_ERR, [NSString stringWithFormat:@"%@ is not longer validly signed (csflags: %#lx -> %#lx", key, (unsigned long)rule.processCSFlags.unsignedIntegerValue, event.file.process.csFlags.unsignedIntegerValue]);
-                    
+
                     //bail here
-                    goto bail;
+                    *stop = YES;
+                    return NO;
                 }
             }
-            
+
             //path mismatch?
             if( (YES != [rule.itemFile isEqualToString:@"*"]) &&
                 (YES != [rule.itemFile isEqualToString:event.file.destinationPath]) )
             {
                 //next
-                continue;
+                return NO;
             }
-            
+
             //item mismatch
             if( (YES != [rule.itemObject isEqualToString:@"*"]) &&
                 (YES != [rule.itemObject isEqualToString:event.item.object]) )
             {
                 //next
-                continue;
+                return NO;
             }
-            
-            //got a match!
-            matchingRule = rule;
-            
-            //done
-            break;
+
+            return YES;
+        }];
+
+        if (idx != NSNotFound) {
+            matchingRule = rules[idx];
         }
     }
-        
-bail:
     
+bail:
     return matchingRule;
 }
 

@@ -76,27 +76,25 @@
     path = file.destinationPath;
     
     //match?
-    [self.regexes enumerateObjectsUsingBlock:^(NSRegularExpression* regex, NSUInteger index, BOOL * _Nonnull stop) {
-        
+    [self.regexes enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(NSRegularExpression* _Nonnull regex, NSUInteger idx, BOOL * _Nonnull stop) {
         //match
         NSTextCheckingResult* match = nil;
-        
+
         //is match?
         match = [regex firstMatchInString:path options:0 range:NSMakeRange(0, path.length)];
         if( (nil == match) ||
-            (NSNotFound == match.range.location) )
+           (NSNotFound == match.range.location) )
         {
             //no match
             // keep checking
             return;
         }
-        
+
         //got match
         matched = YES;
-            
+
         //done
         *stop = YES;
-        
     }];
     
     return matched;
