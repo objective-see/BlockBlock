@@ -119,7 +119,7 @@
 }
 
 //give plugin the option to (more) closely examine event
--(BOOL)shouldIgnore:(id)object
+-(BOOL)shouldIgnore:(id)object message:(es_message_t*)message
 {
     return NO;
 }

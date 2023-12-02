@@ -53,18 +53,14 @@ extern XPCUserClient* xpcUserClient;
     switch(event.esMessage->event.btm_launch_item_add->item->item_type)
     {
         //user item
-        case ES_BTM_ITEM_TYPE_USER_ITEM:
-            alert = @"installed a user item";
-            break;
+        //case ES_BTM_ITEM_TYPE_USER_ITEM:
+        //    alert = @"installed a user item";
+        //    break;
         
-        //app
+        //app / login item
         case ES_BTM_ITEM_TYPE_APP:
-            alert = @"installed an app";
-            break;
-            
-        //login item
         case ES_BTM_ITEM_TYPE_LOGIN_ITEM:
-            alert = @"installed a login item";
+            alert = @"installed login item";
             break;
             
         //launch agent
@@ -94,8 +90,63 @@ extern XPCUserClient* xpcUserClient;
 //get the binary (path) of the item
 -(NSString*)itemObject:(Event*)event
 {
-    //path is in es message's 'executable_path'
-    return convertStringToken(&event.esMessage->event.btm_launch_item_add->executable_path);
+    //object
+    NSString* itemObject = NULL;
+    
+    //string token
+    NSString* stringToken = NULL;
+    
+    //for launch items
+    // ...item found in 'executable_path'
+    if( (ES_BTM_ITEM_TYPE_AGENT == event.esMessage->event.btm_launch_item_add->item->item_type) ||
+        (ES_BTM_ITEM_TYPE_DAEMON == event.esMessage->event.btm_launch_item_add->item->item_type) )
+    {
+        //extract/convert
+        itemObject = convertStringToken(&event.esMessage->event.btm_launch_item_add->executable_path);
+    }
+    
+    //for login items
+    // ...item found in 'item_url'
+    else
+    {
+        //extract convert
+        // but its a URL, so just want it's path
+        stringToken = convertStringToken(&event.esMessage->event.btm_launch_item_add->item->item_url);
+        if(nil != stringToken)
+        {
+            //extract path
+            itemObject = [[NSURL URLWithString:stringToken] path];
+        }
+    }
+    
+    return itemObject;
+}
+
+//should ignore?
+// for now, only ES_BTM_ITEM_TYPE_USER_ITEM events
+-(BOOL)shouldIgnore:(File*)file message:(es_message_t *)message
+{
+    //flag
+    BOOL shouldIgnore = NO;
+    
+    //sanity check
+    if(NULL == message)
+    {
+        //bail
+        goto bail;
+    }
+    
+    //for now
+    // don't support 'ES_BTM_ITEM_TYPE_USER_ITEM'
+    if(ES_BTM_ITEM_TYPE_USER_ITEM == message->event.btm_launch_item_add->item->item_type)
+    {
+        //should ignore
+        shouldIgnore = YES;
+    }
+    
+bail:
+
+    return shouldIgnore;
 }
 
 //block btm item
@@ -109,6 +160,7 @@ extern XPCUserClient* xpcUserClient;
     switch(event.esMessage->event.btm_launch_item_add->item->item_type)
     {
         //login item
+        case ES_BTM_ITEM_TYPE_APP:
         case ES_BTM_ITEM_TYPE_LOGIN_ITEM:
         {
             //login item obj

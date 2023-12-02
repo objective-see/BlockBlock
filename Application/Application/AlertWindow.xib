@@ -20,6 +20,7 @@
                 <outlet property="ancestryViewController" destination="7sP-aX-0Jo" id="Ivg-e4-CP3"/>
                 <outlet property="blockButton" destination="Aix-a5-CPT" id="0go-Zi-bFc"/>
                 <outlet property="processArgs" destination="ndx-hj-9e4" id="LMk-Ad-2I4"/>
+                <outlet property="processArgsLabel" destination="0KC-Qa-4MU" id="IDf-lD-JgL"/>
                 <outlet property="processIcon" destination="fJv-Iu-3gy" id="U3A-rd-am9"/>
                 <outlet property="processName" destination="i1i-s4-Q02" id="Zx9-rv-EJb"/>
                 <outlet property="processPath" destination="TtQ-IX-cXS" id="whq-2c-no7"/>
@@ -274,7 +275,7 @@
                         <rect key="frame" x="509" y="8" width="216" height="18"/>
                         <buttonCell key="cell" type="check" title="temporarily (pid: 12345)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="BdA-oU-RlF">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" size="12" name="Menlo-Regular"/>
+                            <font key="font" size="11" name="Menlo-Regular"/>
                         </buttonCell>
                         <constraints>
                             <constraint firstAttribute="width" constant="214" id="BYE-f6-85S"/>

@@ -311,16 +311,17 @@
 //key for exit code
 #define EXIT_CODE @"exitCode"
 
-//TODO: make enum?
 //plugin types
-#define PLUGIN_TYPE_KEXT 1
-#define PLUGIN_TYPE_LAUNCHD 2
-#define PLUGIN_TYPE_LOGIN_ITEM 3
-#define PLUGIN_TYPE_CRON_JOB 4
-#define PLUGIN_TYPE_APP_LOGIN_ITEM 5
-#define PLUGIN_TYPE_EVENT_MONITOR 6
-#define PLUGIN_TYPE_PROCESS_MONITOR 7
-#define PLUGIN_TYPE_BACKGROUND_TASK 8
+typedef enum {
+    PLUGIN_TYPE_KEXT = 1,
+    PLUGIN_TYPE_LAUNCHD,
+    PLUGIN_TYPE_LOGIN_ITEM,
+    PLUGIN_TYPE_CRON_JOB,
+    PLUGIN_TYPE_APP_LOGIN_ITEM,
+    PLUGIN_TYPE_EVENT_MONITOR,
+    PLUGIN_TYPE_PROCESS_MONITOR,
+    PLUGIN_TYPE_BACKGROUND_TASK
+} PluginType;
 
 //path to kextunload
 #define KEXT_UNLOAD @"/sbin/kextunload"

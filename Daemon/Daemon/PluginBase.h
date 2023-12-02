@@ -56,7 +56,7 @@
 
 //process an event
 // extra processing to decide if an alert should be shown
--(BOOL)shouldIgnore:(id)object;
+-(BOOL)shouldIgnore:(id)object message:(es_message_t*)message;
 
 //block an event
 // delete binary, files (plist), etc

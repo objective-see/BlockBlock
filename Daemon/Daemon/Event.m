@@ -124,7 +124,11 @@
 
     //add startup object
     // this is either a binary, or a cmd
-    alert[ALERT_ITEM_OBJECT] = valueForStringItem(self.item.object);
+    if(nil != self.item.object)
+    {
+        //add
+        alert[ALERT_ITEM_OBJECT] = valueForStringItem(self.item.object);
+    }
     
     //add timestamp
     alert[ALERT_TIMESTAMP] = (nil != self.file.timestamp.description) ? self.file.timestamp.description : self.timestamp.description;

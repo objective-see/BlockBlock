@@ -42,6 +42,9 @@ extern Monitor* monitor;
         //file obj
         File* file = nil;
         
+        //string token
+        NSString* stringToken = nil;
+        
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new 'btm' event: %#x", message->event_type]);
         
@@ -64,11 +67,23 @@ extern Monitor* monitor;
             return;
         }
         
-        //TODO: test for both launch and login items
-        
-        //set source path
-        // this is the plist for the launch item
-        file.destinationPath = convertStringToken(&message->event.btm_launch_item_add->item->item_url);
+        //set plist for launch items (agents/daemons)
+        if( (ES_BTM_ITEM_TYPE_AGENT == message->event.btm_launch_item_add->item->item_type) ||
+            (ES_BTM_ITEM_TYPE_DAEMON == message->event.btm_launch_item_add->item->item_type) )
+        {
+            //set source path
+            // this is the plist for the launch item
+            stringToken = convertStringToken(&message->event.btm_launch_item_add->item->item_url);
+            if(nil != stringToken)
+            {
+                file.destinationPath = [[NSURL URLWithString:stringToken] path];
+            }
+        }
+        //login items don't (really) have a startup file that's modified
+        else
+        {
+            file.destinationPath = @"n/a";
+        }
         
         //process event
         // passing in (btm) plugin

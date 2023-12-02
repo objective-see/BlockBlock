@@ -58,7 +58,7 @@ extern Preferences* preferences;
         dispatch_semaphore_t deadlineSema = 0;
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"new ES_EVENT_TYPE_AUTH_EXEC event");
+        //logMsg(LOG_DEBUG, @"new ES_EVENT_TYPE_AUTH_EXEC event");
         
         //check prefs
         // allow if passive mode, or not in notarization mode
@@ -66,7 +66,7 @@ extern Preferences* preferences;
             (YES != [preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) )
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing process, due to preferences (%@)", preferences.preferences]);
+            //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing process, due to preferences (%@)", preferences.preferences]);
             
             //allow
             if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
@@ -82,7 +82,7 @@ extern Preferences* preferences;
         //init process obj
         process = [[Process alloc] init:(es_message_t* _Nonnull)message csOption:csDynamic];
         if( (nil == process) ||
-            (YES == [plugin shouldIgnore:process]) )
+            (YES == [plugin shouldIgnore:process message:(es_message_t *)message]) )
         {
             //dbg msg
             logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing %@", process]);
@@ -237,16 +237,15 @@ bail:
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_respond_auth_result' failed with %x", result]);
-    }
-    //ok!
-    else
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"allowed process via 'es_respond_auth_result/ES_AUTH_RESULT_ALLOW'");
+        
+        //bail
+        goto bail;
     }
     
     //happy
     allowed = YES;
+    
+bail:
     
     return allowed;
 }

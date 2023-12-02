@@ -68,7 +68,7 @@
 
 //check cron jobs
 // was a new one added?
--(BOOL)shouldIgnore:(File*)file
+-(BOOL)shouldIgnore:(File*)file message:(es_message_t *)message
 {
     //flag
     // default to ignore

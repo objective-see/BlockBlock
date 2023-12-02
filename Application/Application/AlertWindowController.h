@@ -65,6 +65,9 @@
 //process summary (name/pid)
 @property (weak) IBOutlet NSTextField *processSummary;
 
+//process args label
+@property (weak) IBOutlet NSTextField *processArgsLabel;
+
 //process args
 @property (weak) IBOutlet NSTextField *processArgs;
 

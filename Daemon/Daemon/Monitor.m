@@ -301,7 +301,7 @@ bail:
     
     //allow the plugin to closely examine the event
     // it will know more about the details so can determine if it should be ignored
-    if(YES == [matchingPlugin shouldIgnore:file])
+    if(YES == [matchingPlugin shouldIgnore:file message:message])
     {
         //ignore
         goto bail;
@@ -383,7 +383,7 @@ bail:
     //dbg msg
     logMsg(LOG_DEBUG, @"no matching rule found...");
     
-    //update
+    //update last event
     self.lastEvent = event;
     
     //dbg msg

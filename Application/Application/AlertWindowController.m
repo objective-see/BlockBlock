@@ -106,24 +106,21 @@ extern XPCDaemonClient* xpcDaemonClient;
     // name and pid
     self.processSummary.stringValue = [NSString stringWithFormat:@"%@ (pid: %@)", self.alert[ALERT_PROCESS_NAME], self.alert[ALERT_PROCESS_ID]];
     
-    //process args
-    // none? means error
-    if(0 == [self.alert[ALERT_PROCESS_ARGS] count])
+    //no args?
+    // hide process args label
+    if([self.alert[ALERT_PROCESS_ARGS] count] < 2)
     {
-        //unknown
-        self.processArgs.stringValue = @"unknown";
+        //hide
+        self.processArgsLabel.hidden = YES;
     }
+       
     //process args
-    // only one? means, argv[0] and none
-    else if(1 == [self.alert[ALERT_PROCESS_ARGS] count])
-    {
-        //none
-        self.processArgs.stringValue = @"none";
-    }
-    //process args
-    // more than one? create string of all
+    // create string of all
     else
     {
+        //show
+        self.processArgsLabel.hidden = NO;
+        
         //add each arg
         // note: skip first, since the process name
         [self.alert[ALERT_PROCESS_ARGS] enumerateObjectsUsingBlock:^(NSString* argument, NSUInteger index, BOOL* stop) {
@@ -150,9 +147,24 @@ extern XPCDaemonClient* xpcDaemonClient;
         //start up item/file path
         self.startupFile.stringValue = self.alert[ALERT_ITEM_FILE];
         
-        //start item object
-        // binary, cmd, etc...
-        self.startupObject.stringValue = self.alert[ALERT_ITEM_OBJECT];
+        //no startup object?
+        // e.g. login item that's an app
+        if(nil == self.alert[ALERT_ITEM_OBJECT])
+        {
+            //hide
+            self.startupObjectLabel.hidden = YES;
+        }
+        
+        //show start up object
+        else
+        {
+            //show
+            self.startupObjectLabel.hidden = NO;
+            
+            //start item object
+            // binary, cmd, etc...
+            self.startupObject.stringValue = self.alert[ALERT_ITEM_OBJECT];
+        }
         
         //restricted file?
         // configure buttons
@@ -241,7 +253,7 @@ extern XPCDaemonClient* xpcDaemonClient;
     titleAttributes[NSForegroundColorAttributeName] = [NSColor labelColor];
     
     //set font
-    titleAttributes[NSFontAttributeName] = [NSFont fontWithName:@"Menlo-Regular" size:13];
+    titleAttributes[NSFontAttributeName] = [NSFont fontWithName:@"Menlo-Regular" size:12];
     
     //temp rule button label
     self.tempRule.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" temporarily (pid: %@)", [self.alert[ALERT_PROCESS_ID] stringValue]] attributes:titleAttributes];

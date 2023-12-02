@@ -45,7 +45,7 @@
 
 //ignore StagedExtensions
 // ...should pick up the initial event in /Extensions
--(BOOL)shouldIgnore:(File*)file
+-(BOOL)shouldIgnore:(File*)file message:(es_message_t *)message
 {
     return [file.destinationPath containsString:@"/StagedExtensions/"];
 }

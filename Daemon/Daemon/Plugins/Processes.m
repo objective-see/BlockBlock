@@ -41,7 +41,7 @@
 
 //should process be ignored?
 // for now, yes, unless it's non-notarized translocated/quarantined (and not user approved)
--(BOOL)shouldIgnore:(Process*)process
+-(BOOL)shouldIgnore:(Process*)process message:(es_message_t *)message
 {
     //flag
     BOOL ignore = YES;

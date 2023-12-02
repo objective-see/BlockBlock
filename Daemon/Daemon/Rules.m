@@ -322,7 +322,7 @@ bail:
         if(-1 != ruleIndex)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found rule at %lu", (unsigned long)ruleIndex]);
+            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found rule at index: %lu", (unsigned long)ruleIndex]);
             
             //remove
             [self.rules[key][KEY_RULES] removeObjectAtIndex:ruleIndex];

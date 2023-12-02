@@ -50,7 +50,7 @@ extern XPCUserClient* xpcUserClient;
         snapshot = [NSMutableDictionary dictionary];
         
         //init all snapshots
-        // for all (existing) crob job files
+        // for all (existing) login items
         for(NSString* user in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/Users" error:nil])
         {
             //init (user) path
@@ -73,7 +73,7 @@ extern XPCUserClient* xpcUserClient;
 -(NSString*)itemName:(Event*)event
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
     
     return [self findLoginItem:event.file][LOGIN_ITEM_NAME];
 }
@@ -82,21 +82,21 @@ extern XPCUserClient* xpcUserClient;
 -(NSString*)itemObject:(Event*)event
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
     
     return [self findLoginItem:event.file][LOGIN_ITEM_PATH];
 }
 
 //check login items file
 // was a new item added?
--(BOOL)shouldIgnore:(File*)file
+-(BOOL)shouldIgnore:(File*)file message:(es_message_t *)message
 {
     //flag
     // default to ignore
     BOOL shouldIgnore = YES;
  
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
     
     //only care about new login items
     // might be another file edits which are ok to ignore...
@@ -339,8 +339,13 @@ bail:
         
     }];
     
-    //(always) update snapshot
-    [self snapshot:event.file.destinationPath];
+    //update snapshot?
+    // but not for es events
+    if(nil == event.esMessage)
+    {
+        //update
+        [self snapshot:event.file.destinationPath];
+    }
     
     return wasBlocked;
 }
