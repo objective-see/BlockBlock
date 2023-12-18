@@ -56,15 +56,24 @@ extern NSMutableDictionary* alerts;
         //show alert window
         [alertWindow showWindow:self];
             
-        //'request' user attenion
-        // bounces icon on the dock
-        [NSApp requestUserAttention:NSInformationalRequest];
-        
         //make alert window key
         [alertWindow.window makeKeyAndOrderFront:self];
         
         //set app's background/foreground state
         [((AppDelegate*)[[NSApplication sharedApplication] delegate]) setActivationPolicy];
+        
+        //request user attention
+        // bounces icon on the dock
+        [NSApp requestUserAttention:NSCriticalRequest];
+        
+        //delay, then make the alert window front
+        // note: this will stop the dock bouncing...
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            //make window front
+            [NSApp activateIgnoringOtherApps:YES];
+            
+        });
         
     });
     

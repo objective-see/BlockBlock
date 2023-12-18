@@ -77,6 +77,7 @@
     
     //match?
     [self.regexes enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(NSRegularExpression* _Nonnull regex, NSUInteger idx, BOOL * _Nonnull stop) {
+        
         //match
         NSTextCheckingResult* match = nil;
 

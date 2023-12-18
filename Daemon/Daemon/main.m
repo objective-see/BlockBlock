@@ -167,7 +167,7 @@ bail:
 // returns -1/0, as main() will return this too...
 int fdaCheck(void)
 {
-    //isse in ESF pre 10.15.4(?0
+    //issue in ESF pre 10.15.4
     NSOperatingSystemVersion minimumSupportedOSVersion = { .majorVersion = 10, .minorVersion = 15, .patchVersion = 4 };
     
     //status

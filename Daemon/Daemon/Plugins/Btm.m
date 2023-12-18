@@ -151,7 +151,7 @@ bail:
 
 //block btm item
 // basically just call into launch or login item to block
--(BOOL)block:(Event*)event;
+-(BOOL)block:(Event*)event
 {
     //flag
     __block BOOL wasBlocked = NO;

@@ -70,6 +70,29 @@ XPCDaemonClient* xpcDaemonClient;
     //get preferences
     // sends XPC message to daemon
     preferences = [xpcDaemonClient getPreferences];
+    if(0 == preferences.count)
+    {
+        //init alert
+        alert = [[NSAlert alloc] init];
+        
+        //set style
+        alert.alertStyle = NSAlertStyleInformational;
+        
+        //set main text
+        alert.messageText = @"Could Not Connect To The BlockBlock Deamon";
+        
+        //set informative test
+        alert.informativeText = @"Please ensure that the BlockBlock daemon is currently running.";
+        
+        //add button
+        [alert addButtonWithTitle:@"OK"];
+        
+        //show modal
+        [alert runModal];
+        
+        //bail
+        goto bail;
+    }
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded preferences: %@", preferences]);
