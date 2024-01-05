@@ -98,7 +98,7 @@
     alert[ALERT_PROCESS_NAME] = valueForStringItem(self.process.name);
     
     //add alert msg
-    alert[ALERT_MESSAGE] = [plugin alertMessage:self];
+    alert[ALERT_MESSAGE] = [self.plugin alertMessage:self];
     
     //add pid
     alert[ALERT_PROCESS_ID] = [NSNumber numberWithUnsignedInt:self.process.pid];

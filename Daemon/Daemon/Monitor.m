@@ -78,6 +78,12 @@ extern Preferences* preferences;
     //flag
     BOOL started = NO;
     
+    //btm plugin
+    PluginBase* btmPlugin = nil;
+    
+    //process plugin
+    PluginBase* processPlugin = nil;
+
     //events of interest for file monitor
     // also pass in process exec/exit to capture args
     es_event_type_t events[] = {ES_EVENT_TYPE_NOTIFY_CREATE, ES_EVENT_TYPE_NOTIFY_WRITE, ES_EVENT_TYPE_NOTIFY_RENAME, ES_EVENT_TYPE_NOTIFY_EXEC, ES_EVENT_TYPE_NOTIFY_EXIT};
@@ -123,11 +129,22 @@ extern Preferences* preferences;
         goto bail;
     }
     
+    //find process plugin
+    processPlugin = [self findPluginByName:@"Processes"];
+    if(nil == processPlugin)
+    {
+        //err msg
+        logMsg(LOG_ERR, @"failed to find process plugin");
+        
+        //bail
+        goto bail;
+    }
+    
     //alloc
     self.processMonitor = [[ProcessMonitor alloc] init];
     
     //start process monitor
-    if(YES != [self.processMonitor start: [self findPluginByName:@"Process"]])
+    if(YES != [self.processMonitor start:processPlugin])
     {
         //err msg
         logMsg(LOG_ERR, @"failed to start process monitor");
@@ -140,11 +157,22 @@ extern Preferences* preferences;
     // can use BTM events
     if(@available(macOS 14, *))
     {
+        btmPlugin = [self findPluginByName:@"Btm"];
+        if(nil == btmPlugin)
+        {
+            //err msg
+            logMsg(LOG_ERR, @"failed to find btm plugin");
+            
+            //bail
+            goto bail;
+        }
+        
+        
         //alloc
         self.btmMonitor = [[BTMMonitor alloc] init];
-        
+
         //start
-        if(YES != [self.btmMonitor start:[self findPluginByName:@"Btm"]])
+        if(YES != [self.btmMonitor start:btmPlugin])
         {
             //err msg
             logMsg(LOG_ERR, @"failed to start btm monitor");

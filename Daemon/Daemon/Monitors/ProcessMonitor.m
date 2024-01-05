@@ -40,7 +40,7 @@ extern Preferences* preferences;
     
     //dbg msg
     logMsg(LOG_DEBUG, @"starting process monitor...");
-    
+        
     //create client
     // and handle process (auth exec) events
     result = es_new_client(&_endpointClient, ^(es_client_t *client, const es_message_t *message)

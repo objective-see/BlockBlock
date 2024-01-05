@@ -19,7 +19,6 @@
 //user client
 extern XPCUserClient* xpcUserClient;
 
-
 @implementation Btm
 
 //init
@@ -52,10 +51,10 @@ extern XPCUserClient* xpcUserClient;
     //init alert based on btm type
     switch(event.esMessage->event.btm_launch_item_add->item->item_type)
     {
-        //user item
+        //user item (is ingored for now)
         //case ES_BTM_ITEM_TYPE_USER_ITEM:
-        //    alert = @"installed a user item";
-        //    break;
+            //alert = @"installed a user item";
+            //break;
         
         //app / login item
         case ES_BTM_ITEM_TYPE_APP:
@@ -73,8 +72,9 @@ extern XPCUserClient* xpcUserClient;
             alert = @"installed a launch daemon";
             break;
             
+        //default
         default:
-            ;
+            alert = [NSString stringWithFormat:@"installed an background item of unknown type (%d)", event.esMessage->event.btm_launch_item_add->item->item_type];
     }
 
     return alert;
