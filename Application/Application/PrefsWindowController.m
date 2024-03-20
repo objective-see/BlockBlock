@@ -9,13 +9,15 @@
 
 #import "consts.h"
 #import "Update.h"
-#import "logging.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 #import "PrefsWindowController.h"
 #import "UpdateWindowController.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //xpc daemon
 extern XPCDaemonClient* xpcDaemonClient;
@@ -246,7 +248,7 @@ bail:
         case 0:
             
             //dbg msg
-            logMsg(LOG_DEBUG, @"no updates available");
+            os_log_debug(logHandle, "no updates available");
             
             //set label
             self.updateLabel.stringValue = [NSString stringWithFormat:@"Installed version (%@),\r\nis the latest.", getAppVersion()];
@@ -258,7 +260,7 @@ bail:
         case 1:
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"a new version (%@) is available", newVersion]);
+            os_log_debug(logHandle, "a new version (%{public}@) is available", newVersion);
             
             //alloc update window
             updateWindowController = [[UpdateWindowController alloc] initWithWindowNibName:@"UpdateWindow"];

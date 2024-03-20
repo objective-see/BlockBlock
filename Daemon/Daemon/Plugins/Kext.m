@@ -10,11 +10,15 @@
 #import "Item.h"
 #import "Event.h"
 #import "Consts.h"
-#import "Logging.h"
 #import "Utilities.h"
 
 #import <libkern/OSReturn.h>
 #import <IOKit/kext/KextManager.h>
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 // REGEX
 // ^(\/System|)\/Library\/.+\.(?i)kext$
@@ -34,7 +38,7 @@
     if(nil != self)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
+        os_log_debug(logHandle, "init'ing %{public}@ (%p)", NSStringFromClass([self class]), self);
         
         //set type
         self.type = PLUGIN_TYPE_KEXT;
@@ -67,7 +71,7 @@
         (nil == bundle.infoDictionary) )
     {
         //dbg err msg
-        logMsg(LOG_DEBUG, @"failed to find bundle/info dictionary for kext");
+        os_log_debug(logHandle, "failed to find bundle/info dictionary for kext");
         
         //bail
         goto bail;
@@ -97,7 +101,7 @@ bail:
         (nil == bundle.infoDictionary) )
     {
         //dbg err msg
-        logMsg(LOG_DEBUG, @"failed to find bundle/info dictionary for kext");
+        os_log_debug(logHandle, "failed to find bundle/info dictionary for kext");
         
         //bail
         goto bail;
@@ -131,7 +135,7 @@ bail:
     NSString* bundleID = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"PLUGIN %@: blocking %@", NSStringFromClass([self class]), event.file.destinationPath]);
+    os_log_debug(logHandle, "PLUGIN %{public}@: blocking %{public}@", NSStringFromClass([self class]), event.file.destinationPath);
     
     //load bundle
     // need bundle (kext) ID
@@ -147,14 +151,14 @@ bail:
     if(nil != bundleID)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"got kext ID: %@", bundleID]);
+        os_log_debug(logHandle, "got kext ID: %{public}@", bundleID);
            
         //unload
         status = KextManagerUnloadKextWithIdentifier((__bridge CFStringRef)(bundleID));
         if(noErr != status)
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to unload kext (%#x)", status]);
+            os_log_error(logHandle, "ERROR: failed to unload kext (%#x)", status);
             
             //set flag
             blockingFailed = YES;
@@ -166,7 +170,7 @@ bail:
         else
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"successfully unloaded kext");
+            os_log_debug(logHandle, "successfully unloaded kext");
         }
         #endif
     }
@@ -176,7 +180,7 @@ bail:
     else
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to resolve bundle ID for %@", event.file.destinationPath]);
+        os_log_error(logHandle, "ERROR: failed to resolve bundle ID for %{public}@", event.file.destinationPath);
         
         //set flag
         blockingFailed = YES;
@@ -186,7 +190,7 @@ bail:
     if(YES != [[NSFileManager defaultManager] removeItemAtPath:event.file.destinationPath error:&error])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to delete %@ (%@)", event.file.destinationPath, error]);
+        os_log_error(logHandle, "ERROR: failed to delete %{public}@ (%{public}@)", event.file.destinationPath, error);
         
         //set flag
         blockingFailed = YES;
@@ -198,12 +202,12 @@ bail:
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"successfully removed kext's bundle");
+        os_log_debug(logHandle, "successfully removed kext's bundle");
     }
     #endif
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"kext was blocked, (fully? %d)", !blockingFailed]);
+    os_log_debug(logHandle, "kext was blocked, (fully? %d)", !blockingFailed);
     
     return blockingFailed;
 }

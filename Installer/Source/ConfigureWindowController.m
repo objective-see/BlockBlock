@@ -8,11 +8,15 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "Configure.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 #import "ConfigureWindowController.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation ConfigureWindowController
 
@@ -157,7 +161,7 @@
     action = ((NSButton*)sender).tag;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"handling action click: %@ (tag: %ld)", ((NSButton*)sender).title, (long)action]);
+    os_log_debug(logHandle, "handling action click: %{public}@ (tag: %ld)", ((NSButton*)sender).title, (long)action);
     
     //process button
     switch(action)
@@ -192,7 +196,7 @@
         case ACTION_SHOW_FDA:
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"showing 'FDA' view");
+            os_log_debug(logHandle, "showing 'FDA' view");
             
             //remove title
             self.window.title = @"";
@@ -205,7 +209,7 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
             ^{
                 //dbg msg
-                logMsg(LOG_DEBUG, @"waiting for 'FDA' to be granted to daemon...");
+                os_log_debug(logHandle, "waiting for 'FDA' to be granted to daemon...");
                 
                 //still need FDA?
                 while(YES == [self.configureObj shouldRequestFDA])
@@ -215,7 +219,7 @@
                 }
                 
                 //dbg msg
-                logMsg(LOG_DEBUG, @"daemon was granted 'FDA'!");
+                os_log_debug(logHandle, "daemon was granted 'FDA'!");
                 
                 //update UI
                 dispatch_sync(dispatch_get_main_queue(),
@@ -240,7 +244,7 @@
         case ACTION_SHOW_SUPPORT:
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"showing 'support' view");
+            os_log_debug(logHandle, "showing 'support' view");
             
             //show view
             [self showView:self.supportView firstResponder:self.supportButton];
@@ -269,7 +273,7 @@
             if(YES == self.supportView.window.isVisible)
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"now launching: %@", APP_NAME]);
+                os_log_debug(logHandle, "now launching: %{public}@", APP_NAME);
                 
                 //launch helper app
                 execTask(OPEN, @[[@"/Applications" stringByAppendingPathComponent:APP_NAME], @"--args", INITIAL_LAUNCH], NO, NO);
@@ -434,7 +438,7 @@
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"System Preference has finished launching...");
+        os_log_debug(logHandle, "System Preference has finished launching...");
         
         //give it an extra second
         [NSThread sleepForTimeInterval:1.00];
@@ -667,7 +671,7 @@
         if(YES == [self.configureObj shouldRequestFDA])
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"need to request FDA...");
+            os_log_debug(logHandle, "need to request FDA...");
             
             //set tag
             self.installButton.tag = ACTION_SHOW_FDA;
@@ -677,7 +681,7 @@
         else
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"got/have FDA already!");
+            os_log_debug(logHandle, "got/have FDA already!");
             
             //set tag
             self.installButton.tag = ACTION_SHOW_SUPPORT;
@@ -721,13 +725,13 @@
     BOOL cleanedUp = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"cleaning up...");
+    os_log_debug(logHandle, "cleaning up...");
     
     //remove helper
     if(YES != [self.configureObj removeHelper])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to remove config helper");
+        os_log_error(logHandle, "ERROR: failed to remove config helper");
         
         //bail
         goto bail;

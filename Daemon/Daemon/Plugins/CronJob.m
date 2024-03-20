@@ -10,9 +10,13 @@
 #import "Event.h"
 #import "Consts.h"
 #import "CronJob.h"
-#import "Logging.h"
 #import "Utilities.h"
 #import "XPCUserClient.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation CronJob
 
@@ -28,7 +32,7 @@
     if(nil != self)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
+        os_log_debug(logHandle, "init'ing %{public}@ (%p)", NSStringFromClass([self class]), self);
         
         //set type
         self.type = PLUGIN_TYPE_CRON_JOB;
@@ -75,14 +79,14 @@
     BOOL shouldIgnore = YES;
  
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //only care about new jobs
     // might be other file edits which are ok to ignore...
     if(nil != [self findNewJob:file.destinationPath])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"found new cron job, so NOT IGNORING");
+        os_log_debug(logHandle, "found new cron job, so NOT IGNORING");
     
         //don't ignore
         shouldIgnore = NO;
@@ -104,7 +108,7 @@
 -(NSString*)itemName:(Event*)event
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     return self.description;
 }
@@ -114,7 +118,7 @@
 -(NSString*)itemObject:(Event*)event
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //return latest job
     return [self findNewJob:event.file.destinationPath];
@@ -125,7 +129,7 @@
 -(void)allow:(Event *)event
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked with %@", __PRETTY_FUNCTION__, event]);
+    os_log_debug(logHandle, "'%s' invoked with %{public}@", __PRETTY_FUNCTION__, event);
     
     //just update snapshop
     [self snapshot:event.file.destinationPath];
@@ -147,7 +151,7 @@
     NSUInteger index = NSNotFound;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked with %@", __PRETTY_FUNCTION__, event]);
+    os_log_debug(logHandle, "'%s' invoked with %{public}@", __PRETTY_FUNCTION__, event);
     
     //get cron jobs
     jobs = [self loadJobs:event.file.destinationPath comments:YES];
@@ -158,29 +162,29 @@
     if(NSNotFound == index)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"could not find %@ in %@", event.item.object, event.file.destinationPath]);
+        os_log_error(logHandle, "ERROR: could not find %{public}@ in %{public}@", event.item.object, event.file.destinationPath);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"index %lu", (unsigned long)index]);
+    os_log_debug(logHandle, "index %lu", (unsigned long)index);
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cron jobs, before; %@", [jobs componentsJoinedByString:@"\n"]]);
+    os_log_debug(logHandle, "cron jobs, before; %{public}@", [jobs componentsJoinedByString:@"\n"]);
     
     //remove unwanted cron job
     [jobs removeObjectAtIndex:index];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cron jobs, after; %@", [jobs componentsJoinedByString:@"\n"]]);
+    os_log_debug(logHandle, "cron jobs, after; %{public}@", [jobs componentsJoinedByString:@"\n"]);
     
     //update file
     [[jobs componentsJoinedByString:@"\n"] writeToFile:event.file.destinationPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updated %@", event.file.destinationPath]);
+    os_log_debug(logHandle, "updated %{public}@", event.file.destinationPath);
     
     //happy
     wasBlocked = YES;
@@ -204,7 +208,7 @@ bail:
     NSArray* lines = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //alloc
     jobs = [NSMutableArray array];
@@ -249,7 +253,7 @@ bail:
     NSArray* newJobs = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //load (possibly) new cron jobs
     jobs = [self loadJobs:path comments:NO];
@@ -260,7 +264,7 @@ bail:
     newJobs = [jobs filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", self.snapshot[path]]];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new jobs: %@", newJobs]);
+    os_log_debug(logHandle, "new jobs: %{public}@", newJobs);
     
     //grab first new one
     newJob = [newJobs firstObject];
@@ -277,7 +281,7 @@ bail:
     NSMutableArray* jobs = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating snapshot (crob jobs) from: %@", path]);
+    os_log_debug(logHandle, "updating snapshot (crob jobs) from: %{public}@", path);
     
     //load
     jobs = [self loadJobs:path comments:NO];
@@ -287,7 +291,7 @@ bail:
     self.snapshot[path] = jobs;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cron job snapshot: %@", self.snapshot]);
+    os_log_debug(logHandle, "cron job snapshot: %{public}@", self.snapshot);
     
 bail:
 

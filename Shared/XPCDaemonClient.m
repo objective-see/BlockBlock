@@ -8,7 +8,6 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "XPCUser.h"
 #import "utilities.h"
 #import "AppDelegate.h"
@@ -16,6 +15,9 @@
 #import "XPCDaemonClient.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //alert (windows)
 extern NSMutableDictionary* alerts;
@@ -60,18 +62,18 @@ extern NSMutableDictionary* alerts;
     __block NSDictionary* preferences = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__);
     
     //request preferences
     [[self.daemon synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute daemon XPC method '%s' (error: %@)", __PRETTY_FUNCTION__, proxyError]);
+        os_log_error(logHandle, "ERROR: failed to execute daemon XPC method '%s' (error: %{public}@)", __PRETTY_FUNCTION__, proxyError);
         
      }] getPreferences:^(NSDictionary* preferencesFromDaemon)
      {
          //dbg msg
-         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"got preferences: %@", preferencesFromDaemon]);
+         os_log_debug(logHandle, "got preferences: %{public}@", preferencesFromDaemon);
          
          //save
          preferences = preferencesFromDaemon;
@@ -85,13 +87,13 @@ extern NSMutableDictionary* alerts;
 -(void)updatePreferences:(NSDictionary*)preferences
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__);
     
     //update prefs
     [[self.daemon remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute daemon XPC method '%s' (error: %@)", __PRETTY_FUNCTION__, proxyError]);
+        os_log_error(logHandle, "ERROR: failed to execute daemon XPC method '%s' (error: %{public}@)", __PRETTY_FUNCTION__, proxyError);
           
     }] updatePreferences:preferences];
     
@@ -112,13 +114,13 @@ extern NSMutableDictionary* alerts;
     __block NSError* error = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__);
     
     //make XPC request to get rules
     [[self.daemon synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute daemon XPC method '%s' (error: %@)", __PRETTY_FUNCTION__, proxyError]);
+        os_log_error(logHandle, "ERROR: failed to execute daemon XPC method '%s' (error: %{public}@)", __PRETTY_FUNCTION__, proxyError);
         
     }] getRules:^(NSData* archivedRules)
     {
@@ -129,7 +131,7 @@ extern NSMutableDictionary* alerts;
         if(nil != error)
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to unarchive rules: %@", error]);
+            os_log_error(logHandle, "ERROR: failed to unarchive rules: %{public}@", error);
         }
         
         //init
@@ -160,13 +162,13 @@ extern NSMutableDictionary* alerts;
     __block NSError* error = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__);
     
     //delete rule
     [[self.daemon synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute daemon XPC method '%s' (error: %@)", __PRETTY_FUNCTION__, proxyError]);
+        os_log_error(logHandle, "ERROR: failed to execute daemon XPC method '%s' (error: %{public}@)", __PRETTY_FUNCTION__, proxyError);
         
     }] deleteRule:rule reply:^(NSData* archivedRules)
     {
@@ -176,7 +178,7 @@ extern NSMutableDictionary* alerts;
         if(nil != error)
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to unarchive rules: %@", error]);
+            os_log_error(logHandle, "ERROR: failed to unarchive rules: %{public}@", error);
         }
         
         //init
@@ -190,7 +192,7 @@ extern NSMutableDictionary* alerts;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received updated rules %@", rules]);
+        os_log_debug(logHandle, "received updated rules %{public}@", rules);
         
     }];
     
@@ -204,13 +206,13 @@ extern NSMutableDictionary* alerts;
     @autoreleasepool {
         
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "invoking daemon XPC method, '%s'", __PRETTY_FUNCTION__);
     
     //respond to alert
     [[self.daemon remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute daemon XPC method '%s' (error: %@)", __PRETTY_FUNCTION__, proxyError]);
+        os_log_error(logHandle, "ERROR: failed to execute daemon XPC method '%s' (error: %{public}@)", __PRETTY_FUNCTION__, proxyError);
         
     }] alertReply:alert];
     

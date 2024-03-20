@@ -8,7 +8,6 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 
 #import <dlfcn.h>
@@ -22,6 +21,12 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+@import OSLog;
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //get app's version
 // extracted from Info.plist
@@ -64,8 +69,6 @@ NSBundle* getAppBundle(NSString* binaryPath)
     {
         //unset
         appBundle = nil;
-        
-        //bail
         goto bail;
     }
     
@@ -149,9 +152,7 @@ NSString* getAppBinary(NSString* appPath)
     if(nil == appBundle)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to load app bundle for %@", appPath]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: failed to load app bundle for %{public}@", appPath);
         goto bail;
     }
     
@@ -162,7 +163,6 @@ bail:
     
     return binaryPath;
 }
-
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -346,9 +346,7 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
     if(noErr != status)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecStaticCodeCreateWithPath failed w/ %d", status]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: 'SecStaticCodeCreateWithPath' failed with %d/%#x", status, status);
         goto bail;
     }
     
@@ -358,9 +356,7 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
        (requirementRef == NULL) )
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecRequirementCreateWithString failed w/ %d", status]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: 'SecRequirementCreateWithString' failed with %d/%#x", status, status);
         goto bail;
     }
     
@@ -368,9 +364,7 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
     status = SecStaticCodeCheckValidity(staticCode, kSecCSDefaultFlags, requirementRef);
     if(noErr != status)
     {
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecStaticCodeCheckValidity failed w/ %d", status]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: 'SecStaticCodeCheckValidity failed with %d/%#x", status, status);
         goto bail;
     }
     
@@ -514,14 +508,12 @@ BOOL setFileOwner(NSString* path, NSNumber* groupID, NSNumber* ownerID, BOOL rec
     if(YES != [[NSFileManager defaultManager] setAttributes:fileOwner ofItemAtPath:path error:NULL])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to set ownership for %@ (%@)", path, fileOwner]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: failed to set ownership for %{public}@ (%{public}@)", path, fileOwner);
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"set ownership for %@ (%@)", path, fileOwner]);
+    os_log_debug(logHandle, "set ownership for %{public}@ (%{public}@)", path, fileOwner);
     
     //do it recursively
     if(YES == recursive)
@@ -545,9 +537,7 @@ BOOL setFileOwner(NSString* path, NSNumber* groupID, NSNumber* ownerID, BOOL rec
             if(YES != [[NSFileManager defaultManager] setAttributes:fileOwner ofItemAtPath:fullPath error:NULL])
             {
                 //err msg
-                logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to set ownership for %@ (%@)", fullPath, fileOwner]);
-                
-                //bail
+                os_log_error(logHandle, "ERROR: failed to set ownership for %{public}@ (%{public}@)", fullPath, fileOwner);
                 goto bail;
             }
         }
@@ -599,9 +589,7 @@ BOOL setFilePermissions(NSString* file, int permissions, BOOL recursive)
             if(YES != [[NSFileManager defaultManager] setAttributes:filePermissions ofItemAtPath:currentFile.path error:&error])
             {
                 //err msg
-                logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to set permissions for %@ (%@), %@", currentFile.path, filePermissions, error]);
-                
-                //bail
+                os_log_error(logHandle, "ERROR: failed to set permissions for %{public}@ (%{public}@), %{public}@", currentFile.path, filePermissions, error);
                 goto bail;
             }
         }
@@ -612,9 +600,7 @@ BOOL setFilePermissions(NSString* file, int permissions, BOOL recursive)
     if(YES != [[NSFileManager defaultManager] setAttributes:filePermissions ofItemAtPath:file error:NULL])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to set permissions for %@ (%@)", file, filePermissions]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: failed to set permissions for %{public}@ (%{public}@)", file, filePermissions);
         goto bail;
     }
     
@@ -1112,7 +1098,7 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag)
     if(ACTION_INSTALL_FLAG == toggleFlag)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"adding login item %@", loginItem]);
+        os_log_debug(logHandle, "adding login item %{public}@", loginItem);
         
         //add
         LSSharedFileListItemRef itemRef = LSSharedFileListInsertItemURL(loginItemsRef, kLSSharedFileListItemLast, NULL, NULL, (__bridge CFURLRef)(loginItem), NULL, NULL);
@@ -1121,7 +1107,7 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag)
         if(NULL != itemRef)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"added %@/%@", loginItem, itemRef]);
+            os_log_debug(logHandle, "added %{public}@/%{public}@", loginItem, itemRef);
             
             //release
             CFRelease(itemRef);
@@ -1133,9 +1119,7 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag)
         else
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to add login item");
-            
-            //bail
+            os_log_error(logHandle, "ERROR: failed to add login item");
             goto bail;
         }
         
@@ -1146,7 +1130,7 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag)
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"removing login item %@", loginItem]);
+        os_log_debug(logHandle, "removing login item %{public}@", loginItem);
         
         //grab existing login items
         loginItems = LSSharedFileListCopySnapshot(loginItemsRef, nil);
@@ -1170,14 +1154,14 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag)
                 if(noErr != LSSharedFileListItemRemove(loginItemsRef, (__bridge LSSharedFileListItemRef)item))
                 {
                     //err msg
-                    logMsg(LOG_ERR, @"failed to remove login item");
+                    os_log_error(logHandle, "ERROR: failed to remove login item");
                     
                     //bail
                     goto bail;
                 }
                 
                 //dbg msg
-                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"removed login item: %@", loginItem]);
+                os_log_debug(logHandle, "removed login item: %{public}@", loginItem);
                 
                 //happy
                 wasToggled = YES;
@@ -1335,7 +1319,7 @@ pid_t getParentID(int pid)
         parentID = processStruct.kp_eproc.e_ppid;
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"extracted parent ID %d for process: %d", parentID, pid]);
+        os_log_debug(logHandle, "extracted parent ID %d for process: %d", parentID, pid]);
     }
     
     return parentID;
@@ -1354,15 +1338,13 @@ BOOL startApplication(NSURL* path, NSUInteger launchOptions)
     NSError* error = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"starting application: %@", path]);
+    os_log_debug(logHandle, "starting application: %{public}@", path);
     
     //launch it
     if(nil == [[NSWorkspace sharedWorkspace] launchApplicationAtURL:path options:launchOptions configuration:@{} error:&error])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to launch application: %@/%@", path, error]);
-        
-        //bail
+        os_log_error(logHandle, "ERROR: failed to launch application: %{public}@/%{public}@", path, error);
         goto bail;
     }
     
@@ -1447,7 +1429,7 @@ id getValueFromPlist(NSString* plistFile, NSString* plistKey, BOOL insensitiveKe
     if(nil == plistContents)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"failed to open/read %@", plistFile]);
+        os_log_debug(logHandle, "failed to open/read %{public}@", plistFile);
         
         //bail
         goto bail;
@@ -1563,7 +1545,7 @@ NSMutableDictionary* execTask(NSString* binaryPath, NSArray* arguments, BOOL sho
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"execing task, %@ (arguments: %@)", task.launchPath, task.arguments]);
+    os_log_debug(logHandle, "execing task, %{public}@ (arguments: %{public}@)", task.launchPath, task.arguments);
     
     //wrap task launch
     @try
@@ -1574,7 +1556,7 @@ NSMutableDictionary* execTask(NSString* binaryPath, NSArray* arguments, BOOL sho
     @catch(NSException *exception)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to launch task (%@)", exception]);
+        os_log_error(logHandle, "ERROR: failed to launch task (%{public}@)", exception);
         
         //bail
         goto bail;
@@ -1645,7 +1627,7 @@ NSMutableDictionary* execTask(NSString* binaryPath, NSArray* arguments, BOOL sho
 bail:
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"task completed with %@", results]);
+    os_log_debug(logHandle, "task completed with %{public}@", results);
     
     return results;
 }
@@ -1732,7 +1714,7 @@ BOOL isTranslocated(NSString* path)
     bool isTranslocated = false;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ is translocated", path]);
+    os_log_debug(logHandle, "checking if %{public}@ is translocated", path);
 
     //load/open framework
     dispatch_once(&onceToken, ^{
@@ -1748,7 +1730,7 @@ BOOL isTranslocated(NSString* path)
         else
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to 'dlopen' the 'Security.framework'");
+            os_log_error(logHandle, "ERROR: failed to 'dlopen' the 'Security.framework'");
         }
         
     });
@@ -1757,7 +1739,7 @@ BOOL isTranslocated(NSString* path)
     if(NULL == SecTranslocateIsTranslocatedURL)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to resolve 'SecTranslocateIsTranslocatedURL'");
+        os_log_error(logHandle, "ERROR: failed to resolve 'SecTranslocateIsTranslocatedURL'");
         
         //bail
         goto bail;
@@ -1767,14 +1749,14 @@ BOOL isTranslocated(NSString* path)
     if(!SecTranslocateIsTranslocatedURL((__bridge CFURLRef)([NSURL fileURLWithPath:path]), &isTranslocated, NULL))
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to invoke 'SecTranslocateIsTranslocatedURLFP'");
+        os_log_error(logHandle, "ERROR: failed to invoke 'SecTranslocateIsTranslocatedURL'");
         
         //bail
         goto bail;
     }
     
     //log msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"SecTranslocateIsTranslocatedURL succeeded, result: %x", isTranslocated]);
+    os_log_debug(logHandle, "'SecTranslocateIsTranslocatedURL' succeeded, result: %x", isTranslocated);
     
 bail:
 
@@ -1848,13 +1830,13 @@ uint32_t getQuarantineFlags(NSString* path)
     qtn_file_t quarantineFile = NULL;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ is quarantined", path]);
+    os_log_debug(logHandle, "checking if %{public}@ is quarantined", path);
     
     //sanity check(s)
     if(0 == path.length)
     {
         //err msg
-        logMsg(LOG_DEBUG, @"invalid path");
+        os_log_debug(logHandle, "invalid path");
         
         //bail
         goto bail;
@@ -1877,7 +1859,7 @@ uint32_t getQuarantineFlags(NSString* path)
         else
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to 'dlopen' the 'libquarantine.dylib'");
+            os_log_error(logHandle, "ERROR: failed to 'dlopen' the 'libquarantine.dylib'");
         }
         
     });
@@ -1889,7 +1871,7 @@ uint32_t getQuarantineFlags(NSString* path)
         (NULL == qtn_file_init_with_path_FP) )
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to resolve 'libquarantine' function pointers");
+        os_log_error(logHandle, "ERROR: failed to resolve 'libquarantine' function pointers");
         
         //bail
         goto bail;
@@ -1915,7 +1897,7 @@ uint32_t getQuarantineFlags(NSString* path)
     if(QTN_NOT_QUARANTINED == error)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is *not* quarantined (QTN_NOT_QUARANTINED)", path]);
+        os_log_debug(logHandle, "%{public}@ is *not* quarantined (QTN_NOT_QUARANTINED)", path);
         
         //bail
         goto bail;
@@ -1925,7 +1907,7 @@ uint32_t getQuarantineFlags(NSString* path)
     flags = qtn_file_get_flags_FP(quarantineFile);
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"quarantine flags: %#x", flags]);
+    os_log_debug(logHandle, "quarantine flags: %#x", flags);
 
 bail:
     

@@ -8,7 +8,6 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "RuleRow.h"
 #import "utilities.h"
 #import "AppDelegate.h"
@@ -16,6 +15,9 @@
 #import "RulesWindowController.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //xpc daemon
 extern XPCDaemonClient* xpcDaemonClient;
@@ -30,7 +32,7 @@ extern XPCDaemonClient* xpcDaemonClient;
 -(void)configure
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"method '%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "method '%s' invoked", __PRETTY_FUNCTION__);
     
     //load rules
     [self loadRules];
@@ -88,7 +90,7 @@ extern XPCDaemonClient* xpcDaemonClient;
 -(void)loadRules
 {
     //dbg msg
-    logMsg(LOG_DEBUG, @"loading rules...");
+    os_log_debug(logHandle, "loading rules...");
     
     //in background get rules
     // ...then load rule table table
@@ -98,7 +100,7 @@ extern XPCDaemonClient* xpcDaemonClient;
         self.rules = [[xpcDaemonClient getRules] mutableCopy];
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received %lu rules from daemon", (unsigned long)self.rules.count]);
+        os_log_debug(logHandle, "received %lu rules from daemon", (unsigned long)self.rules.count);
 
         //sort
         // case insensitive, by name
@@ -142,7 +144,7 @@ extern XPCDaemonClient* xpcDaemonClient;
     __block Rule* rule = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"deleting rule");
+    os_log_debug(logHandle, "deleting rule");
     
     //sender nil?
     // invoked manually due to context menu
@@ -164,7 +166,7 @@ extern XPCDaemonClient* xpcDaemonClient;
     if(nil != rule)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"deleting rule, %@", rule]);
+        os_log_debug(logHandle, "deleting rule, %{public}@", rule);
     
         //delete rule
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),

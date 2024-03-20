@@ -7,10 +7,14 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
-#import "logging.h"
 #import "utilities.h"
 #import "VirusTotal.h"
 #import "VirusTotalViewController.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation VirusTotalViewController
 
@@ -73,7 +77,7 @@
     if(0 == hash.length)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to hash %@ to submit", self.itemName]);
+        os_log_error(logHandle, "ERROR: failed to hash %{public}@ to submit", self.itemName);
         
         //show error on main thread
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -88,7 +92,7 @@
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"querying VT with %@", self.itemPath]);
+    os_log_debug(logHandle, "querying VT with %{public}@", self.itemPath);
     
     //add name
     item[@"name"] = self.itemName;
@@ -111,7 +115,7 @@
     else
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to query virus total: %@", item]);
+        os_log_error(logHandle, "ERROR: failed to query virus total: %{public}@", item);
         
         //modal window, so use 'performSelectorOnMainThread' to update
         [self performSelectorOnMainThread:@selector(showError) withObject:nil waitUntilDone:YES];
@@ -126,7 +130,7 @@ bail:
 -(void)displayResults:(NSMutableDictionary*)item
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"VT response: %@", item]);
+    os_log_debug(logHandle, "VT response: %{public}@", item);
     
     //stop spinner
     [self.vtSpinner stopAnimation:nil];

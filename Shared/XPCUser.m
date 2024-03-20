@@ -8,13 +8,15 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "XPCUser.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 #import "AlertWindowController.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //alert (windows)
 extern NSMutableDictionary* alerts;
@@ -28,7 +30,7 @@ extern NSMutableDictionary* alerts;
     @autoreleasepool {
         
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"daemon invoked user XPC method, '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "daemon invoked user XPC method, '%s'", __PRETTY_FUNCTION__);
     
     //on main (ui) thread
     dispatch_sync(dispatch_get_main_queue(), ^{

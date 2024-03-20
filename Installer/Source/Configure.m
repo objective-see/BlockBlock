@@ -8,7 +8,6 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "Configure.h"
 #import "utilities.h"
 
@@ -16,6 +15,11 @@
 #import <Foundation/Foundation.h>
 #import <Security/Authorization.h>
 #import <ServiceManagement/ServiceManagement.h>
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation Configure
 
@@ -40,7 +44,7 @@
     if(YES != [self initHelper])
     {
         //err msg
-        logMsg(LOG_ERR, @"ERROR: failed to init helper tool");
+        os_log_error(logHandle, "ERROR: failed to init helper tool");
         
         //bail
         goto bail;
@@ -50,21 +54,21 @@
     if(ACTION_INSTALL_FLAG == parameter)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"installing...");
+        os_log_debug(logHandle, "installing...");
         
         //already installed?
         // perform an uninstall
         if(YES == [self isInstalled])
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"already installed, so uninstalling...");
+            os_log_debug(logHandle, "already installed, so uninstalling...");
             
             //existing install, a beta?
             // set flag to perform full uninstall
             if(YES == [self isBetaInstalled])
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, @"previous version is a beta, so will fully uninstall");
+                os_log_debug(logHandle, "previous version is a beta, so will fully uninstall");
                 
                 //set flag
                 uninstallFlag = UNINSTALL_FULL;
@@ -74,7 +78,7 @@
             else
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, @"previous version is not beta, so only partially uninstall");
+                os_log_debug(logHandle, "previous version is not beta, so only partially uninstall");
                 
                 //set flag
                 uninstallFlag = UNINSTALL_PARTIAL;
@@ -88,7 +92,7 @@
             }
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled (type: %@)", (uninstallFlag == UNINSTALL_PARTIAL) ? @"partial" : @"full"]);
+            os_log_debug(logHandle, "uninstalled (type: %{public}@)", (uninstallFlag == UNINSTALL_PARTIAL) ? @"partial" : @"full");
         }
         
         //install
@@ -106,13 +110,13 @@
         [NSThread sleepForTimeInterval:2.00f];
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"installed!");
+        os_log_debug(logHandle, "installed!");
     }	
     //uninstall
     else if(ACTION_UNINSTALL_FLAG == parameter)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"uninstalling...");
+        os_log_debug(logHandle, "uninstalling...");
         
         //uninstall
         if(YES != [self uninstall:UNINSTALL_FULL])
@@ -122,7 +126,7 @@
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"uninstalled!");
+        os_log_debug(logHandle, "uninstalled!");
     }
 
     //no errors
@@ -193,7 +197,7 @@ bail:
     preferences = [NSDictionary dictionaryWithContentsOfFile:[INSTALL_DIRECTORY stringByAppendingPathComponent:PREFS_FILE]];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking preferences for 'got FDA' flag: %@", preferences]);
+    os_log_debug(logHandle, "checking preferences for 'got FDA' flag: %{public}@", preferences);
     
     //check for flag
     if(YES == [preferences[PREF_GOT_FDA] boolValue])
@@ -220,7 +224,7 @@ bail:
     if(YES != [self blessHelper])
     {
         //err msg
-        syslog(LOG_ERR, "ERROR: failed to install helper tool");
+        os_log_error(logHandle, "ERROR: failed to install helper tool");
         
         //bail
         goto bail;
@@ -231,7 +235,7 @@ bail:
     if(nil == xpcComms)
     {
         //err msg
-        syslog(LOG_ERR, "ERROR: failed to connect to helper tool");
+        os_log_error(logHandle, "ERROR: failed to connect to helper tool");
         
         //bail
         goto bail;
@@ -271,7 +275,7 @@ bail:
     if(errAuthorizationSuccess != AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults, &authRef))
     {
         //err msg
-        syslog(LOG_ERR, "ERROR: failed to create authorization");
+        os_log_error(logHandle, "ERROR: failed to create authorization");
         
         //bail
         goto bail;
@@ -296,7 +300,7 @@ bail:
     if(errAuthorizationSuccess != AuthorizationCopyRights(authRef, &authRights, kAuthorizationEmptyEnvironment, authFlags, NULL))
     {
         //err msg
-        syslog(LOG_ERR, "ERROR: failed to copy authorization rights");
+        os_log_error(logHandle, "ERROR: failed to copy authorization rights");
         
         //bail
         goto bail;
@@ -306,7 +310,7 @@ bail:
     if(YES != (BOOL)SMJobBless(kSMDomainSystemLaunchd, (__bridge CFStringRef)(CONFIG_HELPER_ID), authRef, &error))
     {
         //err msg
-        syslog(LOG_ERR, "ERROR: failed to bless job (%s)", ((__bridge NSError*)error).description.UTF8String);
+        os_log_error(logHandle, "ERROR: failed to bless job (%s)", ((__bridge NSError*)error).description.UTF8String);
         
         //bail
         goto bail;
@@ -385,7 +389,7 @@ bail:
     wasInstalled = [xpcComms install];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"privileged helper item install logic completed (%d)", wasInstalled]);
+    os_log_debug(logHandle, "privileged helper item install logic completed (%d)", wasInstalled);
     
     //sanity check
     // make sure xpc install logic succeeded
@@ -400,11 +404,11 @@ bail:
     {
         //err msg
         // ...though not fatal
-        logMsg(LOG_ERR, @"failed to register daemon");
+        os_log_error(logHandle, "ERROR: failed to register daemon");
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"registered daemon");
+    os_log_debug(logHandle, "registered daemon");
     
     //init path to login item
     loginItem = [@"/Applications" stringByAppendingPathComponent:APP_NAME];
@@ -414,7 +418,7 @@ bail:
     if(YES != toggleLoginItem([NSURL fileURLWithPath:loginItem], ACTION_INSTALL_FLAG))
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to install login item");
+        os_log_error(logHandle, "ERROR: failed to install login item");
         
         //set error
         wasInstalled = NO;
@@ -424,7 +428,7 @@ bail:
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"installed login item (%@)", loginItem]);
+    os_log_debug(logHandle, "installed login item (%{public}@)", loginItem);
     
     //(still) happy
     wasInstalled = YES;
@@ -465,7 +469,7 @@ bail:
         (noErr != [results[EXIT_CODE] intValue]) )
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'LSREGISTER' (%@)", results]);
+        os_log_error(logHandle, "ERROR: failed to execute 'LSREGISTER' (%{public}@)", results);
         
         //bail
         goto bail;
@@ -487,13 +491,13 @@ bail:
     __block BOOL wasLoaded = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking XPC message to toggle (%d) launch daemon", shouldLoad]);
+    os_log_debug(logHandle, "invoking XPC message to toggle (%d) launch daemon", shouldLoad);
     
     //toggle
     wasLoaded = [xpcComms toggleDaemon:shouldLoad];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"privileged helper item 'toggleDaemon' logic completed (%d)", wasLoaded]);
+    os_log_debug(logHandle, "privileged helper item 'toggleDaemon' logic completed (%d)", wasLoaded);
         
     return wasLoaded;
 }
@@ -516,14 +520,14 @@ bail:
     {
         //err msg
         // ...though not fatal
-        logMsg(LOG_ERR, @"failed to uninstall login item");
+        os_log_error(logHandle, "ERROR: failed to uninstall login item");
     }
     
     #ifdef DEBUG
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled login item (%@)", loginItem]);
+        os_log_debug(logHandle, "uninstalled login item (%{public}@)", loginItem);
     }
     #endif
     
@@ -532,14 +536,14 @@ bail:
     {
         //err msg
         // ...though not fatal
-        logMsg(LOG_ERR, @"failed to unregister daemon");
+        os_log_error(logHandle, "ERROR: failed to unregister daemon");
     }
     
     #ifdef DEBUG
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"unregistered daemon");
+        os_log_debug(logHandle, "unregistered daemon");
     }
     #endif
 

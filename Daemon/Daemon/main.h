@@ -10,7 +10,6 @@
 #import "Rules.h"
 #import "Events.h"
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 #import "Preferences.h"
 #import "XPCListener.h"

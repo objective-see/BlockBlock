@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 #import "consts.h"
-#import "logging.h"
 #import "Monitor.h"
 #import "Preferences.h"
 
@@ -17,6 +16,9 @@
 
 //monitor obj
 extern Monitor* monitor;
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation Preferences
 
@@ -34,7 +36,7 @@ extern Monitor* monitor;
         if(YES != [self load])
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to loads preferences from %@", PREFS_FILE]);
+            os_log_error(logHandle, "ERROR: failed to loads preferences from %{public}@", PREFS_FILE);
             
             //unset
             self = nil;
@@ -64,7 +66,7 @@ bail:
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded preferences: %@", self.preferences]);
+    os_log_debug(logHandle, "loaded preferences: %{public}@", self.preferences);
     
     //happy
     loaded = YES;
@@ -82,20 +84,20 @@ bail:
     BOOL updated = NO;
 
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating preferences (%@)", updates]);
+    os_log_debug(logHandle, "updating preferences (%{public}@)", updates);
     
     //user setting state?
     if(nil != updates[PREF_IS_DISABLED])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"client toggling BlockBlock state: %@", updates[PREF_IS_DISABLED]]);
+        os_log_debug(logHandle, "client toggling BlockBlock state: %{public}@", updates[PREF_IS_DISABLED]);
         
         //disable?
         if(YES == [updates[PREF_IS_DISABLED] boolValue])
         {
             //dbg msg
             // and log to file
-            logMsg(LOG_DEBUG|LOG_TO_FILE, @"disabling BlockBlock");
+            os_log(logHandle, "disabling BlockBlock");
             
             //stop
             [monitor stop];
@@ -106,7 +108,7 @@ bail:
         {
             //dbg msg
             // and log to file
-            logMsg(LOG_DEBUG|LOG_TO_FILE, @"enabling BlockBlock");
+            os_log(logHandle, "enabling BlockBlock");
             
             //start
             [monitor start];
@@ -120,7 +122,7 @@ bail:
     if(YES != [self save])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to save preferences");
+        os_log_error(logHandle, "ERROR: failed to save preferences");
         
         //bail
         goto bail;

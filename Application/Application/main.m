@@ -7,13 +7,20 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
+
 @import Cocoa;
+@import OSLog;
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 
 #import <sys/stat.h>
+
+/* GLOBALS */
+
+//log handle
+os_log_t logHandle = nil;
+
 
 //check for daemon
 BOOL isDaemonRunning(void);
@@ -25,9 +32,12 @@ int main(int argc, const char * argv[])
     //status
     int status = 0;
     
+    //init log
+    logHandle = os_log_create(BUNDLE_ID, "app (helper)");
+    
     //dbg msg(s)
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"started: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleNameKey]]);
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"arguments: %@", [[NSProcessInfo processInfo] arguments]]);
+    os_log_debug(logHandle, "started: %{public}@", [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleNameKey]);
+    os_log_debug(logHandle, "arguments: %{public}@", [[NSProcessInfo processInfo] arguments]);
     
     //launch app normally
     status = NSApplicationMain(argc, argv);

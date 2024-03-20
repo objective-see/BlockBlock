@@ -8,22 +8,28 @@
 //
 
 @import Cocoa;
+@import OSLog;
 
 #import "main.h"
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 #import "Configure.h"
+
 
 /* To build:
  
  1. Comment out Installer's 'Run Script' (no need to copy in app/helper)
  2. Build Installer in 'Release Mode'
- 3. Copy Installer to Application
+ 3. Copy Installer to Application 'Uninstaller' folder
  4. Comment in Installer's 'Run Script'
- 5. Build Installer in 'Achive Mode'
+ 5. Build Installer in 'Archive Mode'
  
- */
+*/
+
+/* GLOBALS */
+
+//log handle
+os_log_t logHandle = nil;
 
 //main interface
 int main(int argc, char *argv[])
@@ -31,14 +37,17 @@ int main(int argc, char *argv[])
     //status
     int status = -1;
     
+    //init log
+    logHandle = os_log_create(BUNDLE_ID, "installer");
+    
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"BlockBlock (in/unin)staller launched with %@", NSProcessInfo.processInfo.arguments]);
+    os_log_debug(logHandle, "BlockBlock (in/unin)staller launched with %{public}@", NSProcessInfo.processInfo.arguments);
     
     //cmdline install?
     if(YES == [NSProcessInfo.processInfo.arguments containsObject:CMD_INSTALL])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"performing commandline install");
+        os_log_debug(logHandle, "performing commandline install");
         
         //install
         if(YES != cmdlineInterface(ACTION_INSTALL_FLAG))
@@ -64,7 +73,7 @@ int main(int argc, char *argv[])
     else if(YES == [NSProcessInfo.processInfo.arguments containsObject:CMD_UNINSTALL])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"performing commandline uninstall");
+        os_log_debug(logHandle, "performing commandline uninstall");
         
         //install
         if(YES != cmdlineInterface(ACTION_UNINSTALL_FLAG))

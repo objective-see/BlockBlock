@@ -8,13 +8,15 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 #import "StatusBarItem.h"
 #import "StatusBarPopoverController.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //xpc daemon
 extern XPCDaemonClient* xpcDaemonClient;
@@ -58,7 +60,7 @@ enum menuItems
             if(YES == [[[NSProcessInfo processInfo] arguments] containsObject:INITIAL_LAUNCH])
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, @"initial launch, will show popover");
+                os_log_debug(logHandle, "initial launch, will show popover");
                 
                 //show
                 [self showPopover];
@@ -176,7 +178,7 @@ enum menuItems
 -(void)handler:(id)sender
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"user clicked status menu item %lu", ((NSMenuItem*)sender).tag]);
+    os_log_debug(logHandle, "user clicked status menu item %lu", ((NSMenuItem*)sender).tag);
     
     //handle user selection
     switch(((NSMenuItem*)sender).tag)
@@ -185,7 +187,7 @@ enum menuItems
         case toggle:
         
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"toggling (%d)", self.isDisabled]);
+            os_log_debug(logHandle, "toggling (%d)", self.isDisabled);
         
             //invert since toggling
             self.isDisabled = !self.isDisabled;
@@ -233,7 +235,7 @@ enum menuItems
             configuration.arguments = @[CMD_UNINSTALL_VIA_UI];
         
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launching (un)installer %@", installer]);
+            os_log_debug(logHandle, "launching (un)installer %{public}@", installer);
             
             //wrap
             @try
@@ -242,13 +244,13 @@ enum menuItems
                 [NSWorkspace.sharedWorkspace openApplicationAtURL:installer configuration:configuration completionHandler:^(NSRunningApplication * _Nullable app, NSError * _Nullable error) {
                     
                     //dbg msg
-                    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launched (un)installer: %@ (error: %@)", app, error]);
+                    os_log_debug(logHandle, "launched (un)installer: %{public}@ (error: %{public}@)", app, error);
                 }];
             }
             @catch(NSException *exception)
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"failed to launch (un)installer: %@ (error: %@)", installer, exception]);
+                os_log_debug(logHandle, "failed to launch (un)installer: %{public}@ (error: %{public}@)", installer, exception);
                 
                 //bail
                 goto bail;
@@ -272,7 +274,7 @@ bail:
 -(void)setState
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"setting state to: %@", (self.isDisabled) ? @"disabled" : @"enabled"]);
+    os_log_debug(logHandle, "setting state to: %{public}@", (self.isDisabled) ? @"disabled" : @"enabled");
     
     //set to disabled
     if(YES == self.isDisabled)

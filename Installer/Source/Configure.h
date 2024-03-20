@@ -11,6 +11,8 @@
 #define BlockBlock_Configure_h
 
 #import "HelperComms.h"
+
+@import OSLog;
 #import <Foundation/Foundation.h>
 
 @interface Configure : NSObject

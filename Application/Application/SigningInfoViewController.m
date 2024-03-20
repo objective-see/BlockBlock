@@ -8,11 +8,14 @@
 //
 
 #import "consts.h"
-#import "logging.h"
-#import "FileMonitor.h"
-
 #import "utilities.h"
+#import "FileMonitor.h"
 #import "SigningInfoViewController.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation SigningInfoViewController
 
@@ -38,7 +41,7 @@
     signingInfo = alert[ALERT_PROCESS_SIGNING_INFO];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"signing information for popup: %@", signingInfo]);
+    os_log_debug(logHandle, "signing information for popup: %{public}@", signingInfo);
     
     //start summary with item name
     [summary appendString:alert[ALERT_PROCESS_NAME]];

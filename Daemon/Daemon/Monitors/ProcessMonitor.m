@@ -7,7 +7,6 @@
 //
 
 #import "Consts.h"
-#import "Logging.h"
 #import "Monitor.h"
 
 #import "Events.h"
@@ -18,6 +17,9 @@
 #import "ProcessMonitor.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 extern Events* events;
 extern Monitor* monitor;
@@ -39,7 +41,7 @@ extern Preferences* preferences;
     es_event_type_t procESEvents[] = {ES_EVENT_TYPE_AUTH_EXEC};
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"starting process monitor...");
+    os_log_debug(logHandle, "starting process monitor...");
         
     //create client
     // and handle process (auth exec) events
@@ -58,7 +60,7 @@ extern Preferences* preferences;
         dispatch_semaphore_t deadlineSema = 0;
         
         //dbg msg
-        //logMsg(LOG_DEBUG, @"new ES_EVENT_TYPE_AUTH_EXEC event");
+        //os_log_debug(logHandle, "new ES_EVENT_TYPE_AUTH_EXEC event");
         
         //check prefs
         // allow if passive mode, or not in notarization mode
@@ -66,13 +68,13 @@ extern Preferences* preferences;
             (YES != [preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) )
         {
             //dbg msg
-            //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing process, due to preferences (%@)", preferences.preferences]);
+            //os_log_debug(logHandle, "allowing process, due to preferences (%{public}@)", preferences.preferences]);
             
             //allow
             if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
             {
                 //err msg
-                logMsg(LOG_ERR, @"failed to allow process");
+                os_log_error(logHandle, "ERROR: failed to allow process");
             }
             
             //done
@@ -85,13 +87,13 @@ extern Preferences* preferences;
             (YES == [plugin shouldIgnore:process message:(es_message_t *)message]) )
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing %@", process]);
+            os_log_debug(logHandle, "allowing %{public}@", process);
             
             //allow
             if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
             {
                 //err msg
-                logMsg(LOG_ERR, @"failed to allow process");
+                os_log_error(logHandle, "ERROR: failed to allow process");
             }
             
             //done
@@ -99,13 +101,13 @@ extern Preferences* preferences;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"alerting user about: %@", process]);
+        os_log_debug(logHandle, "alerting user about: %{public}@", process);
         
         //init event
         event = [[Event alloc] init:process plugin:plugin];
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"alerting user w/: %@", event]);
+        os_log_debug(logHandle, "alerting user w/: %{public}@", event);
         
         //add client
         event.esClient = client;
@@ -130,14 +132,14 @@ extern Preferences* preferences;
         if(YES == [events deliver:event])
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"alert delivered, waiting for response...");
+            os_log_debug(logHandle, "alert delivered, waiting for response...");
             
             //wait till close to timeout
             // if haven't hit, just allow, otherwise we'll be killed
             if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, machTimeToNanoseconds(deadline) - (1 * NSEC_PER_SEC))))
             {
                 //err msg
-                logMsg(LOG_ERR, [NSString stringWithFormat:@"es timeout (%llx seconds) about to be hit, forced to allow process :/", machTimeToNanoseconds(deadline) / NSEC_PER_SEC]);
+                os_log_error(logHandle, "ERROR: ES timeout (%llx seconds) about to be hit, forced to allow process :/", machTimeToNanoseconds(deadline) / NSEC_PER_SEC);
                 
                 //sync
                 @synchronized(self)
@@ -146,7 +148,7 @@ extern Preferences* preferences;
                     if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
                     {
                         //err msg
-                        logMsg(LOG_ERR, @"failed to allow process");
+                        os_log_error(logHandle, "ERROR: failed to allow process");
                     }
                     
                     //unset
@@ -162,7 +164,7 @@ extern Preferences* preferences;
             else
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, @"esf semaphore signaled, alert was handled");
+                os_log_debug(logHandle, "esf semaphore signaled, alert was handled");
             }
         }
         //failed to deliver
@@ -170,7 +172,7 @@ extern Preferences* preferences;
         else
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to deliver message, will allow process :/");
+            os_log_error(logHandle, "ERROR: failed to deliver message, will allow process :/");
             
             //sync
             @synchronized(self)
@@ -179,7 +181,7 @@ extern Preferences* preferences;
                 if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
                 {
                     //err msg
-                    logMsg(LOG_ERR, @"failed to allow process");
+                    os_log_error(logHandle, "ERROR: failed to allow process");
                 }
                 
                 //unset
@@ -198,7 +200,7 @@ extern Preferences* preferences;
     if(ES_NEW_CLIENT_RESULT_SUCCESS != result)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_new_client' failed with %x", result]);
+        os_log_error(logHandle, "ERROR: 'es_new_client' failed with %x", result);
         
         //bail
         goto bail;
@@ -208,7 +210,7 @@ extern Preferences* preferences;
     if(ES_RETURN_SUCCESS != es_subscribe(self.endpointClient, procESEvents, sizeof(procESEvents)/sizeof(procESEvents[0])))
     {
         //err msg
-        logMsg(LOG_ERR, @"'es_subscribe' failed");
+        os_log_error(logHandle, "ERROR: 'es_subscribe' failed");
         
         //bail
         goto bail;
@@ -236,7 +238,7 @@ bail:
     if(ES_RESPOND_RESULT_SUCCESS != result)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_respond_auth_result' failed with %x", result]);
+        os_log_error(logHandle, "ERROR: 'es_respond_auth_result' failed with %x", result);
         
         //bail
         goto bail;
@@ -260,7 +262,7 @@ bail:
     @synchronized (self) {
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"stopping process monitor...");
+        os_log_debug(logHandle, "stopping process monitor...");
             
         //sanity check
         if(NULL == self.endpointClient) goto bail;
@@ -269,27 +271,27 @@ bail:
         if(ES_RETURN_SUCCESS != es_unsubscribe_all(self.endpointClient))
         {
            //err msg
-           logMsg(LOG_ERR, @"'es_unsubscribe_all' failed");
+           os_log_error(logHandle, "ERROR: 'es_unsubscribe_all' failed");
            
            //bail
            goto bail;
         }
             
         //dbg msg
-        logMsg(LOG_DEBUG, @"unsubscribed from process events");
+        os_log_debug(logHandle, "unsubscribed from process events");
            
         //delete client
         if(ES_RETURN_SUCCESS != es_delete_client(self.endpointClient))
         {
            //err msg
-           logMsg(LOG_ERR, @"'es_delete_client' failed");
+           os_log_error(logHandle, "ERROR: 'es_delete_client' failed");
            
            //bail
            goto bail;
         }
             
         //dbg msg
-        logMsg(LOG_DEBUG, @"deleted process endpoint client");
+        os_log_debug(logHandle, "deleted process endpoint client");
            
         //unset
         self.endpointClient = NULL;

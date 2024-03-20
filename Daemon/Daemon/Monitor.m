@@ -6,14 +6,12 @@
 //  Copyright (c) 2015 Objective-See. All rights reserved.
 //
 
-#import "Consts.h"
-#import "Logging.h"
-#import "Monitor.h"
-
 #import "Rule.h"
 #import "Event.h"
 #import "Rules.h"
+#import "Consts.h"
 #import "Events.h"
+#import "Monitor.h"
 #import "Utilities.h"
 #import "PluginBase.h"
 #import "Preferences.h"
@@ -27,6 +25,9 @@ extern Rules* rules;
 
 //global event obj
 extern Events* events;
+
+//log handle
+extern os_log_t logHandle;
 
 //glboal prefs obj
 extern Preferences* preferences;
@@ -105,14 +106,14 @@ extern Preferences* preferences;
     if(YES != [self loadWatchList])
     {
         //err msg
-        logMsg(LOG_ERR, @"'loadWatchList' method failed");
+        os_log_error(logHandle, "ERROR: 'loadWatchList' method failed");
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"starting file monitor...");
+    os_log_debug(logHandle, "starting file monitor...");
     
     //init monitor
     fileMon = [[FileMonitor alloc] init];
@@ -123,7 +124,7 @@ extern Preferences* preferences;
     if(YES != started)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to start file monitor");
+        os_log_error(logHandle, "ERROR: failed to start file monitor");
         
         //bail
         goto bail;
@@ -134,7 +135,7 @@ extern Preferences* preferences;
     if(nil == processPlugin)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to find process plugin");
+        os_log_error(logHandle, "ERROR: failed to find process plugin");
         
         //bail
         goto bail;
@@ -147,7 +148,7 @@ extern Preferences* preferences;
     if(YES != [self.processMonitor start:processPlugin])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to start process monitor");
+        os_log_error(logHandle, "ERROR: failed to start process monitor");
         
         //bail
         goto bail;
@@ -161,12 +162,11 @@ extern Preferences* preferences;
         if(nil == btmPlugin)
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to find btm plugin");
+            os_log_error(logHandle, "ERROR: failed to find btm plugin");
             
             //bail
             goto bail;
         }
-        
         
         //alloc
         self.btmMonitor = [[BTMMonitor alloc] init];
@@ -175,14 +175,14 @@ extern Preferences* preferences;
         if(YES != [self.btmMonitor start:btmPlugin])
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to start btm monitor");
+            os_log_error(logHandle, "ERROR: failed to start btm monitor");
             
             //bail
             goto bail;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"started btm monitor");
+        os_log_debug(logHandle, "started btm monitor");
     }
     
     //happy
@@ -201,13 +201,13 @@ bail:
     BOOL stopped = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"stopping file monitor...");
+    os_log_debug(logHandle, "stopping file monitor...");
     
     //stop
     if(YES != [self.fileMon stop])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to stop file monitor");
+        os_log_error(logHandle, "ERROR: failed to stop file monitor");
         
         //bail
         goto bail;
@@ -217,16 +217,16 @@ bail:
     self.fileMon = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"stopped file monitor");
+    os_log_debug(logHandle, "stopped file monitor");
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"stopping process monitor...");
+    os_log_debug(logHandle, "stopping process monitor...");
     
     //stop process monitor
     if(YES != [self.processMonitor stop])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to stop process monitor");
+        os_log_error(logHandle, "ERROR: failed to stop process monitor");
         
         //bail
         goto bail;
@@ -236,13 +236,13 @@ bail:
     self.processMonitor = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"stopped process monitor");
+    os_log_debug(logHandle, "stopped process monitor");
     
     //stop BTM monitor
     if(nil != self.btmMonitor)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"stopping btm monitor...");
+        os_log_debug(logHandle, "stopping btm monitor...");
         
         //stop
         [self.btmMonitor stop];
@@ -251,7 +251,7 @@ bail:
         self.btmMonitor = nil;
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"stopped btm monitor");
+        os_log_debug(logHandle, "stopped btm monitor");
     }
     
     //happy
@@ -299,7 +299,7 @@ bail:
     if(YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue])
     {
         //dbg/log msg
-        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"client in passive mode, so allowing %@", file.destinationPath]);
+        os_log(logHandle, "client in passive mode, so allowing %{public}@", file.destinationPath);
     
         //done!
         goto bail;
@@ -325,7 +325,7 @@ bail:
     }
 
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found plugin %@ for %@", matchingPlugin, file]);
+    os_log_debug(logHandle, "found plugin %{public}@ for %{public}@", matchingPlugin, file);
     
     //allow the plugin to closely examine the event
     // it will know more about the details so can determine if it should be ignored
@@ -349,14 +349,14 @@ bail:
     event = [event init:file plugin:matchingPlugin];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"created event: %@", event]);
+    os_log_debug(logHandle, "created event: %{public}@", event);
     
     //matches last event?
     // if so, ignore the event
     if(YES == [event isRelated:self.lastEvent])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"matches last event, so ignoring");
+        os_log_debug(logHandle, "matches last event, so ignoring");
 
         //update
         self.lastEvent = event;
@@ -370,7 +370,7 @@ bail:
     if(YES == [events wasShown:event])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"event %@ matches/is related to a shown alert, so ignoring", event]);
+        os_log_debug(logHandle, "event %{public}@ matches/is related to a shown alert, so ignoring", event);
 
         //skip
         goto bail;
@@ -382,25 +382,25 @@ bail:
     if(nil != matchingRule)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found matching rule %@ for %@", matchingRule, file]);
+        os_log_debug(logHandle, "found matching rule %{public}@ for %{public}@", matchingRule, file);
         
         //rule: allow
         if(ALLOW_EVENT == matchingRule.action)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"matching rule says, 'allow' ...so allowing!");
+            os_log_debug(logHandle, "matching rule says, 'allow' ...so allowing!");
         }
         //rule: block
         else
         {
             //dbg/log msg
-            logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"matching rule says, 'block', so blocking %@", event]);
+            os_log(logHandle, "matching rule says, 'block', so blocking %{public}@", event);
             
             //block
             if(YES != [matchingPlugin block:event])
             {
                 //err msg
-                logMsg(LOG_ERR, @"failed to block event!");
+                os_log_error(logHandle, "ERROR: failed to block event!");
             }
         }
     
@@ -409,20 +409,20 @@ bail:
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"no matching rule found...");
+    os_log_debug(logHandle, "no matching rule found...");
     
     //update last event
     self.lastEvent = event;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"event appears to be new!, will deliver");
+    os_log_debug(logHandle, "event appears to be new!, will deliver");
     
     //deliver alert
     // can fail if no client
     if(YES == [events deliver:event])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"alert delivered...");
+        os_log_debug(logHandle, "alert delivered...");
         
         //set flag
         wasDelivered = YES;
@@ -433,7 +433,7 @@ bail:
     //not delivered?
     // free es message
     if( (YES != wasDelivered) &&
-        (nil != event.esMessage) )
+        (NULL != event.esMessage) )
     {
         es_free_message(event.esMessage);
         event.esMessage = NULL;
@@ -470,7 +470,7 @@ bail:
     if(nil == watchListPath)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to load watch list");
+        os_log_error(logHandle, "ERROR: failed to load watch list");
         
         //bail
         goto bail;
@@ -481,21 +481,21 @@ bail:
     if(nil == watchList)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to load watch list from %@", watchListPath]);
+        os_log_error(logHandle, "ERROR: failed to load watch list from %{public}@", watchListPath);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"watchlist: %@", watchList]);
+    os_log_debug(logHandle, "watchlist: %{public}@", watchList);
     
     //iterate over all watch items
     // instantiate a plugin for each
     for(NSDictionary* watchItem in watchList)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"watch item: %@/%@", watchItem, NSClassFromString(watchItem[@"class"])]);
+        os_log_debug(logHandle, "watch item: %{public}@/%{public}@", watchItem, NSClassFromString(watchItem[@"class"]));
         
         //grab min/max supported OS
         pluginMinOS = watchItem[@"minOSVersion"];
@@ -507,7 +507,7 @@ bail:
             (pluginMinOS.unsignedIntValue < NSProcessInfo.processInfo.operatingSystemVersion.majorVersion) )
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"macOS %ld too old for plugin %@ (min: %@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMinOS]);
+            os_log_debug(logHandle, "macOS %ld too old for plugin %{public}@ (min: %{public}@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMinOS);
             
             //skip this plugin
             continue;
@@ -519,7 +519,7 @@ bail:
             (pluginMaxOS.unsignedIntValue < NSProcessInfo.processInfo.operatingSystemVersion.majorVersion) )
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"macOS %ld too new for plugin %@ (max: %@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMaxOS]);
+            os_log_debug(logHandle, "macOS %ld too new for plugin %{public}@ (max: %{public}@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMaxOS);
             
             //skip this plugin
             continue;
@@ -531,7 +531,7 @@ bail:
         if(nil == plugin)
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to initialize plugin: %@", watchItem[@"class"]]);
+            os_log_error(logHandle, "ERROR: failed to initialize plugin: %{public}@", watchItem[@"class"]);
             
             //skip
             continue;
@@ -542,7 +542,7 @@ bail:
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"registered plugins: %@", self.plugins]);
+    os_log_debug(logHandle, "registered plugins: %{public}@", self.plugins);
 
     //no errors
     bRet = YES;

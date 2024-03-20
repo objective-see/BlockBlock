@@ -9,11 +9,15 @@
 #import "Item.h"
 #import "Event.h"
 #import "consts.h"
-#import "Logging.h"
 #import "Processes.h"
 #import "utilities.h"
 
 #import <EndpointSecurity/EndpointSecurity.h>
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation Processes
 
@@ -27,7 +31,7 @@
     if(nil != self)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
+        os_log_debug(logHandle, "init'ing %{public}@ (%p)", NSStringFromClass([self class]), self);
         
         //set type
         self.type = PLUGIN_TYPE_PROCESS_MONITOR;
@@ -67,7 +71,7 @@
     uint32_t quarantineFlags = QTN_NOT_QUARANTINED;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if %@ should be allowed", process]);
+    os_log_debug(logHandle, "checking if %{public}@ should be allowed", process);
     
     //init path from process
     path = process.path;
@@ -78,14 +82,14 @@
     if(YES == [self.scripts containsObject:process.signingID])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is a script interpreter...", process.name]);
+        os_log_debug(logHandle, "%{public}@ is a script interpreter...", process.name);
         
         //has to have at least 2 args
         // process name, then path to script
         if(process.arguments.count < 2)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ doesn't appear to have a script argument, will allow", process.name]);
+            os_log_debug(logHandle, "%{public}@ doesn't appear to have a script argument, will allow", process.name);
             
             //done
             goto bail;
@@ -96,14 +100,14 @@
         path = process.arguments[1];
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"extracted (potential) script: %@", path]);
+        os_log_debug(logHandle, "extracted (potential) script: %{public}@", path);
         
         //sanity check
         // was argv[1] is a file?
         if(YES != [NSFileManager.defaultManager fileExistsAtPath:path])
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ doesn't appear to be a path, will allow %@", path, process.name]);
+            os_log_debug(logHandle, "%{public}@ doesn't appear to be a path, will allow %{public}@", path, process.name);
             
             //done
             goto bail;
@@ -118,7 +122,7 @@
         if(YES == [self isRelatedScriptEvent:process])
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ was run by %@, thus appears related, so will allow", path, lastScript.name]);
+            os_log_debug(logHandle, "%{public}@ was run by %{public}@, thus appears related, so will allow", path, lastScript.name);
             
             //done
             goto bail;
@@ -131,14 +135,14 @@
              (YES == [process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) )
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is platform binary || is notarized, will allow", process.name]);
+        os_log_debug(logHandle, "%{public}@ is platform binary || is notarized, will allow", process.name);
         
         //done
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"using path: %@", path]);
+    os_log_debug(logHandle, "using path: %{public}@", path);
     
     //not a script?
     // grab app bundle (for subsequent checks)
@@ -149,7 +153,7 @@
         if(nil != appBundle)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"is app, with bundle...");
+            os_log_debug(logHandle, "is app, with bundle...");
         }
     }
     
@@ -159,7 +163,7 @@
         (AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) )
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is from the app store ...will allow", process.name]);
+        os_log_debug(logHandle, "%{public}@ is from the app store ...will allow", process.name);
         
         //done
         goto bail;
@@ -170,7 +174,7 @@
     if(YES != isTranslocated(path))
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not app translocated ...checking quarantine attributes", path]);
+        os_log_debug(logHandle, "%{public}@ is not app translocated ...checking quarantine attributes", path);
         
         //get quarantine flags
         quarantineFlags = getQuarantineFlags(path);
@@ -180,7 +184,7 @@
         if(QTN_NOT_QUARANTINED == quarantineFlags)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is not quarantined ...will allow", path]);
+            os_log_debug(logHandle, "%{public}@ is not quarantined ...will allow", path);
             
             //done
             goto bail;
@@ -191,7 +195,7 @@
         if(QTN_FLAG_USER_APPROVED & quarantineFlags)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is quarantined, but user approved ...will allow", path]);
+            os_log_debug(logHandle, "%{public}@ is quarantined, but user approved ...will allow", path);
             
             //done
             goto bail;
@@ -207,7 +211,7 @@
             (QTN_FLAG_USER_APPROVED & quarantineFlags) )
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"app bundle, %@, is user approved ...will allow", appPath]);
+            os_log_debug(logHandle, "app bundle, %{public}@, is user approved ...will allow", appPath);
             
             //done
             goto bail;
@@ -215,10 +219,10 @@
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ is translocated or quarantined (and not user approved)", process.name]);
+    os_log_debug(logHandle, "%{public}@ is translocated or quarantined (and not user approved)", process.name);
     
     //dbg
-    logMsg(LOG_DEBUG, @"checking if process is still alive...");
+    os_log_debug(logHandle, "checking if process is still alive...");
     
     //when macOS kills a process
     // we still get an event, so handle this case
@@ -239,7 +243,7 @@
     if(YES != isAlive)
     {
         //dbg
-        logMsg(LOG_DEBUG, @"processed died, so will ignore");
+        os_log_debug(logHandle, "processed died, so will ignore");
         
         //bail
         goto bail;
@@ -272,14 +276,14 @@ bail:
     BOOL isRelated = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"checking if (script) process event is related: %@ vs %@", process, self.lastScript]);
+    os_log_debug(logHandle, "checking if (script) process event is related: %{public}@ vs %{public}@", process, self.lastScript);
     
     //sanity check
     // no last script
     if(nil == self.lastScript)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"no previous script event(s), thus obv. not related");
+        os_log_debug(logHandle, "no previous script event(s), thus obv. not related");
         
         //done
         goto bail;
@@ -290,7 +294,7 @@ bail:
     if(YES != [process.arguments[1] isEqualToString:self.lastScript.arguments[1]])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"...script not the same, thus not related");
+        os_log_debug(logHandle, "...script not the same, thus not related");
         
         //nope
         goto bail;
@@ -301,14 +305,14 @@ bail:
     if(process.rpid != self.lastScript.pid)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"responsible pid (%d) doesn't matches last script process (%d)", process.rpid, self.lastScript.pid]);
+        os_log_debug(logHandle, "responsible pid (%d) doesn't matches last script process (%d)", process.rpid, self.lastScript.pid);
         
         //nope
         goto bail;
     }
 
     //dbg msg
-    logMsg(LOG_DEBUG, @"script is the same, with no rpid match...appears related!");
+    os_log_debug(logHandle, "script is the same, with no rpid match...appears related!");
     
     //set flag
     isRelated = YES;
@@ -362,7 +366,7 @@ bail:
     if(YES != (blocked = [self respond:event action:ES_AUTH_RESULT_DENY]))
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to block %@", event.process.name]);
+        os_log_error(logHandle, "ERROR: failed to block %{public}@", event.process.name);
     }
     
 bail:
@@ -378,7 +382,7 @@ bail:
     if(YES != [self respond:event action:ES_AUTH_RESULT_ALLOW])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to allow %@", event.process.name]);
+        os_log_error(logHandle, "ERROR: failed to allow %{public}@", event.process.name);
     }
     
     return;
@@ -395,7 +399,7 @@ bail:
     es_respond_result_t result = !ES_RESPOND_RESULT_SUCCESS;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@: %@", (ES_AUTH_RESULT_ALLOW == action) ? @"allowing" : @"blocking", event.process.path]);
+    os_log_debug(logHandle, "%{public}@: %{public}@", (ES_AUTH_RESULT_ALLOW == action) ? @"allowing" : @"blocking", event.process.path);
         
     //sync
     @synchronized(event)
@@ -405,7 +409,7 @@ bail:
             (NULL == event.esMessage) )
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"esf client/message was unset ...timeout hit?");
+            os_log_debug(logHandle, "esf client/message was unset ...timeout hit?");
             
             //bail
             goto bail;
@@ -416,13 +420,13 @@ bail:
         if(ES_RESPOND_RESULT_SUCCESS != result)
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_respond_auth_result' failed with: %x", result]);
+            os_log_error(logHandle, "ERROR: 'es_respond_auth_result' failed with: %x", result);
         }
         //success
         else
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@: %@", (ES_AUTH_RESULT_ALLOW == action) ? @"allowed" : @"blocked", event.process.path]);
+            os_log_debug(logHandle, "%{public}@: %{public}@", (ES_AUTH_RESULT_ALLOW == action) ? @"allowed" : @"blocked", event.process.path);
         }
         
         //free/unset message

@@ -10,7 +10,6 @@
 @import Foundation;
 
 #import "consts.h"
-#import "logging.h"
 #import "XPCProtocol.h"
 #import "HelperListener.h"
 #import "HelperInterface.h"
@@ -18,6 +17,11 @@
 #import <bsm/libbsm.h>
 #import <Security/AuthSession.h>
 #import <EndpointSecurity/EndpointSecurity.h>
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //interface for 'extension' to NSXPCConnection
 // allows us to access the 'private' auditToken iVar
@@ -79,14 +83,14 @@ bail:
     if(nil == self.listener)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to create mach service %@", CONFIG_HELPER_ID]);
+        os_log_error(logHandle, "ERROR: failed to create mach service %{public}@", CONFIG_HELPER_ID);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"created mach service %@", CONFIG_HELPER_ID]);
+    os_log_debug(logHandle, "created mach service %{public}@", CONFIG_HELPER_ID);
     
     //set delegate
     self.listener.delegate = self;
@@ -141,14 +145,14 @@ bail:
     auditToken = ((ExtendedNSXPCConnection*)newConnection).auditToken;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"received request to connect to XPC interface");
+    os_log_debug(logHandle, "received request to connect to XPC interface");
         
     //obtain dynamic code ref
     status = SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef);
     if(errSecSuccess != status)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecCodeCopyGuestWithAttributes' failed with': %#x", status]);
+        os_log_error(logHandle, "ERROR: 'SecCodeCopyGuestWithAttributes' failed with': %#x", status);
         
         //bail
         goto bail;
@@ -159,7 +163,7 @@ bail:
     if(errSecSuccess != status)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"SecCodeCheckValidity' failed with': %#x", status]);
+        os_log_error(logHandle, "ERROR: 'SecCodeCheckValidity' failed with': %#x", status);
        
         //bail
         goto bail;
@@ -170,7 +174,7 @@ bail:
     if(errSecSuccess != status)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"'SecCodeCopySigningInformation' failed with': %#x", status]);
+        os_log_error(logHandle, "ERROR: 'SecCodeCopySigningInformation' failed with': %#x", status);
        
         //bail
         goto bail;
@@ -180,21 +184,21 @@ bail:
     csFlags = [((__bridge NSDictionary *)csInfo)[(__bridge NSString *)kSecCodeInfoStatus] unsignedIntValue];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"code signing flags: %#x", csFlags]);
+    os_log_debug(logHandle, "code signing flags: %#x", csFlags);
                     
     //gotta have hardened runtime
     if( !(CS_VALID & csFlags) &&
         !(CS_RUNTIME & csFlags) )
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"invalid code signing flags: %#x", csFlags]);
+        os_log_error(logHandle, "ERROR: invalid code signing flags: %#x", csFlags);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"code signing flags, ok (`CS_RUNTIME` is set)");
+    os_log_debug(logHandle, "code signing flags, ok (`CS_RUNTIME` is set)");
     
     //init signing req
     requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\"", INSTALLER_ID, SIGNING_AUTH];
@@ -213,7 +217,7 @@ bail:
     if(0 != SecTaskValidateForRequirement(taskRef, (__bridge CFStringRef)(requirement)))
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to validate against %@", requirement]);
+        os_log_error(logHandle, "ERROR: failed to validate against %{public}@", requirement);
         
         //bail
         goto bail;
@@ -229,7 +233,7 @@ bail:
     [newConnection resume];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowed XPC connection: %@", newConnection]);
+    os_log_debug(logHandle, "allowed XPC connection: %{public}@", newConnection);
     
     //happy
     shouldAccept = YES;

@@ -11,9 +11,13 @@
 
 #import "Rule.h"
 #import "Rules.h"
-#import "logging.h"
 #import "utilities.h"
 #import "Preferences.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 /* format of rules
     dictionary of dictionaries
@@ -66,13 +70,13 @@ extern Preferences* preferences;
     rulesFile = [INSTALL_DIRECTORY stringByAppendingPathComponent:RULES_FILE];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loading rules from: %@", rulesFile]);
+    os_log_debug(logHandle, "loading rules from: %{public}@", rulesFile);
     
     //no rules (yet)?
     if(YES != [[NSFileManager defaultManager] fileExistsAtPath:rulesFile])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ not found, no rules yet?", rulesFile]);
+        os_log_debug(logHandle, "%{public}@ not found, no rules yet?", rulesFile);
         
         //no error though...
         result = YES;
@@ -86,7 +90,7 @@ extern Preferences* preferences;
     if(nil == archivedRules)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to load rules from: %@", RULES_FILE]);
+        os_log_error(logHandle, "ERROR: failed to load rules from: %{public}@", RULES_FILE);
         
         //bail
         goto bail;
@@ -98,14 +102,14 @@ extern Preferences* preferences;
     if(nil == self.rules)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to unarchive rules from: %@ (%@)", RULES_FILE, error]);
+        os_log_error(logHandle, "ERROR: failed to unarchive rules from: %{public}@ (%{public}@)", RULES_FILE, error);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded %lu rules from: %@", (unsigned long)self.rules.count, RULES_FILE]);
+    os_log_debug(logHandle, "loaded %lu rules from: %{public}@", (unsigned long)self.rules.count, RULES_FILE);
     
     //happy
     result = YES;
@@ -128,14 +132,14 @@ bail:
     NSString* key = nil;
  
     //log msg
-    logMsg(LOG_DEBUG, @"adding rule");
+    os_log_debug(logHandle, "adding rule");
     
     //existing rule?
     // can occur if multiple alerts & user approved (entire) process
     if(nil != (rule = [self find:event]))
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"rule (%@), would be duplicate for event (%@), so not adding", rule, event]);
+        os_log_debug(logHandle, "rule (%{public}@), would be duplicate for event (%{public}@), so not adding", rule, event);
         
         //happy
         added = YES;
@@ -153,7 +157,7 @@ bail:
     if(NULL == key) goto bail;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"key for rule: %@", key]);
+    os_log_debug(logHandle, "key for rule: %{public}@", key);
     
     //new process?
     if(nil == self.rules[key])
@@ -175,7 +179,7 @@ bail:
     if(YES != [self save])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to save rules");
+        os_log_error(logHandle, "ERROR: failed to save rules");
         
         //bail
         goto bail;
@@ -206,13 +210,13 @@ bail:
         key = (0 != event.file.process.signingID.length) ? event.file.process.signingID : event.file.process.path;
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"key for rule: %@", key]);
+        os_log_debug(logHandle, "key for rule: %{public}@", key);
         
         //no match on process
         if(nil == self.rules[key])
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"%@ didn't match any rules", key]);
+            os_log_debug(logHandle, "%{public}@ didn't match any rules", key);
             
             //bail
             goto bail;
@@ -232,7 +236,7 @@ bail:
                     !(CS_VALID & event.file.process.csFlags.unsignedIntegerValue) )
                 {
                     //err msg
-                    logMsg(LOG_ERR, [NSString stringWithFormat:@"%@ is not longer validly signed (csflags: %#lx -> %#lx", key, (unsigned long)rule.processCSFlags.unsignedIntegerValue, event.file.process.csFlags.unsignedIntegerValue]);
+                    os_log_error(logHandle, "ERROR: %{public}@ is not longer validly signed (csflags: %#lx -> %#lx", key, (unsigned long)rule.processCSFlags.unsignedIntegerValue, event.file.process.csFlags.unsignedIntegerValue);
 
                     //bail here
                     *stop = YES;
@@ -283,7 +287,7 @@ bail:
     __block NSUInteger ruleIndex = -1;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"deleting rule, %@", rule]);
+    os_log_debug(logHandle, "deleting rule, %{public}@", rule);
     
     //sync to access
     @synchronized(self.rules)
@@ -312,7 +316,7 @@ bail:
         if(-1 == ruleIndex)
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to find rule");
+            os_log_error(logHandle, "ERROR: failed to find rule");
             
             //bail
             goto bail;
@@ -322,7 +326,7 @@ bail:
         if(-1 != ruleIndex)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"found rule at index: %lu", (unsigned long)ruleIndex]);
+            os_log_debug(logHandle, "found rule at index: %lu", (unsigned long)ruleIndex);
             
             //remove
             [self.rules[key][KEY_RULES] removeObjectAtIndex:ruleIndex];
@@ -331,7 +335,7 @@ bail:
             if(0 == ((NSMutableArray*)self.rules[key][KEY_RULES]).count)
             {
                 //dbg msg
-                logMsg(LOG_DEBUG, @"rule was only one for process, so removing process entry");
+                os_log_debug(logHandle, "rule was only one for process, so removing process entry");
                 
                 //remove process
                 [self.rules removeObjectForKey:key];
@@ -342,7 +346,7 @@ bail:
         if(YES != [self save])
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to save (updated) rules");
+            os_log_error(logHandle, "ERROR: failed to save (updated) rules");
             
             //bail
             goto bail;
@@ -380,7 +384,7 @@ bail:
     if(nil == archivedRules)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to archive rules: %@", error]);
+        os_log_error(logHandle, "ERROR: failed to archive rules: %{public}@", error);
         
         //bail
         goto bail;
@@ -390,7 +394,7 @@ bail:
     if(YES != [archivedRules writeToFile:rulesFile atomically:YES])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to save archived rules to: %@", rulesFile]);
+        os_log_error(logHandle, "ERROR: failed to save archived rules to: %{public}@", rulesFile);
         
         //bail
         goto bail;

@@ -10,7 +10,6 @@
 #import <sys/socket.h>
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 #import "FileMonitor.h"
 #import "AppDelegate.h"
@@ -18,6 +17,9 @@
 #import "AlertWindowController.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //xpc daemon
 extern XPCDaemonClient* xpcDaemonClient;
@@ -279,7 +281,7 @@ bail:
     NSDictionary* signingInfo = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"processing signing information");
+    os_log_debug(logHandle, "processing signing information");
     
     //default to unknown
     image = [NSImage imageNamed:@"SignedUnknown"];
@@ -555,7 +557,7 @@ bail:
     NSMutableDictionary* alertResponse = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"user clicked: %ld", (long)((NSButton*)sender).tag]);
+    os_log_debug(logHandle, "user clicked: %ld", (long)((NSButton*)sender).tag);
     
     //init alert response
     // start w/ copy of received alert
@@ -569,7 +571,7 @@ bail:
     if(sender == [self.window standardWindowButton:NSWindowCloseButton])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"handling 'close' event");
+        os_log_debug(logHandle, "handling 'close' event");
         
         //say: temp
         alertResponse[ALERT_TEMPORARY] = [NSNumber numberWithBool:YES];
@@ -592,7 +594,7 @@ bail:
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"responding to daemon, alert: %@", alertResponse]);
+    os_log_debug(logHandle, "responding to daemon, alert: %{public}@", alertResponse);
     
     //close popups
     [self closePopups];

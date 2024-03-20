@@ -137,9 +137,6 @@
 // update mode
 #define PREF_NO_UPDATE_MODE @"noupdateMode"
 
-//log file
-#define LOG_FILE_NAME @"BlockBlock.log"
-
 //general error URL
 #define FATAL_ERROR_URL @"https://objective-see.org/errors.html"
 

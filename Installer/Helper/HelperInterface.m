@@ -8,11 +8,15 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 #import "HelperInterface.h"
 
 #import <signal.h>
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //script name
 #define CONF_SCRIPT @"configure.sh"
@@ -33,7 +37,7 @@ dispatch_source_t dispatchSource = nil;
     BOOL response = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC-request: install (%@)", app]);
+    os_log_debug(logHandle, "XPC-request: install (%{public}@)", app);
     
     //configure
     // pass in 'install' flag
@@ -87,7 +91,7 @@ dispatch_source_t dispatchSource = nil;
     BOOL response = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"XPC-request: uninstall");
+    os_log_debug(logHandle, "XPC-request: uninstall");
 
     //configure
     // pass in 'uninstall' flag
@@ -118,21 +122,21 @@ dispatch_source_t dispatchSource = nil;
     if(nil == validatedApp)
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to validate copy of app");
+        os_log_error(logHandle, "ERROR: failed to validate copy of app");
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"validated: %@", app]);
+    os_log_debug(logHandle, "validated: %{public}@", app);
 
     //exec script
     result = [self execScript:validatedApp arguments:args];
     if(noErr != result)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute config script %@ (%d)", CONF_SCRIPT, result]);
+        os_log_error(logHandle, "ERROR: failed to execute config script %{public}@ (%d)", CONF_SCRIPT, result);
         
         //bail
         goto bail;
@@ -147,7 +151,7 @@ bail:
     if(YES != [[NSFileManager defaultManager] removeItemAtPath:validatedApp error:nil])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to remove validated app %@", validatedApp]);
+        os_log_error(logHandle, "ERROR: failed to remove validated app %{public}@", validatedApp);
         
         //set err
         result = -1;
@@ -176,7 +180,7 @@ bail:
     __block NSError* error = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"XPC-request: cleanup (removing self)");
+    os_log_debug(logHandle, "XPC-request: cleanup (removing self)");
     
     //ignore sigterm
     // handling it via GCD dispatch
@@ -190,7 +194,7 @@ bail:
     dispatch_source_set_event_handler(dispatchSource, ^{
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"XPC: got SIGTERM, deleting plist & self!");
+        os_log_debug(logHandle, "XPC: got SIGTERM, deleting plist & self!");
         
         //init path to plist
         helperPlist = [@"/Library/LaunchDaemons" stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", CONFIG_HELPER_ID]];
@@ -199,7 +203,7 @@ bail:
         if(YES != [[NSFileManager defaultManager] removeItemAtPath:helperPlist error:&error])
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"ERROR: failed to delete %@ (%@)", helperPlist, error.description]);
+            os_log_error(logHandle, "ERROR: failed to delete %{public}@ (%{public}@)", helperPlist, error.description);
             
             //set error
             noErrors = NO;
@@ -212,7 +216,7 @@ bail:
         if(YES != [[NSFileManager defaultManager] removeItemAtPath:helperBinary error:&error])
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"ERROR: failed to delete %@ (%@)", helperBinary, error.description]);
+            os_log_error(logHandle, "ERROR: failed to delete %{public}@ (%{public}@)", helperBinary, error.description);
             
             //set error
             noErrors = NO;
@@ -226,7 +230,7 @@ bail:
             response = YES;
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"removed %@ and %@", helperPlist, helperBinary]);
+            os_log_debug(logHandle, "removed %{public}@ and %{public}@", helperPlist, helperBinary);
         }
         
         //reply to client
@@ -273,7 +277,7 @@ bail:
     appCopy = [NSTemporaryDirectory() stringByAppendingPathComponent:app.lastPathComponent];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"validating %@", appCopy]);
+    os_log_debug(logHandle, "validating %{public}@", appCopy);
     
     //delete if old copy is there
     if(YES == [defaultManager fileExistsAtPath:appCopy])
@@ -282,7 +286,7 @@ bail:
         if(YES != [defaultManager removeItemAtPath:appCopy error:&error])
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to delete %@ (error: %@)", appCopy, error.description]);
+            os_log_error(logHandle, "failed to delete %{public}@ (error: %{public}@)", appCopy, error.description);
         }
     }
     
@@ -290,7 +294,7 @@ bail:
     if(YES != [defaultManager copyItemAtPath:app toPath:appCopy error:&error])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to copy %@ to %@ (error: %@)", app, appCopy, error.description]);
+        os_log_error(logHandle, "failed to copy %{public}@ to %{public}@ (error: %{public}@)", app, appCopy, error.description);
         
         //bail
         goto bail;
@@ -300,7 +304,7 @@ bail:
     if(YES != setFileOwner(appCopy, @0, @0, YES))
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to set %@ to be owned by root", appCopy]);
+        os_log_error(logHandle, "ERROR: failed to set %{public}@ to be owned by root", appCopy);
         
         //bail
         goto bail;
@@ -311,7 +315,7 @@ bail:
     if(noErr != verifyApp(appCopy, SIGNING_AUTH))
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to validate %@", appCopy]);
+        os_log_error(logHandle, "ERROR: failed to validate %{public}@", appCopy);
         
         //bail
         goto bail;
@@ -354,7 +358,7 @@ bail:
     if(nil == appBundle)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to load app bundle for %@", validatedApp]);
+        os_log_error(logHandle, "ERROR: failed to load app bundle for %{public}@", validatedApp);
         
         //bail
         goto bail;
@@ -365,7 +369,7 @@ bail:
     if(nil == script)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to find config script %@", CONF_SCRIPT]);
+        os_log_error(logHandle, "ERROR: failed to find config script %{public}@", CONF_SCRIPT);
         
         //bail
         goto bail;

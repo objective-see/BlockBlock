@@ -8,7 +8,6 @@
 //
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 #import "UpdateWindowController.h"

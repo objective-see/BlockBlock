@@ -15,7 +15,6 @@
 		CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913DF2382649E00850CD1 /* XPCDaemon.m */; };
 		CD3913E92382649F00850CD1 /* XPCUserClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913E12382649F00850CD1 /* XPCUserClient.m */; };
 		CD3913EA2382649F00850CD1 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913E22382649F00850CD1 /* Events.m */; };
-		CD3913F32382658600850CD1 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913EC2382658600850CD1 /* logging.m */; };
 		CD3913F42382658600850CD1 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913F12382658600850CD1 /* utilities.m */; };
 		CD3913F72382675300850CD1 /* Rules.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913F62382675300850CD1 /* Rules.m */; };
 		CD3913FD238268B300850CD1 /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3913FB238268B300850CD1 /* Rule.m */; };
@@ -69,8 +68,6 @@
 		CD3913E22382649F00850CD1 /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Daemon/Events.m; sourceTree = "<group>"; };
 		CD3913E42382649F00850CD1 /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = Daemon/Preferences.h; sourceTree = "<group>"; };
 		CD3913E52382649F00850CD1 /* XPCUserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserClient.h; path = Daemon/XPCUserClient.h; sourceTree = "<group>"; };
-		CD3913EC2382658600850CD1 /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = logging.m; path = ../Shared/logging.m; sourceTree = "<group>"; };
-		CD3913ED2382658600850CD1 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = ../Shared/logging.h; sourceTree = "<group>"; };
 		CD3913EE2382658600850CD1 /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
 		CD3913EF2382658600850CD1 /* utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utilities.h; path = ../Shared/utilities.h; sourceTree = "<group>"; };
 		CD3913F02382658600850CD1 /* consts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = consts.h; path = ../Shared/consts.h; sourceTree = "<group>"; };
@@ -216,8 +213,6 @@
 				CD3913FC238268B300850CD1 /* Rule.h */,
 				CD3913FB238268B300850CD1 /* Rule.m */,
 				CD3913F02382658600850CD1 /* consts.h */,
-				CD3913ED2382658600850CD1 /* logging.h */,
-				CD3913EC2382658600850CD1 /* logging.m */,
 				CD3913EF2382658600850CD1 /* utilities.h */,
 				CD3913F12382658600850CD1 /* utilities.m */,
 				CD3913F22382658600850CD1 /* XPCUserProto.h */,
@@ -399,7 +394,6 @@
 				CD9E04AB253E845300DB3218 /* Kext.m in Sources */,
 				CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */,
 				CDDC60EF244BDA9D00CC81F1 /* CronJob.m in Sources */,
-				CD3913F32382658600850CD1 /* logging.m in Sources */,
 				CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */,
 				CD410454244406EB00069C56 /* LoginItem.m in Sources */,
 				CDE4C1212B12DD7B001521CE /* ProcessMonitor.m in Sources */,

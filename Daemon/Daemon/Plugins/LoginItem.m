@@ -9,10 +9,14 @@
 #import "Item.h"
 #import "Event.h"
 #import "Consts.h"
-#import "Logging.h"
 #import "Utilities.h"
 #import "LoginItem.h"
 #import "XPCUserClient.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //user client
 extern XPCUserClient* xpcUserClient;
@@ -41,7 +45,7 @@ extern XPCUserClient* xpcUserClient;
     if(nil != self)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
+        os_log_debug(logHandle, "init'ing %{public}@ (%p)", NSStringFromClass([self class]), self);
         
         //set type
         self.type = PLUGIN_TYPE_LOGIN_ITEM;
@@ -73,7 +77,7 @@ extern XPCUserClient* xpcUserClient;
 -(NSString*)itemName:(Event*)event
 {
     //dbg msg
-    //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__]);
     
     return [self findLoginItem:event.file][LOGIN_ITEM_NAME];
 }
@@ -82,7 +86,7 @@ extern XPCUserClient* xpcUserClient;
 -(NSString*)itemObject:(Event*)event
 {
     //dbg msg
-    //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__]);
     
     return [self findLoginItem:event.file][LOGIN_ITEM_PATH];
 }
@@ -96,14 +100,14 @@ extern XPCUserClient* xpcUserClient;
     BOOL shouldIgnore = YES;
  
     //dbg msg
-    //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    //os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__]);
     
     //only care about new login items
     // might be another file edits which are ok to ignore...
     if(nil != [self findLoginItem:file])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"found new login item, so NOT IGNORING");
+        os_log_debug(logHandle, "found new login item, so NOT IGNORING");
     
         //don't ignore
         shouldIgnore = NO;
@@ -130,7 +134,7 @@ extern XPCUserClient* xpcUserClient;
     NSDictionary* loginItems = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"updating snapshot (login items) from: %@", path]);
+    os_log_debug(logHandle, "updating snapshot (login items) from: %{public}@", path);
     
     //sanity check
     if(0 == path.length) goto bail;
@@ -147,7 +151,7 @@ extern XPCUserClient* xpcUserClient;
     self.snapshot[path] = loginItems;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"login items snapshot: %@", self.snapshot]);
+    os_log_debug(logHandle, "login items snapshot: %{public}@", self.snapshot);
 
 bail:
 
@@ -223,7 +227,7 @@ bail:
         }
         
         //dbg msg
-        //logMsg(LOG_DEBUG, [NSString stringWithFormat:@"bookmark properties: %@", properties]);
+        //os_log_debug(logHandle, "bookmark properties: %{public}@", properties]);
     
         //extract path
         path = properties[@"_NSURLPathKey"];
@@ -291,7 +295,7 @@ bail:
     if(0 == currentLoginItems.count) goto bail;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"current login items: %@", currentLoginItems]);
+    os_log_debug(logHandle, "current login items: %{public}@", currentLoginItems);
     
     //init set of new login items with current login items
     newLoginItems = [NSMutableSet setWithArray:[currentLoginItems allKeys]];
@@ -328,7 +332,7 @@ bail:
     __block BOOL wasBlocked = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //remove login item
     // gotta call into user session to remove

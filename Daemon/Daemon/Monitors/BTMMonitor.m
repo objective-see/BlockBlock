@@ -7,7 +7,6 @@
 //
 
 #import "Consts.h"
-#import "Logging.h"
 #import "Monitor.h"
 #import "Utilities.h"
 #import "BTMMonitor.h"
@@ -15,13 +14,17 @@
 
 /* GLOBALS */
 
+//monitor
 extern Monitor* monitor;
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation BTMMonitor
 
 //start BTM monitoring
 // and process BTM events
--(BOOL)start:(PluginBase*)plugin
+-(BOOL)start:(PluginBase*)btmPlugin
 {
     //flag
     BOOL started = NO;
@@ -33,7 +36,7 @@ extern Monitor* monitor;
     es_event_type_t btmESEvents[] = {ES_EVENT_TYPE_NOTIFY_BTM_LAUNCH_ITEM_ADD};
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"starting 'BTM' monitor...");
+    os_log_debug(logHandle, "starting 'BTM' monitor...");
     
     //create client
     // and handle btm events
@@ -46,13 +49,13 @@ extern Monitor* monitor;
         NSString* stringToken = nil;
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"new 'btm' event: %#x", message->event_type]);
+        os_log_debug(logHandle, "new 'btm' event: %#x", message->event_type);
         
         //sanity check
         if(ES_EVENT_TYPE_NOTIFY_BTM_LAUNCH_ITEM_ADD != message->event_type)
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"ignoring non-'ES_EVENT_TYPE_NOTIFY_BTM_LAUNCH_ITEM_ADD' event");
+            os_log_debug(logHandle, "ignoring non-'ES_EVENT_TYPE_NOTIFY_BTM_LAUNCH_ITEM_ADD' event");
             
             return;
         }
@@ -62,7 +65,7 @@ extern Monitor* monitor;
         if(nil == file)
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to create file object for 'btm' event");
+            os_log_error(logHandle, "ERROR: failed to create file object for 'btm' event");
             
             return;
         }
@@ -87,7 +90,7 @@ extern Monitor* monitor;
         
         //process event
         // passing in (btm) plugin
-        [monitor processEvent:file plugin:plugin message:es_copy_message(message)];
+        [monitor processEvent:file plugin:btmPlugin message:es_copy_message(message)];
        
     });
     
@@ -95,7 +98,7 @@ extern Monitor* monitor;
     if(ES_NEW_CLIENT_RESULT_SUCCESS != result)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"'es_new_client' failed with %x", result]);
+        os_log_error(logHandle, "ERROR: 'es_new_client' failed with %x", result);
         
         //bail
         goto bail;
@@ -105,7 +108,7 @@ extern Monitor* monitor;
     if(ES_RETURN_SUCCESS != es_subscribe(self.endpointClient, btmESEvents, sizeof(btmESEvents)/sizeof(btmESEvents[0])))
     {
         //err msg
-        logMsg(LOG_ERR, @"'es_subscribe' failed");
+        os_log_error(logHandle, "ERROR: 'es_subscribe' failed");
         
         //bail
         goto bail;
@@ -130,7 +133,7 @@ bail:
     @synchronized (self) {
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"stopping btm monitor...");
+        os_log_debug(logHandle, "stopping btm monitor...");
             
         //sanity check
         if(NULL == self.endpointClient) goto bail;
@@ -139,27 +142,27 @@ bail:
         if(ES_RETURN_SUCCESS != es_unsubscribe_all(self.endpointClient))
         {
            //err msg
-           logMsg(LOG_ERR, @"'es_unsubscribe_all' failed");
+           os_log_error(logHandle, "ERROR: 'es_unsubscribe_all' failed");
            
            //bail
            goto bail;
         }
             
         //dbg msg
-        logMsg(LOG_DEBUG, @"unsubscribed from btm events");
+        os_log_debug(logHandle, "unsubscribed from btm events");
            
         //delete client
         if(ES_RETURN_SUCCESS != es_delete_client(self.endpointClient))
         {
            //err msg
-           logMsg(LOG_ERR, @"'es_delete_client' failed");
+           os_log_error(logHandle, "ERROR: 'es_delete_client' failed");
            
            //bail
            goto bail;
         }
             
         //dbg msg
-        logMsg(LOG_DEBUG, @"deleted btm endpoint client");
+        os_log_debug(logHandle, "deleted btm endpoint client");
            
         //unset
         self.endpointClient = NULL;

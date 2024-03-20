@@ -16,6 +16,8 @@
 
 #import <EndpointSecurity/EndpointSecurity.h>
 
+@import OSLog;
+
 @interface Monitor : NSObject
 {
 

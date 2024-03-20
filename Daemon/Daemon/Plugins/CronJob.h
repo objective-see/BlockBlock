@@ -6,6 +6,8 @@
 //  Copyright (c) 2020 Objective-See. All rights reserved.
 //
 
+@import OSLog;
+
 #import <Foundation/Foundation.h>
 #import "../PluginBase.h"
 

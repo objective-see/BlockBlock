@@ -84,6 +84,14 @@ elif [ "${1}" == "-uninstall" ]; then
 
     echo "uninstalling"
     
+    #remove (old) log file
+    logFile="$INSTALL_DIRECTORY/BlockBlock.log"
+    if [ -f "$logFile" ]; then
+        rm "$logFile"
+        
+        echo "removed (old) log file"
+    fi
+    
     #uninstall beta?
     BETA="/Library/LaunchDaemons/com.objectiveSee.blockblock.plist"
     if test -f "$BETA"; then

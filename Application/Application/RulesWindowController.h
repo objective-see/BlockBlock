@@ -8,6 +8,7 @@
 //
 
 @import Cocoa;
+@import OSLog;
 
 #import "Rule.h"
 #import "XPCDaemonClient.h"

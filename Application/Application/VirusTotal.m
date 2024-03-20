@@ -7,9 +7,13 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
-#import "logging.h"
 #import "VirusTotal.h"
 #import "AppDelegate.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation VirusTotal
 
@@ -76,7 +80,7 @@
         if(nil == postData)
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to convert paramters %@, to JSON (%@)", itemData, error]);
+            os_log_error(logHandle, "ERROR: failed to convert paramters %{public}@, to JSON (%{public}@)", itemData, error);
             
             //bail
             goto bail;
@@ -87,14 +91,14 @@
     @catch(NSException *exception)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to convert paramters %@, to JSON (%@)", itemData, exception]);
+        os_log_error(logHandle, "ERROR: failed to convert paramters %{public}@, to JSON (%{public}@)", itemData, exception);
         
         //bail
         goto bail;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"posting request (%@) to %@", queryURL, postData]);
+    os_log_debug(logHandle, "posting request (%{public}@) to %{public}@", queryURL, postData);
 
     //make query to VT
     response = [self postRequest:queryURL postData:postData];
@@ -164,7 +168,7 @@ bail:
     [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData* data, NSURLResponse* response, NSError* error)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"got response %lu", (long)((NSHTTPURLResponse *)response).statusCode]);
+        os_log_debug(logHandle, "got response %lu", (long)((NSHTTPURLResponse *)response).statusCode);
         
         //sanity check(s)
         if( (nil != data) &&
@@ -182,7 +186,7 @@ bail:
             @catch (NSException *exception)
             {
                 //err msg
-                logMsg(LOG_ERR, [NSString stringWithFormat:@"converting response %@ to JSON threw %@", data, exception]);
+                os_log_error(logHandle, "ERROR: converting response %{public}@ to JSON threw %{public}@", data, exception);
             }
         }
         //error making request
@@ -190,7 +194,7 @@ bail:
         else
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to query VirusTotal (%@, %@)", error, response]);
+            os_log_error(logHandle, "ERROR: failed to query VirusTotal (%{public}@, %{public}@)", error, response);
         }
         
         //trigger

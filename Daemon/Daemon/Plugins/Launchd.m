@@ -10,8 +10,12 @@
 #import "Event.h"
 #import "Launchd.h"
 #import "Consts.h"
-#import "Logging.h"
 #import "Utilities.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 // REGEX
 // ^(\/System|\/Users\/[^\/]+|)\/Library\/(LaunchDaemons|LaunchAgents)\/.+\.(?i)plist$
@@ -32,7 +36,7 @@
     if(nil != self)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
+        os_log_debug(logHandle, "init'ing %{public}@ (%p)", NSStringFromClass([self class]), self);
     
         //set type
         self.type = PLUGIN_TYPE_LAUNCHD;
@@ -147,7 +151,7 @@ bail:
     propertyList = event.file.destinationPath;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"PLUGIN %@: blocking %@", NSStringFromClass([self class]), propertyList]);
+    os_log_debug(logHandle, "PLUGIN %{public}@: blocking %{public}@", NSStringFromClass([self class]), propertyList);
 
 
     //STEP 1: unload launch item (via launchctl)
@@ -158,7 +162,7 @@ bail:
         (noErr != [results[EXIT_CODE] intValue]) )
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to unload %@, error: %@", propertyList, results[EXIT_CODE]]);
+        os_log_error(logHandle, "failed to unload %{public}@, error: %{public}@", propertyList, results[EXIT_CODE]);
         
         //set flag
         blockingFailed = YES;
@@ -170,7 +174,7 @@ bail:
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"unloaded %@", propertyList]);
+        os_log_debug(logHandle, "unloaded %{public}@", propertyList);
     }
     #endif
     
@@ -181,7 +185,7 @@ bail:
     if(YES != [[NSFileManager defaultManager] removeItemAtPath:propertyList error:&error])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to delete %@ (%@)", propertyList, error]);
+        os_log_error(logHandle, "ERROR: failed to delete %{public}@ (%{public}@)", propertyList, error);
         
         //set flag
         blockingFailed = YES;
@@ -194,7 +198,7 @@ bail:
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"deleted %@", propertyList]);
+        os_log_debug(logHandle, "deleted %{public}@", propertyList);
     }
     #endif
     
@@ -208,7 +212,7 @@ bail:
         if(noErr != kill(pid.intValue, SIGKILL))
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to kill %@:%@ (error: %d)", pid, event.item.object, errno]);
+            os_log_error(logHandle, "failed to kill %{public}@:%{public}@ (error: %d)", pid, event.item.object, errno);
             
             //set flag
             blockingFailed = YES;
@@ -218,13 +222,13 @@ bail:
         else
         {
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"killed %@:%@", pid, event.item.object]);
+            os_log_debug(logHandle, "killed %{public}@:%{public}@", pid, event.item.object);
         }
         #endif
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launch item was blocked, (fully? %d)", !blockingFailed]);
+    os_log_debug(logHandle, "launch item was blocked, (fully? %d)", !blockingFailed);
 
     return blockingFailed;
 }

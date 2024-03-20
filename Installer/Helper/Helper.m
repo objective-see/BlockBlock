@@ -7,12 +7,18 @@
 //  copyright (c) 2018 Objective-See. All rights reserved.
 //
 
+@import OSLog;
 @import Foundation;
 
-#import "logging.h"
+#import "consts.h"
 #import "XPCProtocol.h"
 #import "HelperListener.h"
 #import "HelperInterface.h"
+
+/* GLOBALS */
+
+//log handle
+os_log_t logHandle = nil;
 
 //helper daemon entry point
 // create XPC listener object and then just wait
@@ -31,19 +37,22 @@ int main(int argc, const char * argv[])
         //helper listener (XPC) obj
         HelperListener* helperListener = nil;
         
+        //init log
+        logHandle = os_log_create(BUNDLE_ID, "installer (helper)");
+        
         //alloc/init helper listener XPC obj
         helperListener = [[HelperListener alloc] init];
         if(nil == helperListener)
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to initialize user comms XPC listener");
+            os_log_error(logHandle, "ERROR: failed to initialize user comms XPC listener");
             
             //bail
             goto bail;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"listening for client XPC connections...");
+        os_log_debug(logHandle, "listening for client XPC connections...");
     
         //run loop
         [[NSRunLoop currentRunLoop] run];

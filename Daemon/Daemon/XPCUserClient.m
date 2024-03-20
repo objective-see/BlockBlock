@@ -7,15 +7,19 @@
 //  copyright (c) 2018 Objective-See. All rights reserved.
 //
 
+@import OSLog;
+
 #import "Rules.h"
 #import "Event.h"
 #import "Events.h"
 #import "consts.h"
-#import "logging.h"
 #import "XPCListener.h"
 #import "XPCUserClient.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //xpc connection
 extern XPCListener* xpcListener;
@@ -30,14 +34,14 @@ extern XPCListener* xpcListener;
     __block BOOL xpcError = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"invoking user XPC method: 'alertShow'");
+    os_log_debug(logHandle, "invoking user XPC method: 'alertShow'");
     
     //sanity check
     // no client connection?
     if(nil == xpcListener.client)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"no client is connected, alert will not be delivered");
+        os_log_debug(logHandle, "no client is connected, alert will not be delivered");
         
         //set error
         xpcError = YES;
@@ -53,7 +57,7 @@ extern XPCListener* xpcListener;
         xpcError = YES;
         
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to invoke USER XPC method: 'alertShow' (error: %@)", proxyError]);
+        os_log_error(logHandle, "ERROR: failed to invoke USER XPC method: 'alertShow' (error: %{public}@)", proxyError);
 
     }] alertShow:[event toAlert]];
     
@@ -67,7 +71,7 @@ bail:
 -(void)removeLoginItem:(NSURL*)loginItem reply:(void (^)(NSNumber*))reply;
 {
     //dbg msg
-    logMsg(LOG_DEBUG, @"invoking user XPC method: 'removeLoginItem'");
+    os_log_debug(logHandle, "invoking user XPC method: 'removeLoginItem'");
     
     //sanity check
     // no client connection?
@@ -77,14 +81,14 @@ bail:
     [[xpcListener.client synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to invoke USER XPC method: 'removeLoginItem' (error: %@)", proxyError]);
+        os_log_error(logHandle, "ERROR: failed to invoke USER XPC method: 'removeLoginItem' (error: %{public}@)", proxyError);
         
         reply([NSNumber numberWithInt:-1]);
 
     }] removeLoginItem:loginItem reply:^(NSNumber* result)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"user XPC method responded with: %@", result]);
+        os_log_debug(logHandle, "user XPC method responded with: %{public}@", result);
         
         //invoke block
         reply(result);
@@ -93,39 +97,5 @@ bail:
     
     return;
 }
-
-
-/*
-
-//inform user rules have changed
-// note: rules have been serialized
--(void)rulesChanged:(NSDictionary*)rules
-{
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"invoking user XPC method, '%s'", __PRETTY_FUNCTION__]);
-    
-    //no client?
-    // no need to do anything...
-    if(nil == xpcListener.mainApp)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //send to user (login item) to display
-    [[xpcListener.mainApp remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
-    {
-          //err msg
-          logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'rulesChanged' method on launch daemon (error: %@)", proxyError]);
-          
-    }] rulesChanged:rules];
-    
-bail:
-    
-    return;
-}
-
-*/
-
 
 @end

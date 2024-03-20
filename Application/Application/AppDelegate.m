@@ -9,11 +9,13 @@
 
 #import "consts.h"
 #import "Update.h"
-#import "logging.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //alert windows
 NSMutableDictionary* alerts = nil;
@@ -51,7 +53,7 @@ XPCDaemonClient* xpcDaemonClient;
     parent = getRealParent(getpid());
     
     //dbg msg(s)
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"(real) parent: %@", parent]);
+    os_log_debug(logHandle, "(real) parent: %{public}@", parent);
     
     //set auto launched flag (i.e. login item)
     if(YES == [parent[@"CFBundleIdentifier"] isEqualToString:@"com.apple.loginwindow"])
@@ -95,7 +97,7 @@ XPCDaemonClient* xpcDaemonClient;
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded preferences: %@", preferences]);
+    os_log_debug(logHandle, "loaded preferences: %{public}@", preferences);
     
     //sanity check
     // make sure daemon has FDA
@@ -159,7 +161,7 @@ bail:
 -(BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)hasVisibleWindows
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"method '%s' invoked (hasVisibleWindows: %d)", __PRETTY_FUNCTION__, hasVisibleWindows]);
+    os_log_debug(logHandle, "method '%s' invoked (hasVisibleWindows: %d)", __PRETTY_FUNCTION__, hasVisibleWindows);
     
     //no visible window(s)
     // default to show preferences
@@ -177,13 +179,13 @@ bail:
 -(IBAction)showRules:(id)sender
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"method '%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "method '%s' invoked", __PRETTY_FUNCTION__);
     
     //alloc rules window controller
     if(nil == self.rulesWindowController)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"allocating rules window controller...");
+        os_log_debug(logHandle, "allocating rules window controller...");
         
         //alloc
         rulesWindowController = [[RulesWindowController alloc] initWithWindowNibName:@"Rules"];
@@ -256,7 +258,7 @@ bail:
     keyWindow = [[NSApplication sharedApplication] keyWindow];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"close window request (key window: %@)", keyWindow]);
+    os_log_debug(logHandle, "close window request (key window: %{public}@)", keyWindow);
 
     //close
     // but only for rules/pref/about window
@@ -265,7 +267,7 @@ bail:
         (keyWindow != self.rulesWindowController.window) )
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"key window is not rules or pref window, so ignoring...");
+        os_log_debug(logHandle, "key window is not rules or pref window, so ignoring...");
         
         //ignore
         goto bail;
@@ -307,7 +309,7 @@ bail:
 -(void)toggleIcon:(NSDictionary*)preferences
 {
     //dbg msg
-    logMsg(LOG_DEBUG, @"toggling icon state");
+    os_log_debug(logHandle, "toggling icon state");
     
     //should run with no icon?
     // init and show status bar item
@@ -355,10 +357,10 @@ bail:
     BOOL visibleWindow = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"setting app's activation policy");
+    os_log_debug(logHandle, "setting app's activation policy");
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"windows: %@", NSApp.windows]);
+    os_log_debug(logHandle, "windows: %{public}@", NSApp.windows);
     
     //find any visible windows
     for(NSWindow* window in NSApp.windows)
@@ -386,7 +388,7 @@ bail:
     if(YES == visibleWindow)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"window(s) visible, setting policy: NSApplicationActivationPolicyRegular");
+        os_log_debug(logHandle, "window(s) visible, setting policy: NSApplicationActivationPolicyRegular");
         
         //foreground
         [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
@@ -397,7 +399,7 @@ bail:
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"window(s) not visible, setting policy: NSApplicationActivationPolicyAccessory");
+        os_log_debug(logHandle, "window(s) not visible, setting policy: NSApplicationActivationPolicyAccessory");
         
         //background
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
@@ -418,12 +420,12 @@ bail:
         statusBarItemController = [[StatusBarItem alloc] init:self.statusMenu preferences:(NSDictionary*)preferences];
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"initialized/loaded status bar (icon/menu)");
+        os_log_debug(logHandle, "initialized/loaded status bar (icon/menu)");
     }
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"running in 'no icon' mode (so no need for status bar)");
+        os_log_debug(logHandle, "running in 'no icon' mode (so no need for status bar)");
     }
     
     //automatically check for updates?
@@ -434,7 +436,7 @@ bail:
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"checking for update");
+            os_log_debug(logHandle, "checking for update");
            
             //check
             [self check4Update];
@@ -478,21 +480,21 @@ bail:
         case -1:
             
             //err msg
-            logMsg(LOG_ERR, @"update check failed");
+            os_log_error(logHandle, "ERROR: update check failed");
             break;
             
         //no updates
         case 0:
             
             //dbg msg
-            logMsg(LOG_DEBUG, @"no updates available");
+            os_log_debug(logHandle, "no updates available");
             break;
             
         //new version
         case 1:
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"a new version (%@) is available", newVersion]);
+            os_log_debug(logHandle, "a new version (%{public}@) is available", newVersion);
 
             //alloc update window
             updateWindowController = [[UpdateWindowController alloc] initWithWindowNibName:@"UpdateWindow"];

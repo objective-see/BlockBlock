@@ -7,6 +7,7 @@
 //  copyright (c) 2018 Objective-See. All rights reserved.
 //
 
+@import OSLog;
 @import Foundation;
 
 #import "HelperInterface.h"

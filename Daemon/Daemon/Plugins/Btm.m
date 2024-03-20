@@ -11,13 +11,18 @@
 #import "Event.h"
 #import "Consts.h"
 #import "Launchd.h"
-#import "Logging.h"
 #import "LoginItem.h"
 #import "Utilities.h"
 #import "XPCUserClient.h"
 
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
+
 //user client
 extern XPCUserClient* xpcUserClient;
+
 
 @implementation Btm
 
@@ -29,7 +34,7 @@ extern XPCUserClient* xpcUserClient;
     if(nil != self)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"init'ing %@ (%p)", NSStringFromClass([self class]), self]);
+        os_log_debug(logHandle, "init'ing %{public}@ (%p)", NSStringFromClass([self class]), self);
     
         //set type
         self.type = PLUGIN_TYPE_BACKGROUND_TASK;
@@ -167,7 +172,7 @@ bail:
             LoginItem* loginItem = nil;
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"blocking login item: %@", event.item.object]);
+            os_log_debug(logHandle, "blocking login item: %{public}@", event.item.object);
             
             //init login item obj
             loginItem = [[LoginItem alloc] init];
@@ -186,7 +191,7 @@ bail:
             Launchd* launchItem = nil;
             
             //dbg msg
-            logMsg(LOG_DEBUG, [NSString stringWithFormat:@"blocking launch item: %@", event.item.object]);
+            os_log_debug(logHandle, "blocking launch item: %{public}@", event.item.object);
             
             //init launch item obj
             launchItem = [[Launchd alloc] init];
@@ -201,7 +206,7 @@ bail:
         default:
          
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"%x is (currently) an unsupported type to block", event.esMessage->event.btm_launch_item_add->item->item_type]);
+            os_log_error(logHandle, "ERROR: %x is (currently) an unsupported type to block", event.esMessage->event.btm_launch_item_add->item->item_type);
             
             ;
     }

@@ -7,8 +7,9 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
+@import OSLog;
+
 #import "consts.h"
-#import "logging.h"
 
 #import "Rule.h"
 #import "Rules.h"
@@ -18,11 +19,15 @@
 #import "XPCUserProto.h"
 #import "XPCDaemonProto.h"
 
-
 #import <bsm/libbsm.h>
 
 //signing auth
 #define SIGNING_AUTH @"Developer ID Application: Objective-See, LLC (VBG97UB4TA)"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //interface for 'extension' to NSXPCConnection
 // allows us to access the 'private' auditToken iVar
@@ -93,7 +98,7 @@ bail:
     if(nil == self.listener)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to create mach service %@", DAEMON_MACH_SERVICE]);
+        os_log_error(logHandle, "ERROR: failed to create mach service %{public}@", DAEMON_MACH_SERVICE);
         
         //bail
         goto bail;
@@ -111,12 +116,12 @@ bail:
         [self.listener setConnectionCodeSigningRequirement:requirement];
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"set XPC requirement %@", requirement]);
+        os_log_debug(logHandle, "set XPC requirement %{public}@", requirement);
         
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"created mach service %@", DAEMON_MACH_SERVICE]);
+    os_log_debug(logHandle, "created mach service %{public}@", DAEMON_MACH_SERVICE);
     
     //set delegate
     self.listener.delegate = self;
@@ -169,7 +174,7 @@ bail:
     NSString* requirement = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"'%s' invoked", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //pre-macOS 13
     // have to manually check client, as 'setConnectionCodeSigningRequirement' is not supported
@@ -179,7 +184,7 @@ bail:
         auditToken = ((ExtendedNSXPCConnection*)newConnection).auditToken;
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"received request to connect to XPC interface from: (%d)%@", audit_token_to_pid(auditToken), getProcessPath(audit_token_to_pid(auditToken))]);
+        os_log_debug(logHandle, "received request to connect to XPC interface from: (%d)%{public}@", audit_token_to_pid(auditToken), getProcessPath(audit_token_to_pid(auditToken)));
         
         //obtain dynamic code ref
         status = SecCodeCopyGuestWithAttributes(NULL, (__bridge CFDictionaryRef _Nullable)(@{(__bridge NSString *)kSecGuestAttributeAudit : [NSData dataWithBytes:&auditToken length:sizeof(audit_token_t)]}), kSecCSDefaultFlags, &codeRef);
@@ -206,7 +211,7 @@ bail:
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"client's code signing info: %@", csInfo]);
+        os_log_debug(logHandle, "client's code signing info: %{public}@", csInfo);
         
         //extract flags
         csFlags = [((__bridge NSDictionary *)csInfo)[(__bridge NSString *)kSecCodeInfoStatus] unsignedIntValue];
@@ -266,7 +271,7 @@ bail:
     [newConnection resume];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"allowing XPC connection from client (pid: %d)", audit_token_to_pid(auditToken)]);
+    os_log_debug(logHandle, "allowing XPC connection from client (pid: %d)", audit_token_to_pid(auditToken));
     
     //happy
     shouldAccept = YES;

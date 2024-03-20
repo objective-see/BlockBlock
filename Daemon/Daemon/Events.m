@@ -12,10 +12,12 @@
 #import "consts.h"
 #import "Events.h"
 #import "Monitor.h"
-#import "logging.h"
 #import "utilities.h"
 
 /* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 //monitor obj
 extern Monitor* monitor;
@@ -25,11 +27,9 @@ XPCUserClient* xpcUserClient;
 
 @implementation Events
 
-@synthesize reportedEvents;
 @synthesize consoleUser;
 @synthesize userObserver;
-//@synthesize relatedAlerts;
-//@synthesize xpcUserClient;
+@synthesize reportedEvents;
 @synthesize undelivertedAlerts;
 
 //init
@@ -70,7 +70,7 @@ XPCUserClient* xpcUserClient;
 -(void)addShown:(Event*)event;
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"adding alert to 'shown': %@", event]);
+    os_log_debug(logHandle, "adding alert to 'shown': %{public}@", event);
     
     //add alert
     @synchronized(self.reportedEvents)
@@ -86,7 +86,7 @@ XPCUserClient* xpcUserClient;
 -(void)removeShown:(Event*)event
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"removing alert from 'shown': %@", event]);
+    os_log_debug(logHandle, "removing alert from 'shown': %{public}@", event);
     
     //remove alert
     @synchronized(self.reportedEvents)
@@ -134,14 +134,14 @@ bail:
     BOOL delivered = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"delivering alert to user: %@", event]);
+    os_log_debug(logHandle, "delivering alert to user: %{public}@", event);
     
     //send via XPC to user
     // failure likely means no client, so just allow, but save
     if(YES != [xpcUserClient deliverEvent:event])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"failed to deliver alert to user (no client?)");
+        os_log_debug(logHandle, "failed to deliver alert to user (no client?)");
         
         //can't deliver
         // ...but should update plugin's snapshot
@@ -174,7 +174,7 @@ bail:
     NSString* path = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"adding alert to 'undelivered': %@", alert]);
+    os_log_debug(logHandle, "adding alert to 'undelivered': %{public}@", alert]);
     
     //add alert
     @synchronized(self.undelivertedAlerts)
@@ -200,7 +200,7 @@ bail:
     NSDictionary* alert = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"processing %lu undelivered alerts", self.undelivertedAlerts.count]);
+    os_log_debug(logHandle, "processing %lu undelivered alerts", self.undelivertedAlerts.count]);
     
     //sync
     @synchronized(self.undelivertedAlerts)

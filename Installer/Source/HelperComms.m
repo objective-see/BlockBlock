@@ -7,12 +7,17 @@
 //  copyright (c) 2018 Objective-See. All rights reserved.
 //
 
+@import OSLog;
 @import Foundation;
 
 #import "consts.h"
-#import "logging.h"
 #import "AppDelegate.h"
 #import "HelperComms.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation HelperComms
 
@@ -47,13 +52,13 @@
     __block BOOL result = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"invoking 'install' XPC method");
+    os_log_debug(logHandle, "invoking 'install' XPC method");
     
     //install
     [[self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'install' method on helper tool (error: %@)", proxyError]);
+        os_log_error(logHandle, "failed to execute 'install' method on helper tool (error: %{public}@)", proxyError);
         
     }] install:[[NSBundle mainBundle] bundlePath] reply:^(NSNumber* xpcResult)
     {
@@ -71,13 +76,13 @@
     __block BOOL result = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"invoking 'toggleDaemon' XPC method");
+    os_log_debug(logHandle, "invoking 'toggleDaemon' XPC method");
     
     //install
     [[self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'toggleDaemon' method on helper tool (error: %@)", proxyError]);
+        os_log_error(logHandle, "failed to execute 'toggleDaemon' method on helper tool (error: %{public}@)", proxyError);
         
     }] toggleDaemon:shouldLoad reply:^(NSNumber* xpcResult)
     {
@@ -95,13 +100,13 @@
     __block BOOL result = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"invoking 'uninstall' XPC method");
+    os_log_debug(logHandle, "invoking 'uninstall' XPC method");
     
     //uninstall
     [[self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'uninstall' method on helper tool (error: %@)", proxyError]);
+        os_log_error(logHandle, "failed to execute 'uninstall' method on helper tool (error: %{public}@)", proxyError);
         
     }] uninstall:[[NSBundle mainBundle] bundlePath] full:full reply:^(NSNumber* xpcResult)
     {
@@ -119,13 +124,13 @@
     __block BOOL result = NO;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"invoking 'cleanup' XPC method");
+    os_log_debug(logHandle, "invoking 'cleanup' XPC method");
     
     //remove
     [[(NSXPCConnection*)self.xpcServiceConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'remove' method on helper tool (error: %@)", proxyError]);
+        os_log_error(logHandle, "failed to execute 'remove' method on helper tool (error: %{public}@)", proxyError);
           
     }] cleanup:^(NSNumber* xpcResult)
     {

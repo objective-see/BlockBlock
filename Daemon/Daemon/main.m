@@ -7,13 +7,21 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
+/* VIEW (STREAM) LOG */
+// log stream --level debug --predicate="subsystem='com.objective-see.blockblock'"
+
 #import "main.h"
 #import "Monitor.h"
+
+@import OSLog;
 
 /* GLOBALS */
 
 //(file)monitor
 Monitor* monitor = nil;
+
+//log handle
+os_log_t logHandle = nil;
 
 //main
 // init & kickoff stuffz
@@ -22,26 +30,17 @@ int main(int argc, const char * argv[])
     //pool
     @autoreleasepool
     {
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"launch daemon %@ started with %@", NSProcessInfo.processInfo.arguments.firstObject.lastPathComponent, NSProcessInfo.processInfo.arguments]);
+        //init log
+        logHandle = os_log_create(BUNDLE_ID, "daemon");
         
+        //dbg msg
+        os_log_debug(logHandle, "daemon %{public}@ started with %{public}@", NSProcessInfo.processInfo.arguments.firstObject.lastPathComponent, NSProcessInfo.processInfo.arguments);
+    
         //not root?
         if(0 != geteuid())
         {
-           //err msg
-           logMsg(LOG_ERR, [NSString stringWithFormat:@"launch daemon must be run as root, not %d", geteuid()]);
-           
-           //bail
-           goto bail;
-        }
-        
-        //init logging
-        if(YES != initLogging(logFilePath()))
-        {
             //err msg
-            logMsg(LOG_ERR, @"failed to init logging");
-            
-            //bail
+            os_log_error(logHandle, "ERROR: launch daemon must be run as root, not %d", geteuid());
             goto bail;
         }
         
@@ -50,14 +49,12 @@ int main(int argc, const char * argv[])
         if(nil == preferences)
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to init/load preferences");
-            
-            //bail
+            os_log_error(logHandle, "ERROR: failed to init/load preferences");
             goto bail;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded preferences: %@", preferences.preferences]);
+        os_log_debug(logHandle, "loaded preferences: %{public}@", preferences.preferences);
         
         //alloc/init alerts object
         events = [[Events alloc] init];
@@ -65,26 +62,17 @@ int main(int argc, const char * argv[])
         //alloc/init rules object
         rules = [[Rules alloc] init];
         
-        //register for shutdown
-        // so can close logging, etc...
-        register4Shutdown();
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, @"registered for shutdown events");
-        
         //alloc/init XPC comms object
         xpcListener = [[XPCListener alloc] init];
         if(nil == xpcListener)
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to initialize XPC listener for user connections");
-            
-            //bail
+            os_log_error(logHandle, "ERROR: failed to initialize XPC listener for user connections");
             goto bail;
         }
 
         //dbg msg
-        logMsg(LOG_DEBUG, @"created client XPC listener");
+        os_log_debug(logHandle, "created client XPC listener");
         
         //check for FDA
         // wait till we have it!
@@ -92,7 +80,7 @@ int main(int argc, const char * argv[])
         while(0 != fdaCheck())
         {
             //err msg
-            logMsg(LOG_ERR, @"full disk access: denied");
+            os_log_debug(logHandle, "full disk access: denied");
             
             //update preferences
             [preferences update:@{PREF_GOT_FDA:@NO}];
@@ -102,7 +90,7 @@ int main(int argc, const char * argv[])
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"full disk access: ok");
+        os_log_debug(logHandle, "full disk access: ok");
         
         //update preferences
         [preferences update:@{PREF_GOT_FDA:@YES}];
@@ -111,14 +99,12 @@ int main(int argc, const char * argv[])
         if(YES != [rules load])
         {
             //err msg
-            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to load rules from %@", RULES_FILE]);
-            
-            //bail
+            os_log_error(logHandle, "ERROR: failed to load rules from %{public}@", RULES_FILE);
             goto bail;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"loaded rules");
+        os_log_debug(logHandle, "loaded rules");
     
         //create/init (file) monitor
         monitor = [[Monitor alloc] init];
@@ -129,22 +115,20 @@ int main(int argc, const char * argv[])
             //go go go
             if(YES != [monitor start])
             {
-               //err msg
-               logMsg(LOG_ERR, @"failed to initialize (file) monitor");
-               
-               //bail
-               goto bail;
+                //err msg
+                os_log_error(logHandle, "ERROR: failed to initialize (file) monitor");
+                goto bail;
             }
             
             //dbg msg
-            logMsg(LOG_DEBUG, @"monitoring for file events");
+            os_log_debug(logHandle, "monitoring for file events");
         }
         //user (prev) disabled
         // just log this fact, and don't start it
         else
         {
             //dbg msg
-            logMsg(LOG_DEBUG, @"user has disabled BlockBlock, so, not enabling");
+            os_log_debug(logHandle, "user has disabled BlockBlock, so, not enabling");
         }
         
         //run loop
@@ -153,11 +137,8 @@ int main(int argc, const char * argv[])
 bail:
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"launch daemon exiting");
+    os_log_debug(logHandle, "launch daemon exiting");
             
-    //bye!
-    goodbye();
-        
     }//pool
     
     return 0;
@@ -174,7 +155,7 @@ int fdaCheck(void)
     int status = -1;
     
     //dbg msg
-    logMsg(LOG_DEBUG, @"performing full disk access check...");
+    os_log_debug(logHandle, "performing full disk access check via 'es_new_client'...");
     
     //client
     es_client_t *client = nil;
@@ -192,7 +173,7 @@ int fdaCheck(void)
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"result: %d/%d", result, status]);
+    os_log_debug(logHandle, "'es_new_client' result: %d/%d", result, status);
     
     //cleanup client
     // need extra checks for issues with ESF :|
@@ -212,45 +193,4 @@ int fdaCheck(void)
     }
     
     return status;
-}
-
-//close logging
-void goodbye(void)
-{
-    //close logging
-    deinitLogging();
-    
-    return;
-}
-
-//init a handler for SIGTERM
-// can perform actions such as disabling firewall and closing logging
-void register4Shutdown(void)
-{
-    //ignore sigterm
-    // handling it via GCD dispatch
-    signal(SIGTERM, SIG_IGN);
-    
-    //init dispatch source for SIGTERM
-    dispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue());
-    
-    //set handler
-    // ...(just) closes logging
-    dispatch_source_set_event_handler(dispatchSource, ^{
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, @"caught 'SIGTERM' message....shutting down");
-        
-        //bye!
-        // close logging
-        goodbye();
-        
-        //bye bye!
-        exit(SIGTERM);
-    });
-    
-    //resume
-    dispatch_resume(dispatchSource);
-
-    return;
 }

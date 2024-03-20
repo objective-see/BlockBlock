@@ -14,7 +14,6 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BF04235611C0531400431286 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF04235511C0531400431286 /* AppDelegate.m */; };
 		BF65C19111B985C0007C20AB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF65C19011B985C0007C20AB /* MainMenu.xib */; };
-		CD17D53B20104DD700F798D7 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D53820104DD700F798D7 /* logging.m */; };
 		CD17D54E20104EE700F798D7 /* AboutWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD17D54420104EE700F798D7 /* AboutWindow.xib */; };
 		CD17D54F20104EE700F798D7 /* Configure.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54720104EE700F798D7 /* Configure.m */; };
 		CD17D55020104EE700F798D7 /* ConfigureWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54820104EE700F798D7 /* ConfigureWindowController.m */; };
@@ -29,7 +28,6 @@
 		CD73DA99200490B4001FFC84 /* HelperComms.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA97200490B4001FFC84 /* HelperComms.m */; };
 		CD86B6E823A5BBA5003F6BA4 /* com.objective-see.blockblock.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDAFF43F203E971F00F27635 /* com.objective-see.blockblock.plist */; };
 		CD86B6EA23A5BBE7003F6BA4 /* configure.sh in Resources */ = {isa = PBXBuildFile; fileRef = CD86B6E923A5BBE7003F6BA4 /* configure.sh */; };
-		CDA6E639203B6F1000C78F91 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D53820104DD700F798D7 /* logging.m */; };
 		CDAAC241202255580032F2E6 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAAC23F202255580032F2E6 /* utilities.m */; };
 		CDAAC243202257D70032F2E6 /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAAC23F202255580032F2E6 /* utilities.m */; };
 /* End PBXBuildFile section */
@@ -80,8 +78,6 @@
 		BF04235411C0531400431286 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BF04235511C0531400431286 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		BF65C19011B985C0007C20AB /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
-		CD17D53820104DD700F798D7 /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = logging.m; path = ../../Shared/logging.m; sourceTree = "<group>"; };
-		CD17D53A20104DD700F798D7 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = ../../Shared/logging.h; sourceTree = "<group>"; };
 		CD17D54220104EE600F798D7 /* AboutWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutWindowController.h; sourceTree = "<group>"; };
 		CD17D54420104EE700F798D7 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutWindow.xib; sourceTree = "<group>"; };
 		CD17D54520104EE700F798D7 /* Configure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Configure.h; sourceTree = "<group>"; };
@@ -219,8 +215,6 @@
 				CDA6E62E203B67A100C78F91 /* consts.h */,
 				CDAAC240202255580032F2E6 /* utilities.h */,
 				CDAAC23F202255580032F2E6 /* utilities.m */,
-				CD17D53A20104DD700F798D7 /* logging.h */,
-				CD17D53820104DD700F798D7 /* logging.m */,
 				CD18D64C200DA301005609F9 /* XPCProtocol.h */,
 				CD2F801024465F68009C3D77 /* patrons.txt */,
 			);
@@ -346,7 +340,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#archive build\nif [[ $BUILT_PRODUCTS_DIR = *\"ArchiveIntermediates\"* ]]; then\n    cp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/BlockBlock.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n    cp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/BlockBlock Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n    \n#normal build\nelse\n\nrm -rf  \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/BlockBlock.app\"\nrm -rf  \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/BlockBlock Helper.app\"\n\n#cp daemon/app\ncp -R -f \"$BUILT_PRODUCTS_DIR/BlockBlock.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\ncp -R -f \"$BUILT_PRODUCTS_DIR/BlockBlock Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n\nfi\n\n\n\n";
+			shellScript = "#archive build\nif [[ $BUILT_PRODUCTS_DIR = *\"ArchiveIntermediates\"* ]]; then\n    cp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/BlockBlock.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n    cp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/BlockBlock Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n    \n#normal build\nelse\n\nrm -rf  \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/BlockBlock.app\"\nrm -rf  \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/BlockBlock Helper.app\"\n\n#cp daemon/app\ncp -R -f \"$BUILT_PRODUCTS_DIR/BlockBlock.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\ncp -R -f \"$BUILT_PRODUCTS_DIR/BlockBlock Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n\nfi\n\n\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -355,7 +349,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDA6E639203B6F1000C78F91 /* logging.m in Sources */,
 				CDAAC243202257D70032F2E6 /* utilities.m in Sources */,
 				CD73DA9520046548001FFC84 /* HelperInterface.m in Sources */,
 				CD73DA9620046548001FFC84 /* HelperListener.m in Sources */,
@@ -376,7 +369,6 @@
 				BF04235611C0531400431286 /* AppDelegate.m in Sources */,
 				CD17D54F20104EE700F798D7 /* Configure.m in Sources */,
 				CD17D55020104EE700F798D7 /* ConfigureWindowController.m in Sources */,
-				CD17D53B20104DD700F798D7 /* logging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

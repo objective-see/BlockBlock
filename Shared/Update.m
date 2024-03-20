@@ -9,10 +9,14 @@
 
 #import "consts.h"
 #import "Update.h"
-#import "logging.h"
 #import "utilities.h"
 #import "AppDelegate.h"
 
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation Update
 
@@ -90,7 +94,7 @@
     latestVersion = [[productsVersionDictionary objectForKey:@"BlockBlock"] objectForKey:@"version"];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"latest version: %@", latestVersion]);
+    os_log_debug(logHandle, "latest version: %{public}@", latestVersion);
     
 bail:
     

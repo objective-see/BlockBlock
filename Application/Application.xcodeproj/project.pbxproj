@@ -11,7 +11,6 @@
 		7D16D6951F64E43300DB3161 /* UpdateWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D16D6911F64E43300DB3161 /* UpdateWindow.xib */; };
 		7D16D6961F64E43300DB3161 /* UpdateWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16D6931F64E43300DB3161 /* UpdateWindowController.m */; };
 		7D3B75141F13354900568828 /* StatusBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3B74FD1F13354900568828 /* StatusBarItem.m */; };
-		7D3B75251F13357D00568828 /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3B75231F13357D00568828 /* logging.m */; };
 		7D5C5F521F200B9200C0E94A /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5C5F511F200B9200C0E94A /* utilities.m */; };
 		7D7755E81F02E05B00D0017D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7755E71F02E05B00D0017D /* AppDelegate.m */; };
 		7D7755EB1F02E05B00D0017D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7755EA1F02E05B00D0017D /* main.m */; };
@@ -25,6 +24,7 @@
 		7DD2BF981F1FF64300B33214 /* AlertWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD2BF961F1FF64300B33214 /* AlertWindowController.m */; };
 		CD22785E20434CAC00C72C76 /* StatusBarPopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */; };
 		CD22785F20434CAC00C72C76 /* StatusBarPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */; };
+		CD2DC05B2B48CFC700439271 /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CD2DC05A2B48CFC700439271 /* BlockBlock Installer.app */; };
 		CD2F8008244551AC009C3D77 /* NSApplicationKeyEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */; };
 		CD2F800C24455333009C3D77 /* AboutWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD2F800924455333009C3D77 /* AboutWindow.xib */; };
 		CD2F800D24455333009C3D77 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2F800B24455333009C3D77 /* AboutWindowController.m */; };
@@ -63,8 +63,6 @@
 		7D3B74FF1F13354900568828 /* StatusBarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusBarItem.h; sourceTree = "<group>"; };
 		7D3B75021F13354900568828 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
 		7D3B75221F13357D00568828 /* consts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = consts.h; path = ../Shared/consts.h; sourceTree = "<group>"; };
-		7D3B75231F13357D00568828 /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = logging.m; path = ../Shared/logging.m; sourceTree = "<group>"; };
-		7D3B75241F13357D00568828 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = ../Shared/logging.h; sourceTree = "<group>"; };
 		7D5C5F501F200B9200C0E94A /* utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utilities.h; path = ../Shared/utilities.h; sourceTree = "<group>"; };
 		7D5C5F511F200B9200C0E94A /* utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utilities.m; path = ../Shared/utilities.m; sourceTree = "<group>"; };
 		7D7755E31F02E05B00D0017D /* BlockBlock Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockBlock Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +86,7 @@
 		CD22785B20434CAB00C72C76 /* StatusBarPopover.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatusBarPopover.xib; sourceTree = "<group>"; };
 		CD22785C20434CAB00C72C76 /* StatusBarPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusBarPopoverController.h; sourceTree = "<group>"; };
 		CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusBarPopoverController.m; sourceTree = "<group>"; };
+		CD2DC05A2B48CFC700439271 /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "BlockBlock Installer.app"; sourceTree = "<group>"; };
 		CD2F8006244551AB009C3D77 /* NSApplicationKeyEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSApplicationKeyEvents.h; sourceTree = "<group>"; };
 		CD2F8007244551AC009C3D77 /* NSApplicationKeyEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSApplicationKeyEvents.m; sourceTree = "<group>"; };
 		CD2F800924455333009C3D77 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutWindow.xib; sourceTree = "<group>"; };
@@ -156,8 +155,6 @@
 				7D5C5F511F200B9200C0E94A /* utilities.m */,
 				7DD2BF781F1EAC9C00B33214 /* XPCDaemonClient.h */,
 				7DD2BF791F1EAC9C00B33214 /* XPCDaemonClient.m */,
-				7D3B75231F13357D00568828 /* logging.m */,
-				7D3B75241F13357D00568828 /* logging.h */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -239,6 +236,7 @@
 		CD4597F4291DB39300F2A1C6 /* Uninstaller */ = {
 			isa = PBXGroup;
 			children = (
+				CD2DC05A2B48CFC700439271 /* BlockBlock Installer.app */,
 			);
 			path = Uninstaller;
 			sourceTree = "<group>";
@@ -339,6 +337,7 @@
 				CD2F801724468A8C009C3D77 /* patrons.txt in Resources */,
 				CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */,
 				7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */,
+				CD2DC05B2B48CFC700439271 /* BlockBlock Installer.app in Resources */,
 				7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -355,7 +354,6 @@
 				7D3B75141F13354900568828 /* StatusBarItem.m in Sources */,
 				7D7755EB1F02E05B00D0017D /* main.m in Sources */,
 				CD2F8008244551AC009C3D77 /* NSApplicationKeyEvents.m in Sources */,
-				7D3B75251F13357D00568828 /* logging.m in Sources */,
 				7DD2600F1F252E8C00277EC4 /* VirusTotalViewController.m in Sources */,
 				CD32C2352094062D009CADF6 /* SigningInfoViewController.m in Sources */,
 				7D5C5F521F200B9200C0E94A /* utilities.m in Sources */,

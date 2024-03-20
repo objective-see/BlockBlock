@@ -11,6 +11,7 @@
 #define Update_h
 
 @import Cocoa;
+@import OSLog;
 @import Foundation;
 
 @interface Update : NSObject

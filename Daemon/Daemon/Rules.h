@@ -13,6 +13,7 @@
 
 #import "XPCUserClient.h"
 
+@import OSLog;
 @import Foundation;
 
 @class Rule;

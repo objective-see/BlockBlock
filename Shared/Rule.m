@@ -9,7 +9,6 @@
 
 #import "Rule.h"
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 
 @implementation Rule

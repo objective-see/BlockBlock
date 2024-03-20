@@ -6,10 +6,9 @@
 //  Copyright (c) 2015 Objective-See. All rights reserved.
 //
 
-
+@import OSLog;
 
 #import "consts.h"
-#import "logging.h"
 #import "utilities.h"
 
 #import "Item.h"
@@ -17,6 +16,11 @@
 #import "PluginBase.h"
 
 #import "FileMonitor.h"
+
+/* GLOBALS */
+
+//log handle
+extern os_log_t logHandle;
 
 @implementation Event
 
@@ -161,7 +165,7 @@
     alert[ALERT_PROCESS_ANCESTORS] = [self buildProcessHierarchy:self.process];
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"sending alert to user (client): %@", alert]);
+    os_log_debug(logHandle, "sending alert to user (client): %{public}@", alert);
     
     return alert;
 }
@@ -171,14 +175,14 @@
 -(BOOL)isRelated:(Event*)lastEvent
 {
     //dbg msg
-    logMsg(LOG_DEBUG, @"checking if event is related");
+    os_log_debug(logHandle, "checking if event is related");
     
     //check 1:
     // different plugins mean unrelated watch events
     if(self.plugin != lastEvent.plugin)
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"...plugin different");
+        os_log_debug(logHandle, "...plugin different");
         
         //nope!
         return NO;
@@ -189,7 +193,7 @@
     if(YES != [self.process.path isEqualToString:lastEvent.process.path])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"...process paths different");
+        os_log_debug(logHandle, "...process paths different");
         
         //nope!
         return NO;
@@ -200,7 +204,7 @@
     if(YES != [self.file.destinationPath isEqualToString:lastEvent.file.destinationPath])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"...startup paths different");
+        os_log_debug(logHandle, "...startup paths different");
         
         //nope!
         return NO;
@@ -211,7 +215,7 @@
     if(YES != [self.item.object isEqualToString:lastEvent.item.object])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"...startup items different");
+        os_log_debug(logHandle, "...startup items different");
         
         //nope!
         return NO;
@@ -222,7 +226,7 @@
     if(3 <= [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp])
     {
         //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"...event happened more than 3 seconds ago (delta: %f)", [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp]]);
+        os_log_debug(logHandle, "...event happened more than 3 seconds ago (delta: %f)", [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp]);
         
         //nope!
         return NO;
@@ -272,66 +276,10 @@
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"process hierarchy: %@", processHierarchy]);
+    os_log_debug(logHandle, "process hierarchy: %{public}@", processHierarchy);
 
     return processHierarchy;
 }
-
-/*
-//build an array of processes ancestry
-// this is used to populate the 'ancesty' popup
--(NSMutableArray*)buildProcessHierarchy:(Process*)process
-{
-    //process hierarchy
-    NSMutableArray* processHierarchy = nil;
-    
-    //ancestor
-    NSNumber* ancestor = nil;
-    
-    //first try getting 'real' ancesty
-    processHierarchy = generateProcessHierarchy(process.pid, process.name);
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"generated (real) process hierarchy: %@", processHierarchy]);
-
-    //only got one?
-    // ...check if `standard` ancestry has more
-    if( (processHierarchy.count <= 1) &&
-        (file.process.ancestors.count > 1) )
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"no parent found, will generate 'standard' process hierarchy"]);
-        
-        //get name and add each ancestor
-        for(NSUInteger i=0; i<file.process.ancestors.count; i++)
-        {
-            //skip first one (self)
-            // already have it (pid/path!)
-            if(0 == i) continue;
-            
-            //extact ancestor
-            ancestor = file.process.ancestors[i];
-            
-            //add
-            [processHierarchy addObject:[@{@"pid":ancestor, @"name":valueForStringItem(getProcessPath(ancestor.intValue))} mutableCopy]];
-        }
-    }
-        
-    //add the index value
-    // used to populate outline/table
-    for(NSUInteger i = 0; i < processHierarchy.count; i++)
-    {
-        //set index
-        processHierarchy[i][@"index"] = [NSNumber numberWithInteger:i];
-    }
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"final process hierarchy: %@", processHierarchy]);
-
-    return processHierarchy;
-}
- 
-*/
 
 //for pretty print
 -(NSString *)description {

@@ -8,6 +8,8 @@
 //
 
 @import Cocoa;
+@import OSLog;
+
 
 @interface VirusTotalViewController : NSViewController <NSPopoverDelegate>
 {

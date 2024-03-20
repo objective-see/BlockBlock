@@ -7,13 +7,11 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
-#import "Events.h"
-#import "Event.h"
-
 #import "Rule.h"
+#import "Event.h"
 #import "Rules.h"
+#import "Events.h"
 #import "consts.h"
-#import "logging.h"
 #import "XPCDaemon.h"
 #import "utilities.h"
 #import "Preferences.h"
@@ -26,6 +24,9 @@ extern Rules* rules;
 //global events obj
 extern Events* events;
 
+//log handle
+extern os_log_t logHandle;
+
 //global prefs obj
 extern Preferences* preferences;
 
@@ -35,7 +36,7 @@ extern Preferences* preferences;
 -(void)getPreferences:(void (^)(NSDictionary* preferences))reply
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "XPC request: '%s'", __PRETTY_FUNCTION__);
     
     //reply
     reply(preferences.preferences);
@@ -47,13 +48,13 @@ extern Preferences* preferences;
 -(void)updatePreferences:(NSDictionary *)updates
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: '%s' (%@)", __PRETTY_FUNCTION__, updates]);
+    os_log_debug(logHandle, "XPC request: '%s' (%{public}@)", __PRETTY_FUNCTION__, updates);
     
     //update
     if(YES != [preferences update:updates])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to updates to preferences");
+        os_log_error(logHandle, "ERROR: failed to updates to preferences");
     }
     
     return;
@@ -69,20 +70,20 @@ extern Preferences* preferences;
     NSError* error = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "XPC request: '%s'", __PRETTY_FUNCTION__);
     
     //archive rules
     archivedRules = [NSKeyedArchiver archivedDataWithRootObject:rules.rules requiringSecureCoding:YES error:&error];
     if(nil == archivedRules)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to archive rules: %@", error]);
+        os_log_error(logHandle, "ERROR: failed to archive rules: %{public}@", error);
         
         //don't bail as still want to reply
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"archived %lu rules, and sending to user...", (unsigned long)rules.rules.count]);
+    os_log_debug(logHandle, "archived %lu rules, and sending to user...", (unsigned long)rules.rules.count);
 
     //return rules
     reply(archivedRules);
@@ -100,13 +101,13 @@ extern Preferences* preferences;
     NSError* error = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: '%s' (rule: %@)", __PRETTY_FUNCTION__, rule]);
+    os_log_debug(logHandle, "XPC request: '%s' (rule: %{public}@)", __PRETTY_FUNCTION__, rule);
     
     //remove row
     if(YES != [rules delete:rule])
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to delete rule, %@", rule]);
+        os_log_error(logHandle, "ERROR: failed to delete rule, %{public}@", rule);
         
         //don't bail as still want to reply
     }
@@ -116,13 +117,13 @@ extern Preferences* preferences;
     if(nil == archivedRules)
     {
         //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to archive rules: %@", error]);
+        os_log_error(logHandle, "ERROR: failed to archive rules: %{public}@", error);
         
         //don't bail as still want to reply
     }
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"archived %lu rules, and sending to user...", (unsigned long)rules.rules.count]);
+    os_log_debug(logHandle, "archived %lu rules, and sending to user...", (unsigned long)rules.rules.count);
 
     //return rules
     reply(archivedRules);
@@ -139,7 +140,7 @@ bail:
     Event* event = nil;
     
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: '%s'", __PRETTY_FUNCTION__]);
+    os_log_debug(logHandle, "XPC request: '%s'", __PRETTY_FUNCTION__);
 
     //grab reported event
     @synchronized(events.reportedEvents)
@@ -162,7 +163,7 @@ bail:
     if(BLOCK_EVENT == event.action)
     {
         //dbg/log msg
-        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"user says, 'block', so blocking %@", event]);
+        os_log(logHandle, "user says, 'block', so blocking %{public}@", event);
         
         //block
         [event.plugin block:event];
@@ -171,7 +172,7 @@ bail:
     else
     {
         //dbg/log msg
-        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"user says, 'allow', so allowing %@", event]);
+        os_log(logHandle, "user says, 'allow', so allowing %{public}@", event);
         
         //allow
         [event.plugin allow:event];
@@ -186,20 +187,20 @@ bail:
         if(YES != [rules add:event])
         {
             //err msg
-            logMsg(LOG_ERR, @"failed to add rule");
+            os_log_error(logHandle, "ERROR: failed to add rule");
             
             //bail
             goto bail;
         }
         
         //dbg msg
-        logMsg(LOG_DEBUG, @"added/saved rule");
+        os_log_debug(logHandle, "added/saved rule");
     }
     //temporary rule
     else
     {
         //dbg msg
-        logMsg(LOG_DEBUG, @"user selected 'temporary' ...won't save rule");
+        os_log_debug(logHandle, "user selected 'temporary' ...won't save rule");
     }
 
 bail:
