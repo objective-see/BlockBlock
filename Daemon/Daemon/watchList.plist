@@ -29,8 +29,8 @@
 		<string>installed a launch daemon or agent</string>
 		<key>ignoreKids</key>
 		<true/>
-        <key>maxOSVersion</key>
-        <integer>13</integer>
+		<key>maxOSVersion</key>
+		<integer>13</integer>
 	</dict>
 	<dict>
 		<key>description</key>
@@ -45,8 +45,8 @@
 		<string>installed a login item</string>
 		<key>ignoreKids</key>
 		<true/>
-        <key>maxOSVersion</key>
-        <integer>13</integer>
+		<key>maxOSVersion</key>
+		<integer>13</integer>
 	</dict>
 	<dict>
 		<key>description</key>
@@ -75,37 +75,23 @@
 		<string>created an application helper login item</string>
 		<key>ignoreKids</key>
 		<false/>
-        <key>maxOSVersion</key>
-        <integer>13</integer>
+		<key>maxOSVersion</key>
+		<integer>13</integer>
 	</dict>
 	<dict>
 		<key>description</key>
-		<string>Event Monitor Daemon</string>
+		<string>Background Task Management</string>
 		<key>paths</key>
-		<array>
-			<string>/private/etc/emond.d/rules</string>
-		</array>
+		<array/>
 		<key>class</key>
-		<string>EventMonitor</string>
+		<string>Btm</string>
 		<key>alert</key>
-		<string>created an event monitor rule</string>
+		<string>created an background task item</string>
 		<key>ignoreKids</key>
 		<true/>
+		<key>minOSVersion</key>
+		<integer>14</integer>
 	</dict>
-    <dict>
-        <key>description</key>
-        <string>Background Task Management</string>
-        <key>paths</key>
-        <array></array>
-        <key>class</key>
-        <string>Btm</string>
-        <key>alert</key>
-        <string>created an background task item</string>
-        <key>ignoreKids</key>
-        <true/>
-        <key>minOSVersion</key>
-        <integer>14</integer>
-    </dict>
 	<dict>
 		<key>description</key>
 		<string>Process Monitor</string>
