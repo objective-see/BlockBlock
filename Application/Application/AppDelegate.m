@@ -81,7 +81,7 @@ XPCDaemonClient* xpcDaemonClient;
         alert.alertStyle = NSAlertStyleInformational;
         
         //set main text
-        alert.messageText = @"Could Not Connect To The BlockBlock Deamon";
+        alert.messageText = @"Could Not Connect To The BlockBlock Daemon";
         
         //set informative test
         alert.informativeText = @"Please ensure that the BlockBlock daemon is currently running.";
