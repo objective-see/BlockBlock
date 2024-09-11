@@ -58,7 +58,6 @@
 // all of the rules
 @property(nonatomic, retain)NSMutableArray* rules;
 
-//TODO: add search bar to use this!
 //table items
 // filtered rules
 @property(nonatomic, retain)NSMutableArray* rulesFiltered;

@@ -35,9 +35,6 @@ extern os_log_t logHandle;
         
         //set type
         self.type = PLUGIN_TYPE_PROCESS_MONITOR;
-        
-        //init scripts
-        self.scripts = @[@"com.apple.sh", @"com.apple.bash", @"com.apple.ksh", @"com.apple.csh", @"com.apple.zsh", @"com.apple.dash", @"org.python.python", @"com.apple.perl", @"com.apple.ruby", @"com.apple.osascript"];
     }
 
     return self;
@@ -54,10 +51,6 @@ extern os_log_t logHandle;
     // process (still) alive
     BOOL isAlive = NO;
     
-    //flag
-    // process is executing a script
-    BOOL isScript = NO;
-    
     //item path
     NSString* path = nil;
     
@@ -71,51 +64,16 @@ extern os_log_t logHandle;
     uint32_t quarantineFlags = QTN_NOT_QUARANTINED;
     
     //dbg msg
-    os_log_debug(logHandle, "checking if %{public}@ should be allowed", process);
+    //os_log_debug(logHandle, "checking if %{public}@ should be allowed", process.path);
     
     //init path from process
     path = process.path;
     
     //script?
-    // item will be in argv[1]
-    // so use that for the path to check
-    if(YES == [self.scripts containsObject:process.signingID])
+    if(nil != process.script)
     {
-        //dbg msg
-        os_log_debug(logHandle, "%{public}@ is a script interpreter...", process.name);
-        
-        //has to have at least 2 args
-        // process name, then path to script
-        if(process.arguments.count < 2)
-        {
-            //dbg msg
-            os_log_debug(logHandle, "%{public}@ doesn't appear to have a script argument, will allow", process.name);
-            
-            //done
-            goto bail;
-        }
-        
-        //extact 2nd arg
-        // should be path to a script
-        path = process.arguments[1];
-        
-        //dbg msg
-        os_log_debug(logHandle, "extracted (potential) script: %{public}@", path);
-        
-        //sanity check
-        // was argv[1] is a file?
-        if(YES != [NSFileManager.defaultManager fileExistsAtPath:path])
-        {
-            //dbg msg
-            os_log_debug(logHandle, "%{public}@ doesn't appear to be a path, will allow %{public}@", path, process.name);
-            
-            //done
-            goto bail;
-        }
-        
-        //now set flag
-        // process w/ script
-        isScript = YES;
+        //use script as path instead
+        path = process.script;
         
         //check if script event is the "same" as last
         // avoids situations where sh <script> forks bash <script>
@@ -146,7 +104,7 @@ extern os_log_t logHandle;
     
     //not a script?
     // grab app bundle (for subsequent checks)
-    if(YES != isScript)
+    if(nil != process.script)
     {
         //find app bundle
         appBundle = findAppBundle(path);
@@ -259,7 +217,7 @@ bail:
     
     //script?
     // save it
-    if(YES == isScript)
+    if(nil != process.script)
     {
         //save
         self.lastScript = process;
@@ -332,8 +290,8 @@ bail:
     alert = self.alertMsg;
     
     //script?
-    // then it's execing an translocated item
-    if(YES == [self.scripts containsObject:event.process.signingID])
+    // customize alert msg
+    if(nil != event.process.script)
     {
         //customize
         alert = @"is attempting to run a non-notarized script";
@@ -435,7 +393,7 @@ bail:
         event.esClient = NULL;
         
         //signal
-        // as we've avoid the esf timeout
+        // as we've avoid the es timeout
         dispatch_semaphore_signal(event.esSemaphore);
 
     } //sync

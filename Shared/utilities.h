@@ -165,4 +165,7 @@ BOOL isTranslocated(NSString* path);
 //convert es_string_token_t to string
 NSString* convertStringToken(es_string_token_t* stringToken);
 
+//get file's inode
+unsigned long inodeForPath(NSString *path);
+
 #endif

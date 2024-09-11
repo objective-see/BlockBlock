@@ -504,7 +504,7 @@ bail:
         //check:
         // is system's OS version new enough to support plugin?
         if( (nil != pluginMinOS) &&
-            (pluginMinOS.unsignedIntValue < NSProcessInfo.processInfo.operatingSystemVersion.majorVersion) )
+            (pluginMinOS.unsignedIntValue > NSProcessInfo.processInfo.operatingSystemVersion.majorVersion) )
         {
             //dbg msg
             os_log_debug(logHandle, "macOS %ld too old for plugin %{public}@ (min: %{public}@)", (long)NSProcessInfo.processInfo.operatingSystemVersion.majorVersion, watchItem[@"class"], pluginMinOS);

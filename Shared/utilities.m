@@ -14,6 +14,7 @@
 #import <signal.h>
 #import <unistd.h>
 #import <libproc.h>
+#import <sys/stat.h>
 #import <sys/sysctl.h>
 #import <Carbon/Carbon.h>
 #import <Security/Security.h>
@@ -1763,7 +1764,6 @@ bail:
     return isTranslocated;
 }
 
-
 //convert es_string_token_t to string
 NSString* convertStringToken(es_string_token_t* stringToken)
 {
@@ -1787,6 +1787,25 @@ bail:
     return string;
 }
 
+unsigned long inodeForPath(NSString *path) 
+{
+    //stat
+    struct stat fileStat = {0};
+    
+    //inode
+    unsigned long iNode = 0;
+    
+    if(0 != stat(path.fileSystemRepresentation, &fileStat))
+    {
+        goto bail;
+    }
+  
+    iNode = fileStat.st_ino;
+    
+bail:
+        
+    return iNode;
+}
 
 #ifdef DAEMON_BUILD
 

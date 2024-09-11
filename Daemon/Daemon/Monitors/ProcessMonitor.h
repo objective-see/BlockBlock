@@ -23,6 +23,9 @@
 //endpoint client
 @property es_client_t* endpointClient;
 
+//cache
+@property(nonatomic, retain)NSCache* cache;
+
 
 /* METHODS */
 

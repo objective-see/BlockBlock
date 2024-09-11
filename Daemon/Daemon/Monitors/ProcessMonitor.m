@@ -40,6 +40,10 @@ extern Preferences* preferences;
     //events
     es_event_type_t procESEvents[] = {ES_EVENT_TYPE_AUTH_EXEC};
     
+    //init cache
+    self.cache = [[NSCache alloc] init];
+    self.cache.countLimit = 4096;
+    
     //dbg msg
     os_log_debug(logHandle, "starting process monitor...");
         
@@ -80,7 +84,7 @@ extern Preferences* preferences;
             //done
             return;
         }
-        
+
         //init process obj
         process = [[Process alloc] init:(es_message_t* _Nonnull)message csOption:csDynamic];
         if( (nil == process) ||
@@ -136,7 +140,7 @@ extern Preferences* preferences;
             
             //wait till close to timeout
             // if haven't hit, just allow, otherwise we'll be killed
-            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, machTimeToNanoseconds(deadline) - (1 * NSEC_PER_SEC))))
+            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, machTimeToNanoseconds(deadline) - (1.01 * NSEC_PER_SEC))))
             {
                 //err msg
                 os_log_error(logHandle, "ERROR: ES timeout (%llx seconds) about to be hit, forced to allow process :/", machTimeToNanoseconds(deadline) / NSEC_PER_SEC);

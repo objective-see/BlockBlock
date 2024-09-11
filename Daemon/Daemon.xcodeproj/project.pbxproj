@@ -28,7 +28,10 @@
 		CDBAE82B261AC6C600D6BD21 /* Processes.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBAE82A261AC6C600D6BD21 /* Processes.m */; };
 		CDC592D4243AF99E00C190D9 /* watchList.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D3243AF99E00C190D9 /* watchList.plist */; };
 		CDC592D6243AFE9500C190D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDC592D5243AFE9500C190D9 /* Assets.xcassets */; };
-		CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD5666C23AB547500F51B1F /* libFileMonitor.a */; };
+		CDCE66472C922F440095CD97 /* FileMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCE663F2C922F440095CD97 /* FileMonitor.m */; };
+		CDCE66492C922F440095CD97 /* signing.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCE66412C922F440095CD97 /* signing.m */; };
+		CDCE664A2C922F440095CD97 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCE66452C922F440095CD97 /* File.m */; };
+		CDCE664B2C922F440095CD97 /* Process.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCE66462C922F440095CD97 /* Process.m */; };
 		CDDC60EF244BDA9D00CC81F1 /* CronJob.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDC60ED244BDA9D00CC81F1 /* CronJob.m */; };
 		CDE4C11E2B12DD5E001521CE /* BTMMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE4C11D2B12DD5E001521CE /* BTMMonitor.m */; };
 		CDE4C1212B12DD7B001521CE /* ProcessMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE4C11F2B12DD7A001521CE /* ProcessMonitor.m */; };
@@ -93,8 +96,12 @@
 		CDBAE82A261AC6C600D6BD21 /* Processes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Processes.m; sourceTree = "<group>"; };
 		CDC592D3243AF99E00C190D9 /* watchList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = watchList.plist; path = Daemon/watchList.plist; sourceTree = SOURCE_ROOT; };
 		CDC592D5243AFE9500C190D9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Daemon/Assets.xcassets; sourceTree = "<group>"; };
-		CDD5666B23AB547500F51B1F /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMonitor.h; sourceTree = "<group>"; };
-		CDD5666C23AB547500F51B1F /* libFileMonitor.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFileMonitor.a; sourceTree = "<group>"; };
+		CDCE663F2C922F440095CD97 /* FileMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileMonitor.m; path = FileMonitor/FileMonitor.m; sourceTree = "<group>"; };
+		CDCE66412C922F440095CD97 /* signing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = signing.m; path = FileMonitor/signing.m; sourceTree = "<group>"; };
+		CDCE66422C922F440095CD97 /* signing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = signing.h; path = FileMonitor/signing.h; sourceTree = "<group>"; };
+		CDCE66432C922F440095CD97 /* FileMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMonitor.h; path = FileMonitor/FileMonitor.h; sourceTree = "<group>"; };
+		CDCE66452C922F440095CD97 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = FileMonitor/File.m; sourceTree = "<group>"; };
+		CDCE66462C922F440095CD97 /* Process.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Process.m; path = FileMonitor/Process.m; sourceTree = "<group>"; };
 		CDDC60ED244BDA9D00CC81F1 /* CronJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CronJob.m; sourceTree = "<group>"; };
 		CDDC60EE244BDA9D00CC81F1 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronJob.h; sourceTree = "<group>"; };
 		CDE3875427B39ACF00752C50 /* libquarantine.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libquarantine.tbd; path = usr/lib/system/libquarantine.tbd; sourceTree = SDKROOT; };
@@ -118,7 +125,6 @@
 			files = (
 				CDAABD4A238BA1E2005AE212 /* libbsm.tbd in Frameworks */,
 				CDAABD48238BA1D3005AE212 /* libEndpointSecurity.tbd in Frameworks */,
-				CDD5666E23AB548000F51B1F /* libFileMonitor.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +192,7 @@
 				7D564DAF1F18434F00B8AAD6 /* Supporting Files */,
 			);
 			name = Source;
-			path = LaunchDaemon;
+			path = Daemon;
 			sourceTree = "<group>";
 		};
 		7D564DAF1F18434F00B8AAD6 /* Supporting Files */ = {
@@ -255,8 +261,12 @@
 		CDD5666723AB53D600F51B1F /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				CDD5666B23AB547500F51B1F /* FileMonitor.h */,
-				CDD5666C23AB547500F51B1F /* libFileMonitor.a */,
+				CDCE66452C922F440095CD97 /* File.m */,
+				CDCE66432C922F440095CD97 /* FileMonitor.h */,
+				CDCE663F2C922F440095CD97 /* FileMonitor.m */,
+				CDCE66462C922F440095CD97 /* Process.m */,
+				CDCE66422C922F440095CD97 /* signing.h */,
+				CDCE66412C922F440095CD97 /* signing.m */,
 			);
 			name = Libraries;
 			path = ../Shared/Libraries;
@@ -378,6 +388,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDFE5CF423ACAD4800A7B28B /* Item.m in Sources */,
+				CDCE664B2C922F440095CD97 /* Process.m in Sources */,
 				7D564DB11F18434F00B8AAD6 /* main.m in Sources */,
 				CDBAE82B261AC6C600D6BD21 /* Processes.m in Sources */,
 				CD3913E72382649F00850CD1 /* Preferences.m in Sources */,
@@ -386,6 +397,7 @@
 				CDE4C1242B12E4FA001521CE /* Btm.m in Sources */,
 				CD3913E92382649F00850CD1 /* XPCUserClient.m in Sources */,
 				CD3913F42382658600850CD1 /* utilities.m in Sources */,
+				CDCE664A2C922F440095CD97 /* File.m in Sources */,
 				CDAABD53238D0220005AE212 /* Launchd.m in Sources */,
 				CDAABD3E238BA077005AE212 /* Monitor.m in Sources */,
 				CDE4C11E2B12DD5E001521CE /* BTMMonitor.m in Sources */,
@@ -395,6 +407,8 @@
 				CD3913E82382649F00850CD1 /* XPCDaemon.m in Sources */,
 				CDDC60EF244BDA9D00CC81F1 /* CronJob.m in Sources */,
 				CDAABD4D238BB1B3005AE212 /* PluginBase.m in Sources */,
+				CDCE66492C922F440095CD97 /* signing.m in Sources */,
+				CDCE66472C922F440095CD97 /* FileMonitor.m in Sources */,
 				CD410454244406EB00069C56 /* LoginItem.m in Sources */,
 				CDE4C1212B12DD7B001521CE /* ProcessMonitor.m in Sources */,
 				CD3913FD238268B300850CD1 /* Rule.m in Sources */,
@@ -537,7 +551,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.2.2;
+				CURRENT_PROJECT_VERSION = 2.2.3;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -545,11 +559,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../shared/Libraries",
+					"$(PROJECT_DIR)/../Shared/Libraries",
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.2.2;
+				MARKETING_VERSION = 2.2.3;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";
@@ -566,7 +580,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.2.2;
+				CURRENT_PROJECT_VERSION = 2.2.3;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -574,11 +588,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../shared/Libraries",
+					"$(PROJECT_DIR)/../Shared/Libraries",
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.2.2;
+				MARKETING_VERSION = 2.2.3;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";

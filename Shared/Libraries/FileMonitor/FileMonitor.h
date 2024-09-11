@@ -145,6 +145,9 @@ typedef void (^FileCallbackBlock)(File* _Nonnull);
 //timestamp
 @property(nonatomic, retain)NSDate* _Nonnull timestamp;
 
+//script
+@property(nonatomic, retain)NSString* _Nullable script;
+
 /* METHODS */
 
 //init

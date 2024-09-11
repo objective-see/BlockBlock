@@ -11,10 +11,11 @@
 
 #import "consts.h"
 #import "utilities.h"
-#import "FileMonitor.h"
 #import "AppDelegate.h"
 #import "XPCDaemonClient.h"
 #import "AlertWindowController.h"
+
+//#import "FileMonitor/FileMonitor.h"
 
 /* GLOBALS */
 
