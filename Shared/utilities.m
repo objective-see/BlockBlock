@@ -1787,26 +1787,6 @@ bail:
     return string;
 }
 
-unsigned long inodeForPath(NSString *path) 
-{
-    //stat
-    struct stat fileStat = {0};
-    
-    //inode
-    unsigned long iNode = 0;
-    
-    if(0 != stat(path.fileSystemRepresentation, &fileStat))
-    {
-        goto bail;
-    }
-  
-    iNode = fileStat.st_ino;
-    
-bail:
-        
-    return iNode;
-}
-
 #ifdef DAEMON_BUILD
 
 //mach time to nanoseconds
