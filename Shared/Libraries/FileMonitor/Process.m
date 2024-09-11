@@ -158,6 +158,9 @@ pid_t getParentID(pid_t child);
         //init uuid
         self.uid = audit_token_to_euid(process->audit_token);
         
+        //add cs flags
+        self.csFlags = [NSNumber numberWithUnsignedInt:process->codesigning_flags];
+        
         //path
         self.path = convertStringToken(&process->executable->path);
         
@@ -167,6 +170,17 @@ pid_t getParentID(pid_t child);
         //now attempt to find cached process
         // via inode, so will be same binary (though pid/args, etc will be different)
         cachedProcess = [processesCache objectForKey:inode];
+        
+        //(basic) sanity check
+        // make sure cs flags still match
+        if(YES != [self.csFlags isEqualTo:cachedProcess.csFlags])
+        {
+            //unset
+            cachedProcess = nil;
+            
+            //remove
+            [processesCache removeObjectForKey:inode];
+        }
         
         //generate name
         if(nil == cachedProcess)
@@ -190,9 +204,6 @@ pid_t getParentID(pid_t child);
             self.architecture = cachedProcess.architecture;
         }
     
-        //add cs flags
-        self.csFlags = [NSNumber numberWithUnsignedInt:process->codesigning_flags];
-        
         //add signing id
         if(nil == cachedProcess)
         {
