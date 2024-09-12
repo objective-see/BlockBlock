@@ -111,7 +111,7 @@ XPCUserClient* xpcUserClient;
         [self.reportedEvents enumerateKeysAndObjectsUsingBlock:^(NSString* key, Event* shownEvent, BOOL *stop)
         {
             //related?
-            if(YES == [event isRelated:shownEvent])
+            if(YES == [event isRelated:shownEvent includeTime:NO])
             {
                 //got match
                 shown = YES;

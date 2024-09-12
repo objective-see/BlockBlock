@@ -353,7 +353,7 @@ bail:
     
     //matches last event?
     // if so, ignore the event
-    if(YES == [event isRelated:self.lastEvent])
+    if(YES == [event isRelated:self.lastEvent includeTime:YES])
     {
         //dbg msg
         os_log_debug(logHandle, "matches last event, so ignoring");

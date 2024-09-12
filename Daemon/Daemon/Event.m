@@ -172,13 +172,13 @@ extern os_log_t logHandle;
 
 //determines if a event is related
 // checks things like process path, plugins, paths, etc
--(BOOL)isRelated:(Event*)lastEvent
+-(BOOL)isRelated:(Event*)lastEvent includeTime:(BOOL)includeTime
 {
     //dbg msg
     os_log_debug(logHandle, "checking if event is related");
     
     //check 1:
-    // different plugins mean unrelated watch events
+    // different plugins mean unrelated watch events?
     if(self.plugin != lastEvent.plugin)
     {
         //dbg msg
@@ -189,7 +189,7 @@ extern os_log_t logHandle;
     }
     
     //check #2
-    // same (responsible) process path
+    // same (responsible) process path?
     if(YES != [self.process.path isEqualToString:lastEvent.process.path])
     {
         //dbg msg
@@ -200,7 +200,7 @@ extern os_log_t logHandle;
     }
     
     //check #3
-    // different startup path (i.e. plist)
+    // different startup path (i.e. plist)?
     if(YES != [self.file.destinationPath isEqualToString:lastEvent.file.destinationPath])
     {
         //dbg msg
@@ -211,7 +211,7 @@ extern os_log_t logHandle;
     }
     
     //check #4
-    // different startup item
+    // different startup item?
     if(YES != [self.item.object isEqualToString:lastEvent.item.object])
     {
         //dbg msg
@@ -222,14 +222,18 @@ extern os_log_t logHandle;
     }
     
     //check #5
-    // 3 seconds between now last event means 'unrelated'
-    if(3 <= [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp])
+    // time check?
+    if(YES == includeTime)
     {
-        //dbg msg
-        os_log_debug(logHandle, "...event happened more than 3 seconds ago (delta: %f)", [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp]);
-        
-        //nope!
-        return NO;
+        //3 seconds between now last event means 'unrelated'
+        if(3 <= [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp])
+        {
+            //dbg msg
+            os_log_debug(logHandle, "...event happened more than 3 seconds ago (delta: %f)", [[NSDate date] timeIntervalSinceDate:lastEvent.timestamp]);
+            
+            //nope!
+            return NO;
+        }
     }
     
     //events appear to be related

@@ -59,7 +59,7 @@
 
 //determines if a event is related
 // checks things like process path, plugins, paths, etc
--(BOOL)isRelated:(Event*)lastEvent;
+-(BOOL)isRelated:(Event*)lastEvent includeTime:(BOOL)includeTime;
 
 //create an (deliverable) obj
 -(NSMutableDictionary*)toAlert;
