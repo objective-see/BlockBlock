@@ -116,8 +116,19 @@ extern Preferences* preferences;
         //add client
         event.esClient = client;
         
-        //add msg
-        event.esMessage = es_copy_message(message);
+        //retain message
+        if(@available(macOS 11.0, *))
+        {
+            //retain
+            es_retain_message(message);
+            event.esMessage = (es_message_t*)message;
+        }
+        //copy message
+        else
+        {
+            //copy
+            event.esMessage = es_copy_message(message);
+        }
         
         //create deadline semaphore
         deadlineSema = dispatch_semaphore_create(0);
@@ -158,8 +169,20 @@ extern Preferences* preferences;
                     //unset
                     event.esClient = NULL;
                     
-                    //free
-                    es_free_message(event.esMessage);
+                    //release message
+                    if(@available(macOS 11.0, *))
+                    {
+                        //release
+                        es_release_message(event.esMessage);
+                    }
+                    //free message
+                    else
+                    {
+                        //free
+                        es_free_message(event.esMessage);
+                    }
+                    
+                    //unset
                     event.esMessage = NULL;
                 }
             }
@@ -191,8 +214,20 @@ extern Preferences* preferences;
                 //unset
                 event.esClient = NULL;
                 
-                //free
-                es_free_message(event.esMessage);
+                //release message
+                if(@available(macOS 11.0, *))
+                {
+                    //release
+                    es_release_message(event.esMessage);
+                }
+                //free message
+                else
+                {
+                    //free
+                    es_free_message(event.esMessage);
+                }
+                
+                //unset
                 event.esMessage = NULL;
             }
         }
@@ -205,8 +240,6 @@ extern Preferences* preferences;
     {
         //err msg
         os_log_error(logHandle, "ERROR: 'es_new_client' failed with %x", result);
-        
-        //bail
         goto bail;
     }
     
@@ -215,10 +248,11 @@ extern Preferences* preferences;
     {
         //err msg
         os_log_error(logHandle, "ERROR: 'es_subscribe' failed");
-        
-        //bail
         goto bail;
     }
+    
+    //set flag
+    self.isRunning = YES;
 
     //happy
     started = YES;
@@ -234,17 +268,32 @@ bail:
     //flag
     BOOL allowed = NO;
     
-    //result
-    __block es_respond_result_t result = !ES_RESPOND_RESULT_SUCCESS;
+    //flag
+    // default cache
+    BOOL shouldCache = YES;
     
+    //result
+    es_respond_result_t result = !ES_RESPOND_RESULT_SUCCESS;
+    
+    //script?
+    // don't cache
+    if( (message->version >= 2) &&
+        (ES_EVENT_TYPE_AUTH_EXEC == message->event_type) )
+    {
+        //is script?
+        if(NULL != message->event.exec.script)
+        {
+            //set flag
+            shouldCache = NO;
+        }
+    }
+
     //allow
-    result = es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, false);
+    result = es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, shouldCache);
     if(ES_RESPOND_RESULT_SUCCESS != result)
     {
         //err msg
         os_log_error(logHandle, "ERROR: 'es_respond_auth_result' failed with %x", result);
-        
-        //bail
         goto bail;
     }
     
@@ -276,8 +325,6 @@ bail:
         {
            //err msg
            os_log_error(logHandle, "ERROR: 'es_unsubscribe_all' failed");
-           
-           //bail
            goto bail;
         }
             
@@ -289,8 +336,6 @@ bail:
         {
            //err msg
            os_log_error(logHandle, "ERROR: 'es_delete_client' failed");
-           
-           //bail
            goto bail;
         }
             
@@ -305,9 +350,31 @@ bail:
             
     }//sync
     
+    //set flag
+    self.isRunning = YES;
+    
 bail:
     
     return stopped;
+}
+
+//clear (ES) cache
+-(void)clearCache
+{
+    //dbg msg
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
+    
+    //sync to clear
+    @synchronized (self)
+    {
+        //clear cache
+        if(NULL != self.endpointClient)
+        {
+            //clear
+            es_clear_cache(self.endpointClient);
+        }
+    }
+    return;
 }
 
 @end

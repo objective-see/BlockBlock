@@ -114,6 +114,19 @@ bail:
             [monitor start];
         }
     }
+    
+    //toggled off passive mode or on notarization mode
+    // clear cache, as in these modes we've cached processes
+    if( ((nil != [updates objectForKey:PREF_PASSIVE_MODE]) &&
+         (YES != [updates[PREF_PASSIVE_MODE] boolValue])) ||
+         (YES == [updates[PREF_NOTARIZATION_MODE] boolValue]) )
+    {
+        //dbg msg
+        os_log(logHandle, "passive mode off or notarization mode on, so clearing (ES) cache");
+        
+        //clear cache
+        [monitor.processMonitor clearCache];
+    }
 
     //add in (new) prefs
     [self.preferences addEntriesFromDictionary:updates];
@@ -123,8 +136,6 @@ bail:
     {
         //err msg
         os_log_error(logHandle, "ERROR: failed to save preferences");
-        
-        //bail
         goto bail;
     }
     

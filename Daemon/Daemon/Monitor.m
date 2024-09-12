@@ -299,7 +299,7 @@ bail:
     if(YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue])
     {
         //dbg/log msg
-        os_log(logHandle, "client in passive mode, so allowing %{public}@", file.destinationPath);
+        //os_log(logHandle, "client in passive mode, so allowing %{public}@ (from %{public}@)", file.destinationPath, file.process.path);
     
         //done!
         goto bail;
@@ -435,7 +435,20 @@ bail:
     if( (YES != wasDelivered) &&
         (NULL != event.esMessage) )
     {
-        es_free_message(event.esMessage);
+        //release message
+        if(@available(macOS 11.0, *))
+        {
+            //release
+            es_release_message(event.esMessage);
+        }
+        //free message
+        else
+        {
+            //free
+            es_free_message(event.esMessage);
+        }
+        
+        //unset
         event.esMessage = NULL;
     }
 

@@ -38,6 +38,7 @@ extern os_log_t logHandle;
     //dbg msg
     os_log_debug(logHandle, "starting 'BTM' monitor...");
     
+    
     //create client
     // and handle btm events
     result = es_new_client(&_endpointClient, ^(es_client_t *client, const es_message_t *message)
@@ -47,6 +48,9 @@ extern os_log_t logHandle;
         
         //string token
         NSString* stringToken = nil;
+        
+        //copied message
+        es_message_t* messageCopy = NULL;
         
         //dbg msg
         os_log_debug(logHandle, "new 'btm' event: %#x", message->event_type);
@@ -88,9 +92,23 @@ extern os_log_t logHandle;
             file.destinationPath = @"n/a";
         }
         
+        //retain message
+        if(@available(macOS 11.0, *))
+        {
+            //retain
+            es_retain_message(message);
+            messageCopy = (es_message_t *)message;
+        }
+        //copy message
+        else
+        {
+            //copy
+            messageCopy = es_copy_message(message);
+        }
+        
         //process event
         // passing in (btm) plugin
-        [monitor processEvent:file plugin:btmPlugin message:es_copy_message(message)];
+        [monitor processEvent:file plugin:btmPlugin message:messageCopy];
        
     });
     

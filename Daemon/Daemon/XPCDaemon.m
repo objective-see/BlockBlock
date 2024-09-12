@@ -206,10 +206,22 @@ bail:
 bail:
     
     //free es message
-    if(nil != event.esMessage)
+    if(NULL != event.esMessage)
     {
-        //free
-        es_free_message(event.esMessage);
+        //release message
+        if(@available(macOS 11.0, *))
+        {
+            //release
+            es_release_message(event.esMessage);
+        }
+        //free message
+        else
+        {
+            //free
+            es_free_message(event.esMessage);
+        }
+        
+        //unset
         event.esMessage = NULL;
     }
     

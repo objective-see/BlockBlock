@@ -94,6 +94,9 @@ pid_t getParentID(pid_t child);
         //set type
         self.event = message->event_type;
         
+        //init
+        self.script = NULL;
+        
         //event specific logic
         
         // set type
@@ -272,7 +275,10 @@ pid_t getParentID(pid_t child);
                 (ES_EVENT_TYPE_NOTIFY_EXEC == message->event_type) )
             {
                 //save
-                self.script = convertStringToken(&message->event.exec.script->path);
+                if(NULL != message->event.exec.script)
+                {
+                    self.script = convertStringToken(&message->event.exec.script->path);
+                }
             }
         }
     

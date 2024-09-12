@@ -23,6 +23,9 @@
 //endpoint client
 @property es_client_t* endpointClient;
 
+//state
+@property BOOL isRunning;
+
 //cache
 @property(nonatomic, retain)NSCache* cache;
 
@@ -34,5 +37,8 @@
 
 //stop
 -(BOOL)stop;
+
+//clear (ES) cache
+-(void)clearCache;
 
 @end

@@ -105,49 +105,7 @@ bail:
             break;
         }
             
-        //open
-        case ES_EVENT_TYPE_AUTH_OPEN:
-        case ES_EVENT_TYPE_NOTIFY_OPEN:
-            
-            //set path
-            self.destinationPath = convertStringToken(&message->event.open.file->path);
-            
-            break;
-            
-        //clone
-        case ES_EVENT_TYPE_AUTH_CLONE:
-            
-            //set source
-            self.sourcePath = convertStringToken(&message->event.clone.source->path);
-            
-            //set destination
-            self.destinationPath = [convertStringToken(&message->event.clone.target_dir->path) stringByAppendingPathComponent:convertStringToken(&message->event.clone.target_name)];
-            
-            break;
-            
-        //exchange data
-        case ES_EVENT_TYPE_AUTH_EXCHANGEDATA:
-            
-            //set source
-            self.sourcePath = convertStringToken(&message->event.exchangedata.file1->path);
-            
-            //set destination
-            self.destinationPath = convertStringToken(&message->event.exchangedata.file2->path);
-            
-            break;
-            
-        //copy file
-        case ES_EVENT_TYPE_AUTH_COPYFILE:
-            
-            //set source
-            self.sourcePath = convertStringToken(&message->event.copyfile.source->path);
-            
-            //set destination
-            self.destinationPath = [convertStringToken(&message->event.copyfile.target_dir->path) stringByAppendingPathComponent:convertStringToken(&message->event.copyfile.target_name)];
-            
-            break;
         
-
         //write
         case ES_EVENT_TYPE_NOTIFY_WRITE:
             
@@ -156,25 +114,7 @@ bail:
             
             break;
             
-            //close
-        case ES_EVENT_TYPE_NOTIFY_CLOSE:
-            
-            //set destination
-            self.destinationPath = convertStringToken(&message->event.close.target->path);
-            
-            break;
-            
-        //link
-        case ES_EVENT_TYPE_NOTIFY_LINK:
         
-            //set source
-            self.sourcePath = convertStringToken(&message->event.link.source->path);
-            
-            //set destination, via combining
-            self.destinationPath = [convertStringToken(&message->event.link.target_dir->path) stringByAppendingPathComponent:convertStringToken(&message->event.link.target_filename)];
-            
-            break;
-            
         //rename
         case ES_EVENT_TYPE_NOTIFY_RENAME:
             
@@ -195,24 +135,6 @@ bail:
             }
             
             break;
-            
-        //truncate
-        case ES_EVENT_TYPE_AUTH_TRUNCATE:
-            
-            //set destination
-            self.destinationPath = convertStringToken(&message->event.truncate.target->path);
-            
-            break;
-            
-        //unlink
-        case ES_EVENT_TYPE_AUTH_UNLINK:
-        case ES_EVENT_TYPE_NOTIFY_UNLINK:
-            
-            //set destination
-            self.destinationPath = convertStringToken(&message->event.unlink.target->path);
-            
-            break;
-            
             
         default:
             break;
@@ -245,36 +167,16 @@ bail:
             [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_CREATE\","];
             break;
             
-        //open
-        case ES_EVENT_TYPE_NOTIFY_OPEN:
-            [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_OPEN\","];
-            break;
-            
         //write
         case ES_EVENT_TYPE_NOTIFY_WRITE:
             [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_WRITE\","];
-            break;
-            
-        //close
-        case ES_EVENT_TYPE_NOTIFY_CLOSE:
-            [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_CLOSE\","];
             break;
             
         //rename
         case ES_EVENT_TYPE_NOTIFY_RENAME:
             [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_RENAME\","];
             break;
-            
-        //link
-        case ES_EVENT_TYPE_NOTIFY_LINK:
-            [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_LINK\","];
-            break;
-            
-        //unlink
-        case ES_EVENT_TYPE_NOTIFY_UNLINK:
-            [description appendString:@"\"ES_EVENT_TYPE_NOTIFY_UNLINK\","];
-            break;
-            
+                        
         default:
             break;
     }

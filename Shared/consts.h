@@ -329,4 +329,7 @@ typedef enum {
 //path to killall
 #define KILL_ALL @"/usr/bin/killall"
 
+//path to log
+#define UNIVERSAL_LOG "/usr/bin/log"
+
 #endif

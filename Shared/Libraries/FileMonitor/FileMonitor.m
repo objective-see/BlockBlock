@@ -9,8 +9,9 @@
 //  Inspired by https://gist.github.com/Omar-Ikram/8e6721d8e83a3da69b31d4c2612a68ba
 //  NOTE: requires a) root b) the 'com.apple.developer.endpoint-security.client' entitlement
 
-#import "FileMonitor.h"
+#import "consts.h"
 #import "utilities.h"
+#import "FileMonitor.h"
 
 #import <dlfcn.h>
 #import <Foundation/Foundation.h>
@@ -22,7 +23,7 @@
 es_client_t* endpointClient = nil;
 
 //pointer to function
-// responsibility_get_pid_responsible_for_pid()
+// responsibility_get_pid_responsible_for_pid
 pid_t (*getRPID)(pid_t pid) = NULL;
 
 //process cache
@@ -161,10 +162,11 @@ NSCache* _Nonnull processesCache;
     }
     
     //mute self
-    // note: you might not want this, but for a cmdline-based filemonitor
-    //       this ensures we don't constantly report writes to current /dev/tty
     es_mute_path_literal(endpointClient, [NSProcessInfo.processInfo.arguments[0] UTF8String]);
-    
+        
+    //mute log
+    es_mute_path_literal(endpointClient, UNIVERSAL_LOG);
+
     //subscribe
     if(ES_RETURN_SUCCESS != es_subscribe(endpointClient, events, count))
     {

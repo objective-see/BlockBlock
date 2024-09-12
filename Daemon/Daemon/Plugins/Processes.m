@@ -99,9 +99,6 @@ extern os_log_t logHandle;
         goto bail;
     }
     
-    //dbg msg
-    os_log_debug(logHandle, "using path: %{public}@", path);
-    
     //not a script?
     // grab app bundle (for subsequent checks)
     if(nil != process.script)
@@ -374,7 +371,7 @@ bail:
         }
             
         //take action
-        result = es_respond_auth_result(event.esClient, event.esMessage, action, false);
+        result = es_respond_auth_result(event.esClient, event.esMessage, action, true);
         if(ES_RESPOND_RESULT_SUCCESS != result)
         {
             //err msg
@@ -387,9 +384,23 @@ bail:
             os_log_debug(logHandle, "%{public}@: %{public}@", (ES_AUTH_RESULT_ALLOW == action) ? @"allowed" : @"blocked", event.process.path);
         }
         
-        //free/unset message
-        es_free_message(event.esMessage);
+        //release message
+        if(@available(macOS 11.0, *))
+        {
+            //release
+            es_release_message(event.esMessage);
+        }
+        //free message
+        else
+        {
+            //free
+            es_free_message(event.esMessage);
+        }
+        
+        //unset message
         event.esMessage = NULL;
+        
+        //unset client
         event.esClient = NULL;
         
         //signal

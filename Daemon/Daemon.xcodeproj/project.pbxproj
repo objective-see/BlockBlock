@@ -215,14 +215,14 @@
 		7D564DE21F18445400B8AAD6 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CD3913F02382658600850CD1 /* consts.h */,
 				CDD5666723AB53D600F51B1F /* Libraries */,
 				CD3913FC238268B300850CD1 /* Rule.h */,
 				CD3913FB238268B300850CD1 /* Rule.m */,
-				CD3913F02382658600850CD1 /* consts.h */,
 				CD3913EF2382658600850CD1 /* utilities.h */,
 				CD3913F12382658600850CD1 /* utilities.m */,
-				CD3913F22382658600850CD1 /* XPCUserProto.h */,
 				CD3913EE2382658600850CD1 /* XPCDaemonProto.h */,
+				CD3913F22382658600850CD1 /* XPCUserProto.h */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
