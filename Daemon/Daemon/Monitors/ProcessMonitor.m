@@ -57,9 +57,6 @@ extern Preferences* preferences;
         //new process event
         Process* process = nil;
         
-        //esf deadline
-        uint64_t deadline = 0;
-        
         //deadline sema
         dispatch_semaphore_t deadlineSema = 0;
         
@@ -84,7 +81,21 @@ extern Preferences* preferences;
             //done
             return;
         }
-
+        
+        //if deadline is super short
+        // user won't be able to respond anyways, so just allow :|
+        if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
+            
+            //allow
+            [self allowProcessEvent:client message:(es_message_t*)message];
+            
+            //dbg msg
+            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short, so allowing process",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC);
+            
+            //done
+            return;
+        }
+    
         //init process obj
         process = [[Process alloc] init:(es_message_t* _Nonnull)message csOption:csDynamic];
         if( (nil == process) ||
@@ -133,14 +144,8 @@ extern Preferences* preferences;
         //create deadline semaphore
         deadlineSema = dispatch_semaphore_create(0);
         
-        //init deadline
-        deadline = message->deadline - mach_absolute_time();
-        
         //add to event
         event.esSemaphore = deadlineSema;
-        
-        //background
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
         
         //deliver alert
         // can fail if no client
@@ -149,12 +154,16 @@ extern Preferences* preferences;
             //dbg msg
             os_log_debug(logHandle, "alert delivered, waiting for response...");
             
+            //wait time
+            // note: we've already checked to make sure it's at least 2.5 seconds
+            uint64_t waitTime = machTimeToNanoseconds(message->deadline - mach_absolute_time()) - (2.0 * NSEC_PER_SEC);
+            
             //wait till close to timeout
             // if haven't hit, just allow, otherwise we'll be killed
-            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, machTimeToNanoseconds(deadline) - (1.01 * NSEC_PER_SEC))))
+            if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, waitTime)))
             {
                 //err msg
-                os_log_error(logHandle, "ERROR: ES timeout (%llx seconds) about to be hit, forced to allow process :/", machTimeToNanoseconds(deadline) / NSEC_PER_SEC);
+                os_log_error(logHandle, "ERROR: ES timeout (%llu seconds) about to be hit, forced to allow process", waitTime / NSEC_PER_SEC);
                 
                 //sync
                 @synchronized(self)
@@ -166,24 +175,35 @@ extern Preferences* preferences;
                         os_log_error(logHandle, "ERROR: failed to allow process");
                     }
                     
-                    //unset
-                    event.esClient = NULL;
-                    
-                    //release message
-                    if(@available(macOS 11.0, *))
-                    {
-                        //release
-                        es_release_message(event.esMessage);
+                    //sync
+                    @synchronized (event) {
+                        
+                        //unset
+                        event.esClient = NULL;
+                        
+                        //release message
+                        if(@available(macOS 11.0, *))
+                        {
+                            //release
+                            if(NULL != event.esMessage)
+                            {
+                                es_release_message(event.esMessage);
+                            }
+                        }
+                        //free message
+                        else
+                        {
+                            //free
+                            if(NULL != event.esMessage)
+                            {
+                                //free
+                                es_free_message(event.esMessage);
+                            }
+                        }
+                        
+                        //unset
+                        event.esMessage = NULL;
                     }
-                    //free message
-                    else
-                    {
-                        //free
-                        es_free_message(event.esMessage);
-                    }
-                    
-                    //unset
-                    event.esMessage = NULL;
                 }
             }
             //sema signal'd
@@ -211,30 +231,39 @@ extern Preferences* preferences;
                     os_log_error(logHandle, "ERROR: failed to allow process");
                 }
                 
-                //unset
-                event.esClient = NULL;
-                
-                //release message
-                if(@available(macOS 11.0, *))
-                {
-                    //release
-                    es_release_message(event.esMessage);
+                //sync
+                @synchronized(event) {
+                    
+                    //unset
+                    event.esClient = NULL;
+                    
+                    //release message
+                    if(@available(macOS 11.0, *))
+                    {
+                        //release
+                        if(NULL != event.esMessage)
+                        {
+                            es_release_message(event.esMessage);
+                        }
+                    }
+                    //free message
+                    else
+                    {
+                        //free
+                        if(NULL != event.esMessage)
+                        {
+                            es_free_message(event.esMessage);
+                        }
+                    }
+                    
+                    //unset
+                    event.esMessage = NULL;
                 }
-                //free message
-                else
-                {
-                    //free
-                    es_free_message(event.esMessage);
-                }
-                
-                //unset
-                event.esMessage = NULL;
             }
         }
             
-        });
     });
-    
+   
     //sanity check
     if(ES_NEW_CLIENT_RESULT_SUCCESS != result)
     {

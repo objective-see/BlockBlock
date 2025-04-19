@@ -161,15 +161,19 @@ extern os_log_t logHandle;
         
         //also check app bundle
         // to see if it has been approved
-        quarantineFlags = getQuarantineFlags(appPath);
-        if( (QTN_NOT_QUARANTINED != quarantineFlags) &&
-            (QTN_FLAG_USER_APPROVED & quarantineFlags) )
+        if(0 != appPath.length)
         {
-            //dbg msg
-            os_log_debug(logHandle, "app bundle, %{public}@, is user approved ...will allow", appPath);
-            
-            //done
-            goto bail;
+            //get app bundle's flags
+            quarantineFlags = getQuarantineFlags(appPath);
+            if( (QTN_NOT_QUARANTINED != quarantineFlags) &&
+               (QTN_FLAG_USER_APPROVED & quarantineFlags) )
+            {
+                //dbg msg
+                os_log_debug(logHandle, "app bundle, %{public}@, is user approved ...will allow", appPath);
+                
+                //done
+                goto bail;
+            }
         }
     }
     
@@ -384,6 +388,10 @@ bail:
             os_log_debug(logHandle, "%{public}@: %{public}@", (ES_AUTH_RESULT_ALLOW == action) ? @"allowed" : @"blocked", event.process.path);
         }
         
+        //signal
+        // as we've avoided the es timeout
+        dispatch_semaphore_signal(event.esSemaphore);
+        
         //release message
         if(@available(macOS 11.0, *))
         {
@@ -402,11 +410,7 @@ bail:
         
         //unset client
         event.esClient = NULL;
-        
-        //signal
-        // as we've avoid the es timeout
-        dispatch_semaphore_signal(event.esSemaphore);
-
+    
     } //sync
     
     //happy

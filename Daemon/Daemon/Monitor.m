@@ -430,28 +430,31 @@ bail:
     
 bail:
     
-    //not delivered?
-    // free es message
-    if( (YES != wasDelivered) &&
-        (NULL != event.esMessage) )
-    {
-        //release message
-        if(@available(macOS 11.0, *))
-        {
-            //release
-            es_release_message(event.esMessage);
-        }
-        //free message
-        else
-        {
-            //free
-            es_free_message(event.esMessage);
-        }
+    @synchronized (event) {
         
-        //unset
-        event.esMessage = NULL;
-    }
-
+        //not delivered?
+        // free es message
+        if( (YES != wasDelivered) &&
+           (NULL != event.esMessage) )
+        {
+            //release message
+            if(@available(macOS 11.0, *))
+            {
+                //release
+                es_release_message(event.esMessage);
+            }
+            //free message
+            else
+            {
+                //free
+                es_free_message(event.esMessage);
+            }
+            
+            //unset
+            event.esMessage = NULL;
+        }
+    } //sync
+    
     return;
 }
  
