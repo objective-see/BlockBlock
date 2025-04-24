@@ -28,7 +28,7 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" texturedBackground="YES"/>
             <rect key="contentRect" x="196" y="240" width="523" height="237"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1470" height="918"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="523" height="237"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -101,11 +101,11 @@
             <point key="canvasLocation" x="216.5" y="-225.5"/>
         </window>
         <customView id="8vS-7f-v27" userLabel="Disk Access">
-            <rect key="frame" x="0.0" y="0.0" width="1179" height="494"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <rect key="frame" x="0.0" y="0.0" width="1064" height="348"/>
+            <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qNV-KX-UQg">
-                    <rect key="frame" x="346" y="465" width="487" height="29"/>
+                    <rect key="frame" x="346" y="319" width="487" height="29"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Grant Full Disk Access" id="7wy-Mn-dLg">
                         <font key="font" size="20" name="Menlo-Bold"/>
@@ -114,7 +114,7 @@
                     </textFieldCell>
                 </textField>
                 <button tag="4" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tCu-p3-YpG">
-                    <rect key="frame" x="956" y="13" width="209" height="32"/>
+                    <rect key="frame" x="951" y="13" width="100" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Next »" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" tag="3" imageScaling="proportionallyDown" inset="2" id="2bh-JF-lbl">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -125,32 +125,32 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fx-Ct-TfV">
-                    <rect key="frame" x="527" y="360" width="643" height="80"/>
+                    <rect key="frame" x="527" y="213" width="492" height="80"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" alignment="left" title="BlockBlock requires 'Full Disk Access' to protect the system.  ...this must be manually granted via the 'System Preferences'." id="v8h-lw-Wzd">
+                    <textFieldCell key="cell" alignment="left" title="BlockBlock requires 'Full Disk Access' This must be granted via 'System Settings'" id="v8h-lw-Wzd">
                         <font key="font" size="17" name="Menlo-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqj-bL-Uao">
-                    <rect key="frame" x="527" y="248" width="625" height="108"/>
+                    <rect key="frame" x="527" y="167" width="625" height="68"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" alignment="left" title="1.   2. In System Preferences, click the 🔒 to authenticate.   3. Select BlockBlock's checkbox in the Full Disk Access table. " id="Zck-cH-GpA">
+                    <textFieldCell key="cell" alignment="left" title="1.   2. Toggle on BlockBlock in the 'Full Disk Access' table.  " id="Zck-cH-GpA">
                         <font key="font" size="15" name="Menlo-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tiU-5S-rkl">
-                    <rect key="frame" x="0.0" y="7" width="521" height="437"/>
+                    <rect key="frame" x="20" y="-52" width="488" height="416"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" image="SystemPrefs" id="Ig5-36-GEz"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="SystemPrefs" id="Ig5-36-GEz"/>
                 </imageView>
                 <button tag="1" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xfy-pO-bPJ">
-                    <rect key="frame" x="553" y="331" width="236" height="32"/>
+                    <rect key="frame" x="553" y="210" width="236" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="push" title="Open System Preferences" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cZ4-lX-UNP">
+                    <buttonCell key="cell" type="push" title="Open 'System Settings'" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cZ4-lX-UNP">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" size="13" name="Menlo-Regular"/>
                     </buttonCell>
@@ -159,29 +159,16 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VKg-cQ-9gk">
-                    <rect key="frame" x="551" y="192" width="539" height="57"/>
+                    <rect key="frame" x="560" y="110" width="472" height="57"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="  If BlockBlock doesn't show up, click the '+'   and manually add: /Library/Objective-See/BlockBlock/BlockBlock.app" drawsBackground="YES" id="Ob0-Ni-jks">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="  If BlockBlock doesn't show up, click the '+'   and add: /Library/Objective-See/BlockBlock/BlockBlock.app" drawsBackground="YES" id="Ob0-Ni-jks">
                         <font key="font" size="13" name="Menlo-Regular"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="quaternaryLabelColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField hidden="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wH6-TW-h1P">
-                    <rect key="frame" x="711" y="105" width="284" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="Waiting for Full Disk Access..." id="08d-fd-1uE">
-                        <font key="font" size="15" name="Menlo-Regular"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <progressIndicator hidden="YES" wantsLayer="YES" fixedFrame="YES" maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="goS-M0-vWy">
-                    <rect key="frame" x="662" y="98" width="32" height="32"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                </progressIndicator>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6nx-nf-Lpb">
-                    <rect key="frame" x="543" y="13" width="85" height="32"/>
+                    <rect key="frame" x="522" y="13" width="100" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Issues?" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WdC-Zi-mMl">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -191,8 +178,21 @@
                         <action selector="fdaIssues:" target="-2" id="ZWQ-LP-dd3"/>
                     </connections>
                 </button>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wH6-TW-h1P">
+                    <rect key="frame" x="680" y="67" width="284" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Waiting for Full Disk Access..." id="08d-fd-1uE">
+                        <font key="font" size="15" name="Menlo-Regular"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="goS-M0-vWy">
+                    <rect key="frame" x="631" y="60" width="32" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </progressIndicator>
             </subviews>
-            <point key="canvasLocation" x="440.5" y="323"/>
+            <point key="canvasLocation" x="383" y="250"/>
         </customView>
         <customView id="bkk-rY-ALC" userLabel="Support">
             <rect key="frame" x="0.0" y="0.0" width="812" height="494"/>
@@ -323,6 +323,6 @@
         <image name="FriendsiVerify" width="500" height="180"/>
         <image name="Icon" width="769" height="769"/>
         <image name="Love" width="256" height="256"/>
-        <image name="SystemPrefs" width="500" height="429"/>
+        <image name="SystemPrefs" width="1430" height="799"/>
     </resources>
 </document>

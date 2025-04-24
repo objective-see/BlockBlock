@@ -204,6 +204,9 @@ extern os_log_t logHandle;
             //show view
             [self showView:self.diskAccessView firstResponder:self.diskAccessButton];
             
+            //start spinner
+            [self.fdaActivityIndicator startAnimation:self];
+            
             //in background
             // wait for daemon to set 'got FDA' preference
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
@@ -312,6 +315,9 @@ extern os_log_t logHandle;
     
     //update config view
     self.window.contentView = view;
+    
+    //(re)center
+    [self.window center];
 
     //make 'next' button first responder
     // calling this without a timeout, sometimes fails :/
@@ -407,16 +413,7 @@ extern os_log_t logHandle;
     
     //disable button
     self.diskAccessButton.enabled = NO;
-    
-    //show FDA message
-    self.fdaMessage.hidden = NO;
-    
-    //show spinner
-    self.fdaActivityIndicator.hidden = NO;
-    
-    //start spinner
-    [self.fdaActivityIndicator startAnimation:self];
-    
+        
     //wait till system preferences has finished launching
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
