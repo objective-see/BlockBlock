@@ -483,7 +483,7 @@ bail:
     return result;
 }
 
-//load/unload lauch daemon
+//load/unload launch daemon
 // calls into helper via XPC
 -(BOOL)toggleDaemon:(BOOL)shouldLoad
 {

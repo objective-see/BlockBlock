@@ -39,6 +39,10 @@
 //update window controller
 @property(nonatomic, retain)UpdateWindowController* updateWindowController;
 
+//click fix monitor
+@property (nonatomic) id clickFixMonitor;
+@property (nonatomic, strong) NSMutableSet<NSNumber*>* allowedTerminalPIDs;
+
 /* METHODS */
 
 //set app foreground/background
@@ -56,6 +60,9 @@
 //toggle (status) bar icon
 -(void)toggleIcon:(NSDictionary*)preferences;
 
+//click fix methods
+-(void)stopClickFixMonitor;
+-(void)startClickFixMonitor:(BOOL)shouldPrompt;
 
 @end
 

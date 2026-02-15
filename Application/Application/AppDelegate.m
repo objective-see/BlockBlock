@@ -7,6 +7,9 @@
 //  copyright (c) 2017 Objective-See. All rights reserved.
 //
 
+@import Carbon;
+@import ApplicationServices;
+
 #import "consts.h"
 #import "Update.h"
 #import "utilities.h"
@@ -48,6 +51,9 @@ XPCDaemonClient* xpcDaemonClient;
     
     //preferences
     NSDictionary* preferences = nil;
+    
+    //allowed pids ('Click Fix' monitor)
+    self.allowedTerminalPIDs = [NSMutableSet set];
     
     //get real parent
     parent = getRealParent(getpid());
@@ -147,6 +153,14 @@ XPCDaemonClient* xpcDaemonClient;
         //show preferences
         [self showPreferences:nil];
     }
+    
+    //want app terminations
+    // ...for 'ClickFix' protections
+    [[[NSWorkspace sharedWorkspace] notificationCenter]
+            addObserver:self
+               selector:@selector(appTerminated:)
+                   name:NSWorkspaceDidTerminateApplicationNotification
+                 object:nil];
     
     //complete initializations
     [self completeInitialization:preferences];
@@ -443,6 +457,19 @@ bail:
        });
     }
     
+    //monitor for "ClickFix" attacks?
+    // after slight delay to make sure 'Accessibility' prompt shows up
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        
+        //'ClickFix' mode?
+        if([preferences[PREF_CLICKFIX_MODE] boolValue]) {
+            
+            //start
+            [self startClickFixMonitor:YES];
+        }
+        
+    });
+
     return;
 }
 
@@ -520,6 +547,223 @@ bail:
     }
     
     return;
+}
+
+//install 'ClickFix' monitor
+-(void)startClickFixMonitor:(BOOL)shouldPrompt {
+    
+    static CFAbsoluteTime pollStart = 0;
+    
+    //common terminal apps
+    static NSSet* terminalBundleIDs = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        terminalBundleIDs = [NSSet setWithArray:@[
+            @"com.apple.Terminal",
+            @"com.googlecode.iterm2",
+            @"com.mitchellh.ghostty",
+            @"net.kovidgoyal.kitty"
+        ]];
+    });
+    
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
+    
+    if (self.clickFixMonitor) {
+        return;
+    }
+    
+    //do we need 'Accessibility'?
+    if(!AXIsProcessTrusted()) {
+        
+        os_log_debug(logHandle, "'AXIsProcessTrusted' returned: NO");
+            
+        //should prompt
+        if(shouldPrompt) {
+            
+            //start timeout
+            pollStart = CFAbsoluteTimeGetCurrent();
+            
+            //activate
+            [NSApp activateIgnoringOtherApps:YES];
+            
+            os_log_debug(logHandle, "triggering 'Accessibility' prompt");
+        
+            //trigger prompt to user to allow app
+            AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{
+                (__bridge id)kAXTrustedCheckOptionPrompt: @YES
+            });
+        }
+        
+        //hit timeout?
+        // unset preference
+        if(pollStart > 0 && (CFAbsoluteTimeGetCurrent() - pollStart) > 30.0) {
+            
+            os_log_error(logHandle, "ERROR: timed out waiting for Accessibility");
+            
+            //reset stuff
+            pollStart = 0;
+            [xpcDaemonClient updatePreferences:@{PREF_CLICKFIX_MODE:@NO}];
+            return;
+        }
+        
+        //(re)call this function for poll/check if we got 'Accessibility'
+        __weak typeof(self) weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+            [weakSelf startClickFixMonitor:NO];
+        });
+        
+        return;
+    }
+    
+    //now, we have 'Accessibility' so can install monitor
+    
+    //reset
+    pollStart = 0;
+    
+    os_log_debug(logHandle, "'Accessibility' granted, will install monitor");
+
+    //install monitor
+    // note, we only care about '⌘+v' in Terminal
+    self.clickFixMonitor =
+    [NSEvent addGlobalMonitorForEventsMatchingMask:NSEventMaskKeyDown handler:^(NSEvent *event) {
+        
+        //'⌘' gotta be pressed
+        if (!(event.modifierFlags & NSEventModifierFlagCommand)) {
+            return;
+        }
+        
+        //and also 'v'
+        if (![[event.charactersIgnoringModifiers lowercaseString] isEqualToString:@"v"]) {
+            return;
+        }
+
+        //check if pasting into Terminal
+        dispatch_async(dispatch_get_main_queue(), ^{
+        
+            //front app
+            NSRunningApplication* frontApp = NSWorkspace.sharedWorkspace.frontmostApplication;
+            if(!frontApp) {
+                return;
+            }
+            
+            os_log_debug(logHandle, "'ClickFix' monitor: detected '⌘+v' in %@", frontApp.localizedName);
+            
+            //gotta be a terminal app
+            if(![terminalBundleIDs containsObject:frontApp.bundleIdentifier]) {
+                return;
+            }
+            
+            //user said "Allow until Terminal quits"?
+            if([self.allowedTerminalPIDs containsObject:@(frontApp.processIdentifier)]) {
+                os_log_debug(logHandle, "'ClickFix' monitor: Terminal was previously allowed");
+                return;
+            }
+            
+            //grab clipboard
+            NSString* clipboard = [[NSPasteboard generalPasteboard]
+                               stringForType:NSPasteboardTypeString];
+            
+            //ignore if blank
+            if(!clipboard.length) {
+                return;
+            }
+            
+            //stop terminal
+            kill(frontApp.processIdentifier, SIGSTOP);
+            
+            os_log_debug(logHandle, "SIGSTOP'd Terminal");
+            
+            //truncate
+            NSString *displayClip = clipboard.length > 500 ?
+                    [[clipboard substringToIndex:500] stringByAppendingString:@"…"] :
+            clipboard;
+                
+            //scrollable text view for clipboard content
+            NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 450, 120)];
+            scrollView.hasVerticalScroller = YES;
+            scrollView.borderType = NSBezelBorder;
+            
+            NSTextView *textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 450, 120)];
+            textView.editable = NO;
+            textView.font = [NSFont monospacedSystemFontOfSize:11 weight:NSFontWeightRegular];
+            textView.string = displayClip;
+            textView.backgroundColor = [NSColor controlBackgroundColor];
+            scrollView.documentView = textView;
+            
+            //alert
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.icon = [NSImage imageNamed:@"AppIcon"];
+            alert.messageText = @"BlockBlock: Paste into Terminal Detected";
+            alert.informativeText = @"A website may have tricked you into copying a malicious command. "
+                                    @"Please review the content below before allowing!";
+            alert.alertStyle = NSAlertStyleCritical;
+            alert.accessoryView = scrollView;
+            alert.showsSuppressionButton = YES;
+            alert.suppressionButton.title = @"Allow pastes until Terminal quits";
+            [alert addButtonWithTitle:@"Block"];
+            [alert addButtonWithTitle:@"Allow"];
+            
+            //bring to front
+            // as we're a LSUIElement app
+            [self setActivationPolicy];
+            [NSApp requestUserAttention:NSCriticalRequest];
+            [NSApp activateIgnoringOtherApps:YES];
+            
+            //show alert
+            NSModalResponse response = [alert runModal];
+            
+            //response:
+            // allow until Terminal quits?
+            if(alert.suppressionButton.state == NSControlStateValueOn) {
+                [self.allowedTerminalPIDs addObject:@(frontApp.processIdentifier)];
+            }
+            
+            //block!
+            // just clear pasteboard
+            if(response == NSAlertFirstButtonReturn) {
+                
+                os_log(logHandle, "clearing Pasteboard to block");
+                
+                //clear
+                [[NSPasteboard generalPasteboard] clearContents];
+            }
+                
+            //resume Terminal
+            kill(frontApp.processIdentifier, SIGCONT);
+            
+            os_log(logHandle, "SIGCONT'd Terminal");
+            
+            //back to background
+            [self setActivationPolicy];
+            
+        });
+    }];
+    
+    os_log_debug(logHandle, "'ClickFix' monitor installed");
+}
+
+//handler for app termination
+// just reset allowed (Terminal) pid
+-(void)appTerminated:(NSNotification *)notification
+{
+    NSRunningApplication *app = notification.userInfo[NSWorkspaceApplicationKey];
+    if(app) {
+        [self.allowedTerminalPIDs removeObject:@(app.processIdentifier)];
+    }
+}
+
+//remove 'ClickFix' monitor
+-(void)stopClickFixMonitor {
+    
+    //remove
+    if(self.clickFixMonitor) {
+        [NSEvent removeMonitor:self.clickFixMonitor];
+        self.clickFixMonitor = nil;
+        
+        //reset
+        [self.allowedTerminalPIDs removeAllObjects];
+    }
 }
 
 @end

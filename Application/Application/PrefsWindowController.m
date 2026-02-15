@@ -39,8 +39,11 @@ extern XPCDaemonClient* xpcDaemonClient;
 //'notarization mode' button
 #define BUTTON_NOTARIZATION_MODE 3
 
+//(block) click fix mode
+#define BUTTON_CLICKFIX_MODE 4
+
 //'update mode' button
-#define BUTTON_NO_UPDATE_MODE 4
+#define BUTTON_NO_UPDATE_MODE 5
 
 //init 'general' view
 // add it, and make it selected
@@ -61,66 +64,42 @@ extern XPCDaemonClient* xpcDaemonClient;
     return;
 }
 
-//toolbar view handler
-// toggle view based on user selection
 -(IBAction)toolbarButtonHandler:(id)sender
 {
-    //view
     NSView* view = nil;
     
-    //when we've prev added a view
-    // remove the prev view cuz adding a new one
-    if(nil != sender)
-    {
-        //remove
-        [[[self.window.contentView subviews] lastObject] removeFromSuperview];
-    }
+    [self.containerView.subviews.lastObject removeFromSuperview];
     
-    //assign view
     switch(((NSToolbarItem*)sender).tag)
     {
-        //modes
         case TOOLBAR_MODES:
-            
-            //set view
             view = self.modesView;
-            
-            //set 'passive mode' button state
             ((NSButton*)[view viewWithTag:BUTTON_PASSIVE_MODE]).state = [self.preferences[PREF_PASSIVE_MODE] boolValue];
-            
-            //set 'no icon' button state
             ((NSButton*)[view viewWithTag:BUTTON_NO_ICON_MODE]).state = [self.preferences[PREF_NO_ICON_MODE] boolValue];
-            
-            //set 'notarization mode' button state
             ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_MODE]).state = [self.preferences[PREF_NOTARIZATION_MODE] boolValue];
-            
+            ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state = [self.preferences[PREF_CLICKFIX_MODE] boolValue];
             break;
             
-        //update
         case TOOLBAR_UPDATE:
-            
-            //set view
             view = self.updateView;
-    
-            //set 'update' button state
             ((NSButton*)[view viewWithTag:BUTTON_NO_UPDATE_MODE]).state = [self.preferences[PREF_NO_UPDATE_MODE] boolValue];
-            
             break;
             
         default:
-            
-            //bail
             goto bail;
     }
     
-    //set frame rect
-    view.frame = CGRectMake(0, 75, self.window.contentView.frame.size.width, self.window.contentView.frame.size.height-75);
+    //size to fill container
+    view.frame = self.containerView.bounds;
     
-    //add to window
-    [self.window.contentView addSubview:view];
+    //size to fill container
+    view.frame = self.containerView.bounds;
+    view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+
+    //add to container
+    [self.containerView addSubview:view];
     
 bail:
-    
     return;
 }
 
@@ -158,6 +137,10 @@ bail:
             updatedPreferences[PREF_NOTARIZATION_MODE] = state;
             break;
             
+        case BUTTON_CLICKFIX_MODE:
+            updatedPreferences[PREF_CLICKFIX_MODE] = state;
+            break;
+            
         //no update mode
         case BUTTON_NO_UPDATE_MODE:
             updatedPreferences[PREF_NO_UPDATE_MODE] = state;
@@ -174,11 +157,29 @@ bail:
     // note: this will include (all) prefs, which is what we want
     self.preferences = [xpcDaemonClient getPreferences];
     
-    //toggle (status menu) icon
+    //some prefs require immediate action
+    
+    //no icon mode
+    // toggle icon
     if(BUTTON_NO_ICON_MODE == ((NSButton*)sender).tag)
     {
         //toggle icon
         [((AppDelegate*)[[NSApplication sharedApplication] delegate]) toggleIcon:self.preferences];
+    }
+    
+    //toggle (status menu) icon
+    else if(BUTTON_CLICKFIX_MODE == ((NSButton*)sender).tag) {
+        
+        //on?
+        // start
+        if(NSControlStateValueOn == ((NSButton*)sender).state) {
+            [((AppDelegate*)[[NSApplication sharedApplication] delegate]) startClickFixMonitor:YES];
+        }
+        //off?
+        // stop
+        else{
+            [((AppDelegate*)[[NSApplication sharedApplication] delegate]) stopClickFixMonitor];
+        }
     }
     
     return;

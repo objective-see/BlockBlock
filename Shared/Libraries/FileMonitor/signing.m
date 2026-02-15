@@ -314,9 +314,7 @@ NSNumber* extractSigner(SecStaticCodeRef code, SecCSFlags flags, BOOL isDynamic)
     
     //token
     static dispatch_once_t onceToken = 0;
-    
-    //only once
-    // init requirements
+
     dispatch_once(&onceToken, ^{
         
         //init apple signing requirement

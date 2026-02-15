@@ -134,6 +134,9 @@
 #define PREF_NOTARIZATION_MODE @"notarizationMode"
 
 //prefs
+// (block) click fix mode
+#define PREF_CLICKFIX_MODE @"clickFixMode"
+//prefs
 // update mode
 #define PREF_NO_UPDATE_MODE @"noupdateMode"
 

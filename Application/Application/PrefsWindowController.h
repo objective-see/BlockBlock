@@ -33,6 +33,9 @@
 //toolbar
 @property (weak) IBOutlet NSToolbar *toolbar;
 
+//container view
+@property (weak) IBOutlet NSView *containerView;
+
 //rules prefs view
 @property (weak) IBOutlet NSView *rulesView;
 
