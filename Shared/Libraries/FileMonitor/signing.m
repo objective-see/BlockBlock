@@ -163,7 +163,7 @@ CFDictionaryRef dynamicCodeCheck(Process* process, SecCSFlags flags, NSMutableDi
         signingInfo[KEY_SIGNATURE_SIGNER] = [NSNumber numberWithInt:Apple];
         
         //not notarized
-        signingInfo[KEY_SIGNING_IS_NOTARIZED] = @"0";
+        signingInfo[KEY_SIGNING_IS_NOTARIZED] = @(0);
     }
     
     //check all others
@@ -175,7 +175,7 @@ CFDictionaryRef dynamicCodeCheck(Process* process, SecCSFlags flags, NSMutableDi
         
         //set notarization status
         // note: SecStaticCodeCheckValidity returns 0 on success, hence the `!`
-        signingInfo[KEY_SIGNING_IS_NOTARIZED] = [NSNumber numberWithInt:!SecStaticCodeCheckValidity(dynamicCode, kSecCSDefaultFlags, isNotarized)];
+        signingInfo[KEY_SIGNING_IS_NOTARIZED] = [NSNumber numberWithInt:!SecCodeCheckValidity(dynamicCode, kSecCSDefaultFlags, isNotarized)];
     }
     
     //extract signing info
