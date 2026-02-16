@@ -706,6 +706,17 @@ bail:
             [alert addButtonWithTitle:@"Block"];
             [alert addButtonWithTitle:@"Allow"];
             
+            //remove key equivalents so Enter doesn't trigger either
+            for(NSButton* button in alert.buttons) {
+                button.keyEquivalent = @"";
+            }
+            
+            //make block reddish
+            if(@available(macOS 11.0, *))
+            {
+                [alert.buttons[0] setHasDestructiveAction:YES];
+            }
+            
             //bring to front
             // as we're a LSUIElement app
             [self setActivationPolicy];
