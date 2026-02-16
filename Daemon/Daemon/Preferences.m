@@ -122,7 +122,7 @@ bail:
          (YES == [updates[PREF_NOTARIZATION_MODE] boolValue]) )
     {
         //dbg msg
-        os_log(logHandle, "passive mode off or notarization mode on, so clearing (ES) cache");
+        os_log_debug(logHandle, "passive mode off or notarization mode on, so clearing (ES) cache");
         
         //clear cache
         [monitor.processMonitor clearCache];

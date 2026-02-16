@@ -639,46 +639,52 @@ bail:
         if (![[event.charactersIgnoringModifiers lowercaseString] isEqualToString:@"v"]) {
             return;
         }
-
-        //check if pasting into Terminal
+        
+        //front app
+        NSRunningApplication* frontApp = NSWorkspace.sharedWorkspace.frontmostApplication;
+        if(!frontApp) {
+            return;
+        }
+        
+        os_log_debug(logHandle, "'ClickFix' monitor: detected '⌘+v' in %@", frontApp.localizedName);
+        
+        //gotta be a terminal app
+        if(![terminalBundleIDs containsObject:frontApp.bundleIdentifier]) {
+            return;
+        }
+        
+        //user said "Allow until Terminal quits"?
+        if([self.allowedTerminalPIDs containsObject:@(frontApp.processIdentifier)]) {
+            os_log_debug(logHandle, "'ClickFix' monitor: Terminal was previously allowed");
+            return;
+        }
+        
+        //stop terminal
+        kill(frontApp.processIdentifier, SIGSTOP);
+        
+        os_log(logHandle, "SIGSTOP'd Terminal");
+    
+        //check if paste is ok
+        // and if not, show alert to user
         dispatch_async(dispatch_get_main_queue(), ^{
         
-            //front app
-            NSRunningApplication* frontApp = NSWorkspace.sharedWorkspace.frontmostApplication;
-            if(!frontApp) {
-                return;
-            }
-            
-            os_log_debug(logHandle, "'ClickFix' monitor: detected '⌘+v' in %@", frontApp.localizedName);
-            
-            //gotta be a terminal app
-            if(![terminalBundleIDs containsObject:frontApp.bundleIdentifier]) {
-                return;
-            }
-            
-            //user said "Allow until Terminal quits"?
-            if([self.allowedTerminalPIDs containsObject:@(frontApp.processIdentifier)]) {
-                os_log_debug(logHandle, "'ClickFix' monitor: Terminal was previously allowed");
-                return;
-            }
-            
             //grab clipboard
             NSString* clipboard = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
             
-            //ignore if blank
-            if(!clipboard.length) {
+            //should allow?
+            if([self shouldAllowPaste:clipboard]) {
+                os_log_debug(logHandle, "'ClickFix' monitor: heuristics said to allow");
+                
+                //resume Terminal
+                kill(frontApp.processIdentifier, SIGCONT);
+                
                 return;
             }
             
-            //stop terminal
-            kill(frontApp.processIdentifier, SIGSTOP);
-            
-            os_log_debug(logHandle, "SIGSTOP'd Terminal");
-            
+            os_log_debug(logHandle, "'ClickFix' monitor: heuristics said to block");
+        
             //truncate
-            NSString *displayClip = clipboard.length > 1000 ?
-                    [[clipboard substringToIndex:1000] stringByAppendingString:@"…"] :
-            clipboard;
+            NSString *display = clipboard.length > 1000 ? [[clipboard substringToIndex:1000] stringByAppendingString:@"…"] : clipboard;
                 
             //scrollable text view for clipboard content
             NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 450, 120)];
@@ -688,7 +694,7 @@ bail:
             NSTextView *textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 450, 120)];
             textView.editable = NO;
             textView.font = [NSFont monospacedSystemFontOfSize:11 weight:NSFontWeightRegular];
-            textView.string = displayClip;
+            textView.string = display;
             textView.backgroundColor = [NSColor controlBackgroundColor];
             scrollView.documentView = textView;
             
@@ -721,7 +727,7 @@ bail:
             
             //bring to front
             // as we're a LSUIElement app
-            [self setActivationPolicy];
+            //[self setActivationPolicy];
             [NSApp requestUserAttention:NSCriticalRequest];
             [NSApp activateIgnoringOtherApps:YES];
             
@@ -758,6 +764,24 @@ bail:
     }];
     
     os_log_debug(logHandle, "'ClickFix' monitor installed");
+}
+
+//heuristics to classify if paste is ok
+// for now, we just use length, but could/should add others
+-(BOOL)shouldAllowPaste:(NSString*)clipboard {
+    
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
+    
+    //ignore if blank/to short
+    if(clipboard.length < 100) {
+        os_log_debug(logHandle, "clipboard contents are < 100, so will allow");
+        return YES;
+    }
+    
+    //TODO: add other heuristics
+    
+    
+    return NO;
 }
 
 //handler for app termination
