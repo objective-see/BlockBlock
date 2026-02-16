@@ -55,7 +55,6 @@ XPCDaemonClient* xpcDaemonClient;
     //allowed pids ('Click Fix' monitor)
     self.allowedTerminalPIDs = [NSMutableSet set];
     
-    
     //get real parent
     parent = getRealParent(getpid());
     
@@ -262,6 +261,39 @@ bail:
     return;
 }
 
+//state was changed (i.e. via status bar)
+-(void)stateChanged {
+    
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
+
+    //get prefs
+    // we need them all anyways...
+    NSDictionary* preferences = [xpcDaemonClient getPreferences];
+    
+    //now disabled?
+    // might need to *stop* 'ClickFix' monitor
+    if([preferences[PREF_IS_DISABLED] boolValue]) {
+        
+        if([preferences[PREF_CLICKFIX_MODE] boolValue]) {
+                
+            //stop
+            [self stopClickFixMonitor];
+        }
+    }
+    
+    //now enabled?
+    // might need to *start* 'ClickFix' monitor
+    else {
+        
+        if([preferences[PREF_CLICKFIX_MODE] boolValue]) {
+                
+            //start
+            [self startClickFixMonitor:YES];
+        }
+    }
+}
+
+
 //close window handler
 // close rules || pref window
 -(IBAction)closeWindow:(id)sender {
@@ -458,18 +490,21 @@ bail:
        });
     }
     
-    //monitor for "ClickFix" attacks?
-    // after slight delay to make sure 'Accessibility' prompt shows up
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    //enabled and pref set for monitor for "ClickFix" attacks?
+    // start, after slight delay to make sure 'Accessibility' prompt shows up
+    if(![preferences[PREF_IS_DISABLED] boolValue]) {
         
-        //'ClickFix' mode?
-        if([preferences[PREF_CLICKFIX_MODE] boolValue]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             
-            //start
-            [self startClickFixMonitor:YES];
-        }
-        
-    });
+            //'ClickFix' mode?
+            if([preferences[PREF_CLICKFIX_MODE] boolValue]) {
+                
+                //start
+                [self startClickFixMonitor:YES];
+            }
+            
+        });
+    }
 
     return;
 }
@@ -796,6 +831,8 @@ bail:
 
 //remove 'ClickFix' monitor
 -(void)stopClickFixMonitor {
+    
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //remove
     if(self.clickFixMonitor) {

@@ -198,6 +198,9 @@ enum menuItems
             //update prefs
             [xpcDaemonClient updatePreferences:@{PREF_IS_DISABLED:[NSNumber numberWithBool:self.isDisabled]}];
             
+            //now tell app delegate state changed
+            [((AppDelegate*)[[NSApplication sharedApplication] delegate]) stateChanged];
+            
             break;
             
         //rules

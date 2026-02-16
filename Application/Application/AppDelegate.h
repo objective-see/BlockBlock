@@ -62,6 +62,10 @@
 //toggle (status) bar icon
 -(void)toggleIcon:(NSDictionary*)preferences;
 
+//state was changed
+// (i.e. via status bar)
+-(void)stateChanged;
+
 //click fix methods
 -(void)stopClickFixMonitor;
 -(void)startClickFixMonitor:(BOOL)shouldPrompt;
