@@ -695,13 +695,16 @@ bail:
             //alert
             NSAlert *alert = [[NSAlert alloc] init];
             alert.icon = [NSImage imageNamed:@"AppIcon"];
-            alert.messageText = @"BlockBlock: Paste into Terminal Detected";
+            alert.messageText = [NSString stringWithFormat:
+                @"BlockBlock: Paste into %@ Detected", frontApp.localizedName];
+            
             alert.informativeText = @"A website may have tricked you into copying a malicious command. "
                                     @"Please review the content below before allowing!";
             alert.alertStyle = NSAlertStyleCritical;
             alert.accessoryView = scrollView;
             alert.showsSuppressionButton = YES;
-            alert.suppressionButton.title = @"Allow pastes until Terminal quits";
+            alert.suppressionButton.title = [NSString stringWithFormat:
+                @"Allow pastes until %@ quits", frontApp.localizedName];
             [alert addButtonWithTitle:@"Block"];
             [alert addButtonWithTitle:@"Allow"];
             
@@ -725,19 +728,18 @@ bail:
             //show alert
             NSModalResponse response = [alert runModal];
             
-            //response:
-            // allow until Terminal quits?
-            if(alert.suppressionButton.state == NSControlStateValueOn) {
-                [self.allowedTerminalPIDs addObject:@(frontApp.processIdentifier)];
+            //action: allow?
+            if(response == NSAlertSecondButtonReturn) {
+                
+                //allow until Terminal quits?
+                if(alert.suppressionButton.state == NSControlStateValueOn) {
+                    [self.allowedTerminalPIDs addObject:@(frontApp.processIdentifier)];
+                }
             }
-            
-            //block!
-            // just clear pasteboard
-            if(response == NSAlertFirstButtonReturn) {
-                
+
+            //action: block
+            else {
                 os_log(logHandle, "clearing Pasteboard to block");
-                
-                //clear
                 [NSPasteboard.generalPasteboard clearContents];
             }
                 
