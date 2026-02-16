@@ -39,8 +39,10 @@
 //update window controller
 @property(nonatomic, retain)UpdateWindowController* updateWindowController;
 
-//click fix monitor
+//ClickFix monitor
 @property (nonatomic) id clickFixMonitor;
+@property (nonatomic, strong) id appSwitchObserver;
+@property (nonatomic, strong) NSMutableArray<NSDictionary*>* recentApps;
 @property (nonatomic, strong) NSMutableSet<NSNumber*>* allowedTerminalPIDs;
 
 /* METHODS */

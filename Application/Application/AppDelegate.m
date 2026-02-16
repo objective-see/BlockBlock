@@ -55,6 +55,7 @@ XPCDaemonClient* xpcDaemonClient;
     //allowed pids ('Click Fix' monitor)
     self.allowedTerminalPIDs = [NSMutableSet set];
     
+    
     //get real parent
     parent = getRealParent(getpid());
     
@@ -562,7 +563,8 @@ bail:
             @"com.apple.Terminal",
             @"com.googlecode.iterm2",
             @"com.mitchellh.ghostty",
-            @"net.kovidgoyal.kitty"
+            @"net.kovidgoyal.kitty",
+            @"dev.warp.Warp-Stable"
         ]];
     });
     
@@ -733,6 +735,9 @@ bail:
             kill(frontApp.processIdentifier, SIGCONT);
             
             os_log(logHandle, "SIGCONT'd Terminal");
+            
+            //give Terminal focus back
+            [frontApp activateWithOptions:NSApplicationActivateIgnoringOtherApps];
             
             //back to background
             [self setActivationPolicy];
