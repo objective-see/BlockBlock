@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24128" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.13.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24128"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -26,14 +26,14 @@
                                     <action selector="showRules:" target="Voe-Tx-rLC" id="o11-TT-ZZt"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Preferences" id="nwx-Qf-8X8">
+                            <menuItem title="Settings..." id="nwx-Qf-8X8">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showPreferences:" target="Voe-Tx-rLC" id="I6s-79-3QP"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="doQ-u9-gKW"/>
-                            <menuItem title="About LuLu" id="GOu-8z-DaB" userLabel="About LuLu">
+                            <menuItem title="About BlockBlock" id="GOu-8z-DaB" userLabel="About LuLu">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showAbout:" target="Voe-Tx-rLC" id="7t6-BU-qX6"/>

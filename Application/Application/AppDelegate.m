@@ -663,8 +663,7 @@ bail:
             }
             
             //grab clipboard
-            NSString* clipboard = [[NSPasteboard generalPasteboard]
-                               stringForType:NSPasteboardTypeString];
+            NSString* clipboard = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
             
             //ignore if blank
             if(!clipboard.length) {
@@ -677,8 +676,8 @@ bail:
             os_log_debug(logHandle, "SIGSTOP'd Terminal");
             
             //truncate
-            NSString *displayClip = clipboard.length > 500 ?
-                    [[clipboard substringToIndex:500] stringByAppendingString:@"…"] :
+            NSString *displayClip = clipboard.length > 1000 ?
+                    [[clipboard substringToIndex:1000] stringByAppendingString:@"…"] :
             clipboard;
                 
             //scrollable text view for clipboard content
@@ -739,7 +738,7 @@ bail:
                 os_log(logHandle, "clearing Pasteboard to block");
                 
                 //clear
-                [[NSPasteboard generalPasteboard] clearContents];
+                [NSPasteboard.generalPasteboard clearContents];
             }
                 
             //resume Terminal
