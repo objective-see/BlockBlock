@@ -854,108 +854,24 @@ void toggleMenu(NSMenu* menu, BOOL shouldEnable)
 
 //get an icon for a process
 // for apps, this will be app's icon, otherwise just a standard system one
+//get icon for a process
 NSImage* getIconForProcess(NSString* path)
 {
-    //icon's file name
-    NSString* iconFile = nil;
-    
-    //icon's path
-    NSString* iconPath = nil;
-    
-    //icon's path extension
-    NSString* iconExtension = nil;
-    
-    //icon
     NSImage* icon = nil;
-    
-    //system's document icon
-    static NSImage* documentIcon = nil;
-    
-    //bundle
-    NSBundle* appBundle = nil;
-    
-    //invalid path?
-    // grab a default icon and bail
-    if(YES != [[NSFileManager defaultManager] fileExistsAtPath:path])
-    {
-        //set icon to system 'application' icon
-        icon = [[NSWorkspace sharedWorkspace]
-                iconForFileType: NSFileTypeForHFSTypeCode(kGenericApplicationIcon)];
-        
-        //set size to 64 @2x
-        [icon setSize:NSMakeSize(128, 128)];
-   
-        //bail
-        goto bail;
+
+    //prefer the app's icon
+    NSBundle *appBundle = findAppBundle(path);
+    if(appBundle) {
+        icon = [NSWorkspace.sharedWorkspace iconForFile:appBundle.bundlePath];
     }
-    
-    //first try grab bundle
-    // then extact icon from this
-    appBundle = findAppBundle(path);
-    if(nil != appBundle)
-    {
-        //extract icon
-        icon = [[NSWorkspace sharedWorkspace] iconForFile:appBundle.bundlePath];
-        if(nil != icon)
-        {
-            //done!
-            goto bail;
-        }
+
+    //otherwise, generic executable icon
+    if(!icon) {
         
-        //get file
-        iconFile = appBundle.infoDictionary[@"CFBundleIconFile"];
-        
-        //get path extension
-        iconExtension = [iconFile pathExtension];
-        
-        //if its blank (i.e. not specified)
-        // go with 'icns'
-        if(YES == [iconExtension isEqualTo:@""])
-        {
-            //set type
-            iconExtension = @"icns";
-        }
-        
-        //set full path
-        iconPath = [appBundle pathForResource:[iconFile stringByDeletingPathExtension] ofType:iconExtension];
-        
-        //load it
-        icon = [[NSImage alloc] initWithContentsOfFile:iconPath];
+        icon = [NSWorkspace.sharedWorkspace iconForContentType:UTTypeUnixExecutable];
     }
-    
-    //process is not an app or couldn't get icon
-    // try to get it via shared workspace
-    if( (nil == appBundle) ||
-        (nil == icon) )
-    {
-        //extract icon
-        icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
-        
-        //load system document icon
-        // static var, so only load once
-        if(nil == documentIcon)
-        {
-            //load
-            documentIcon = [[NSWorkspace sharedWorkspace] iconForFileType:
-                            NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-        }
-        
-        //if 'iconForFile' method doesn't find and icon, it returns the system 'document' icon
-        // the system 'application' icon seems more applicable, so use that here...
-        if(YES == [icon isEqual:documentIcon])
-        {
-            //set icon to system 'application' icon
-            icon = [[NSWorkspace sharedWorkspace]
-                    iconForFileType: NSFileTypeForHFSTypeCode(kGenericApplicationIcon)];
-        }
-        
-        //'iconForFileType' returns small icons
-        // so set size to 64 @2x
-        [icon setSize:NSMakeSize(128, 128)];
-    }
-    
-bail:
-    
+
+    [icon setSize:NSMakeSize(128, 128)];
     return icon;
 }
 

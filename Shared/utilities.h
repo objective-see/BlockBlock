@@ -13,6 +13,7 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import <EndpointSecurity/EndpointSecurity.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #ifdef DAEMON_BUILD
 

@@ -52,8 +52,9 @@ extern NSMutableDictionary* alerts;
         //set alert
         alertWindow.alert = alert;
         
-        //show in all spaces
-        alertWindow.window.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+        //show in all spaces + above all the things
+        alertWindow.window.level = NSFloatingWindowLevel;
+        alertWindow.window.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
         
         //show alert window
         [alertWindow showWindow:self];

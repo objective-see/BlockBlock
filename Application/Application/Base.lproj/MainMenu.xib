@@ -75,6 +75,10 @@
                 <menuItem title="Uninstall BlockBlock" tag="104" id="cNx-AE-lyN">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
+                <menuItem isSeparatorItem="YES" id="DYa-tz-7v9"/>
+                <menuItem title="Support BlockBlock 💕" tag="105" id="N4N-tO-4wm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
             </items>
             <point key="canvasLocation" x="55" y="10"/>
         </menu>

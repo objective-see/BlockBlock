@@ -29,6 +29,7 @@ enum menuItems
     rules,
     prefs,
     uninstall,
+    support,
     end
 };
 
@@ -175,9 +176,8 @@ enum menuItems
 }
 
 //menu handler
--(void)handler:(id)sender
-{
-    //dbg msg
+-(void)handler:(id)sender {
+    
     os_log_debug(logHandle, "user clicked status menu item %lu", ((NSMenuItem*)sender).tag);
     
     //handle user selection
@@ -186,7 +186,6 @@ enum menuItems
         //toggle
         case toggle:
         
-            //dbg msg
             os_log_debug(logHandle, "toggling (%d)", self.isDisabled);
         
             //invert since toggling
@@ -237,7 +236,6 @@ enum menuItems
             //set args
             configuration.arguments = @[CMD_UNINSTALL_VIA_UI];
         
-            //dbg msg
             os_log_debug(logHandle, "launching (un)installer %{public}@", installer);
             
             //wrap
@@ -245,22 +243,21 @@ enum menuItems
             {
                 //launch (in)/(un)installer
                 [NSWorkspace.sharedWorkspace openApplicationAtURL:installer configuration:configuration completionHandler:^(NSRunningApplication * _Nullable app, NSError * _Nullable error) {
-                    
-                    //dbg msg
                     os_log_debug(logHandle, "launched (un)installer: %{public}@ (error: %{public}@)", app, error);
                 }];
             }
-            @catch(NSException *exception)
-            {
-                //dbg msg
+            @catch(NSException *exception) {
                 os_log_debug(logHandle, "failed to launch (un)installer: %{public}@ (error: %{public}@)", installer, exception);
-                
-                //bail
                 goto bail;
             }
             
             break;
         }
+            
+        //support
+        case support:
+            [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:PATREON_URL]];
+            break;
             
         default:
             
@@ -272,6 +269,7 @@ bail:
     return;
 }
 
+
 //set menu status
 // logic based on 'isEnabled' iVar
 -(void)setState
@@ -279,31 +277,24 @@ bail:
     //dbg msg
     os_log_debug(logHandle, "setting state to: %{public}@", (self.isDisabled) ? @"disabled" : @"enabled");
     
-    //set to disabled
-    if(YES == self.isDisabled)
+    //icon
+    NSImage* icon = [NSImage imageNamed:@"StatusBarIcon"];
+    icon.template = YES;
+
+    //set icon
+    self.statusItem.button.image = icon;
+
+    //set appearance based on state
+    if(self.isDisabled)
     {
-        //update status
-        [self.statusItem.menu itemWithTag:status].title = @"BlockBlock: disabled";
-        
-        //set icon
-        self.statusItem.button.image = [NSImage imageNamed:@"StatusInactive"];
-        self.statusItem.button.image.template = YES;
-        
-        //change toggle text
+        self.statusItem.button.alphaValue = 0.5;
+        [self.statusItem.menu itemWithTag:status].title = @"BlockBlock: Disabled";
         [self.statusItem.menu itemWithTag:toggle].title = @"Enable";
     }
-    
-    //set to enabled
     else
     {
-        //update status
-        [self.statusItem.menu itemWithTag:status].title = @"BlockBlock: enabled";
-        
-        //set icon
-        self.statusItem.button.image = [NSImage imageNamed:@"StatusActive"];
-        self.statusItem.button.image.template = YES;
-        
-        //change toggle text
+        self.statusItem.button.alphaValue = 1.0;
+        [self.statusItem.menu itemWithTag:status].title = @"BlockBlock: Enabled";
         [self.statusItem.menu itemWithTag:toggle].title = @"Disable";
     }
     

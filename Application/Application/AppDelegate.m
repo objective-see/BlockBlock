@@ -812,8 +812,8 @@ bail:
     os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
     //ignore if blank/to short
-    if(clipboard.length < 100) {
-        os_log_debug(logHandle, "clipboard contents are < 100, so will allow");
+    if(clipboard.length < 50) {
+        os_log_debug(logHandle, "clipboard contents are < 50, so will allow");
         return YES;
     }
     
