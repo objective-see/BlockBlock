@@ -760,9 +760,13 @@ bail:
                 [alert.buttons[0] setHasDestructiveAction:YES];
             }
             
+            //show alert as floating window
+            // so it can't get stuck behind the SIGSTOP'd terminal
+            alert.window.level = NSFloatingWindowLevel;
+            alert.window.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
+            
             //bring to front
             // as we're a LSUIElement app
-            //[self setActivationPolicy];
             [NSApp requestUserAttention:NSCriticalRequest];
             [NSApp activateIgnoringOtherApps:YES];
             
