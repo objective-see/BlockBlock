@@ -49,9 +49,6 @@ XPCDaemonClient* xpcDaemonClient;
     //flag
     BOOL autoLaunched = NO;
     
-    //preferences
-    NSDictionary* preferences = nil;
-    
     //allowed pids ('Click Fix' monitor)
     self.allowedTerminalPIDs = [NSMutableSet set];
     
@@ -74,11 +71,37 @@ XPCDaemonClient* xpcDaemonClient;
     //init deamon comms
     // establishes connection to daemon
     xpcDaemonClient = [[XPCDaemonClient alloc] init];
+    
+    //first launch?
+    // save any prefs passed in from installer
+    if([NSProcessInfo.processInfo.arguments containsObject:INITIAL_LAUNCH]) {
+        
+        NSArray* args = NSProcessInfo.processInfo.arguments;
+        NSMutableDictionary* initialPreferences = [NSMutableDictionary dictionary];
+        NSArray* prefKeys = @[PREF_NOTARIZATION_MODE, PREF_NOTARIZATION_ALL_MODE,
+                                  PREF_CLICKFIX_MODE, PREF_CLICKFIX_HEURISTICS_MODE];
+            
+        //extract set key/value pairs
+        for(NSString* key in prefKeys) {
+            NSUInteger index = [args indexOfObject:key];
+            if(index != NSNotFound && index + 1 < args.count) {
+                initialPreferences[key] = @([args[index + 1] integerValue]);
+            }
+        }
+        
+        os_log_debug(logHandle, "initial preferences: %{public}@", initialPreferences);
+            
+        //set init prefs
+        [xpcDaemonClient updatePreferences:initialPreferences];
+    }
+    
+    //register for prefs. changed
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(preferencesUpdated:) name:PREFERENCES_UPDATED_NOTIFICATION object:nil];
 
     //get preferences
     // sends XPC message to daemon
-    preferences = [xpcDaemonClient getPreferences];
-    if(0 == preferences.count)
+    self.preferences = [xpcDaemonClient getPreferences];
+    if(0 == self.preferences.count)
     {
         //init alert
         alert = [[NSAlert alloc] init];
@@ -103,11 +126,11 @@ XPCDaemonClient* xpcDaemonClient;
     }
     
     //dbg msg
-    os_log_debug(logHandle, "loaded preferences: %{public}@", preferences);
+    os_log_debug(logHandle, "loaded preferences: %{public}@", self.preferences);
     
     //sanity check
     // make sure daemon has FDA
-    if(YES != [preferences[PREF_GOT_FDA] boolValue])
+    if(YES != [self.preferences[PREF_GOT_FDA] boolValue])
     {
         //grab os version
         osVersion = NSProcessInfo.processInfo.operatingSystemVersion;
@@ -148,7 +171,7 @@ XPCDaemonClient* xpcDaemonClient;
     //when user (manually) runs app
     // show the app's preferences window
     if( (YES != autoLaunched) &&
-        (YES != [[[NSProcessInfo processInfo] arguments] containsObject:INITIAL_LAUNCH]) )
+        (YES != [NSProcessInfo.processInfo.arguments containsObject:INITIAL_LAUNCH]) )
     {
         //show preferences
         [self showPreferences:nil];
@@ -163,7 +186,7 @@ XPCDaemonClient* xpcDaemonClient;
                  object:nil];
     
     //complete initializations
-    [self completeInitialization:preferences];
+    [self completeInitialization:self.preferences];
     
 bail:
         
@@ -186,6 +209,11 @@ bail:
     }
     
     return NO;
+}
+
+//invoked when prefs changed via pref pane
+-(void)preferencesUpdated:(NSNotification*)notification {
+    self.preferences = notification.userInfo;
 }
 
 //'rules' menu item handler
@@ -806,21 +834,104 @@ bail:
 }
 
 //heuristics to classify if paste is ok
-// for now, we just use length, but could/should add others
 -(BOOL)shouldAllowPaste:(NSString*)clipboard {
     
     os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
-    //ignore if blank/to short
-    if(clipboard.length < 50) {
-        os_log_debug(logHandle, "clipboard contents are < 50, so will allow");
+    //ignore if blank
+    if(!clipboard.length) {
+        os_log_debug(logHandle, "clipboard contents are blank, so will allow");
         return YES;
     }
     
-    //TODO: add other heuristics
+    //not using heuristics
+    // just allow prompt...
+    if(![self.preferences[PREF_CLICKFIX_HEURISTICS_MODE] boolValue]) {
+        os_log_debug(logHandle, "heuristics are off, so will disallow");
+        return NO;
+    }
     
+    os_log_debug(logHandle, "heuristics are on, so will check");
     
-    return NO;
+    //lower case
+    NSString *lower = clipboard.lowercaseString;
+    
+    //compile regexes once
+    static NSRegularExpression* pipeToShellRegex = nil;
+    static NSRegularExpression* base64DecodeRegex = nil;
+    static NSRegularExpression* curlExecRegex = nil;
+    static NSRegularExpression* osascriptRegex = nil;
+    static NSRegularExpression* inlineExecRegex = nil;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        
+        pipeToShellRegex =
+        [NSRegularExpression regularExpressionWithPattern:
+         @"\\|\\s*(?:/\\S+/)?(?:sh|bash|zsh)\\b"
+         options:0
+         error:nil];
+        
+        base64DecodeRegex =
+        [NSRegularExpression regularExpressionWithPattern:
+         @"\\bbase64\\b\\s+(?:-d\\b|--decode\\b)"
+         options:0
+         error:nil];
+        
+        curlExecRegex =
+        [NSRegularExpression regularExpressionWithPattern:
+         @"\\bcurl\\b[\\s\\S]{0,500}?(\\||&&|;|\\$\\(|`|\\bbash\\b|\\bsh\\b|\\bchmod\\b|\\b\\./)"
+         options:0
+         error:nil];
+        
+        //osascript ... -e  (handles spacing/flags)
+        osascriptRegex =
+        [NSRegularExpression regularExpressionWithPattern:
+         @"\\bosascript\\b[\\s\\S]{0,120}?\\s-e\\b"
+         options:0
+         error:nil];
+        
+        //python -c / python3 -c / perl -e (handles optional paths + spacing)
+        inlineExecRegex =
+        [NSRegularExpression regularExpressionWithPattern:
+         @"\\b(?:/\\S+/)?(?:python3?|perl)\\b\\s+-(?:c|e)\\b"
+         options:0
+         error:nil];
+    });
+    
+    //pipe to shell
+    if([pipeToShellRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
+        os_log_debug(logHandle, "clipboard contains pipe-to-shell pattern");
+        return NO;
+    }
+    
+    //base64 decode usage
+    if([base64DecodeRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
+        os_log_debug(logHandle, "clipboard contains base64 decode pattern");
+        return NO;
+    }
+    
+    //osascript execution
+    if([osascriptRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)] ||
+       [lower containsString:@"do shell script"]) {
+        os_log_debug(logHandle, "clipboard contains osascript pattern");
+        return NO;
+    }
+    
+    //curl + execute
+    if([curlExecRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
+        os_log_debug(logHandle, "clipboard contains curl+execute pattern");
+        return NO;
+    }
+        
+    //inline interpreter execution
+    if([inlineExecRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
+        os_log_debug(logHandle, "clipboard contains inline script execution pattern");
+        return NO;
+    }
+    
+    os_log_debug(logHandle, "no suspicious patterns found, allowing");
+    return YES;
 }
 
 //handler for app termination
@@ -848,4 +959,11 @@ bail:
     }
 }
 
+-(void)dealloc {
+    
+    //remove notification observer
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
 @end
+

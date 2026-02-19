@@ -152,18 +152,27 @@ extern os_log_t logHandle;
 
 //button handler for configure window
 // install/uninstall/close logic
--(IBAction)configureButtonHandler:(id)sender
-{
-    //action
-    NSInteger action = 0;
-
-    //grab tag
-    action = ((NSButton*)sender).tag;
+-(IBAction)configureButtonHandler:(id)sender {
     
-    //dbg msg
+    //action (tag)
+    NSInteger action = ((NSButton*)sender).tag;
+    
     os_log_debug(logHandle, "handling action click: %{public}@ (tag: %ld)", ((NSButton*)sender).title, (long)action);
     
-    //process button
+    //leaving prefs view?
+    // capture preferences
+    if( (ACTION_SHOW_CONFIGURATIONS+1) == action)
+    {
+        //capture
+        self.preferences = @{
+            PREF_NOTARIZATION_MODE: @(self.notarizationMode.state),
+            PREF_NOTARIZATION_ALL_MODE: @(self.notarizationAllMode.state),
+            PREF_CLICKFIX_MODE: @(self.clickFixMode.state),
+            PREF_CLICKFIX_HEURISTICS_MODE: @(self.clickFixHeuristicsMode.state)
+        };
+    }
+    
+    //process action
     switch(action)
     {
         //install/uninstall
@@ -202,7 +211,7 @@ extern os_log_t logHandle;
             self.window.title = @"";
             
             //show view
-            [self showView:self.diskAccessView firstResponder:self.diskAccessButton];
+            [self showView:self.diskAccessView firstResponder:self.diskAccessButton.tag];
             
             //start spinner
             [self.fdaActivityIndicator startAnimation:self];
@@ -243,6 +252,22 @@ extern os_log_t logHandle;
             
             break;
         }
+        
+        //show configuration (of additional protections) view
+        case ACTION_SHOW_CONFIGURATIONS:
+        {
+            //dbg msg
+            os_log_debug(logHandle, "showing 'configuration' (of additional protections) view");
+            
+            //show view
+            [self showView:self.protectionsView firstResponder:ACTION_SHOW_SUPPORT];
+            
+            //unset window title
+            self.window.title = @"";
+            
+            break;
+        }
+            
         //show 'support' view
         case ACTION_SHOW_SUPPORT:
         {
@@ -250,7 +275,7 @@ extern os_log_t logHandle;
             os_log_debug(logHandle, "showing 'support' view");
             
             //show view
-            [self showView:self.supportView firstResponder:self.supportButton];
+            [self showView:self.supportView firstResponder:self.supportButton.tag];
             
             //unset window title
             self.window.title = @"";
@@ -279,7 +304,14 @@ extern os_log_t logHandle;
                 os_log_debug(logHandle, "now launching: %{public}@", APP_NAME);
                 
                 //launch helper app
-                execTask(OPEN, @[[@"/Applications" stringByAppendingPathComponent:APP_NAME], @"--args", INITIAL_LAUNCH], NO, NO);
+                // pass in preferences
+                execTask(OPEN, @[[@"/Applications" stringByAppendingPathComponent:APP_NAME],
+                    @"--args", INITIAL_LAUNCH,
+                    PREF_NOTARIZATION_MODE, [self.preferences[PREF_NOTARIZATION_MODE] description],
+                    PREF_NOTARIZATION_ALL_MODE, [self.preferences[PREF_NOTARIZATION_ALL_MODE] description],
+                    PREF_CLICKFIX_MODE, [self.preferences[PREF_CLICKFIX_MODE] description],
+                    PREF_CLICKFIX_HEURISTICS_MODE, [self.preferences[PREF_CLICKFIX_HEURISTICS_MODE] description]],
+                    NO, NO);
             }
             
             //close window
@@ -300,7 +332,7 @@ extern os_log_t logHandle;
 
 //show view
 // adds to main window, resizes, etc
--(void)showView:(NSView*)view firstResponder:(NSButton*)firstResponder
+-(void)showView:(NSView*)view firstResponder:(NSInteger)firstResponder
 {
     //not in dark mode?
     // make window white
@@ -324,7 +356,11 @@ extern os_log_t logHandle;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
         
         //set first responder
-        [self.window makeFirstResponder:firstResponder];
+        if(-1 != firstResponder)
+        {
+            //first responder
+            [self.window makeFirstResponder:[view viewWithTag:firstResponder]];
+        }
         
     });
     
@@ -471,6 +507,48 @@ extern os_log_t logHandle;
     return;
 }
 
+//handler for (additiona) protections buttons
+-(IBAction)protectionsButtonHandler:(id)sender {
+    
+    //button tag
+    NSInteger tag = ((NSButton*)sender).tag;
+    
+    //button state
+    NSInteger state = ((NSButton*)sender).state;
+    
+    //child
+    NSButton* child = nil;
+    
+    //notarization mode
+    // toggle 'all' state off/on
+    if(tag == BUTTON_NOTARIZATION_MODE) {
+    
+        //get button
+        child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_NOTARIZATION_ALL_MODE];
+    }
+    
+    //ClickFix mode
+    // toggle 'heuristics' state off/on
+    else if(tag == BUTTON_CLICKFIX_MODE) {
+    
+        //get button
+        child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE];
+    }
+    
+    //child logic
+    if(child) {
+        
+        //clear if parent is off
+        if(state == NSControlStateValueOff) {
+            child.state = NSControlStateValueOff;
+        }
+        
+        //match parent's state
+        child.enabled = (state == NSControlStateValueOn);
+    }
+    
+}
+
 //button handler for '?' button (on an error)
 // load objective-see's documentation for error(s) in default browser
 -(IBAction)info:(id)sender
@@ -479,7 +557,7 @@ extern os_log_t logHandle;
     
     //open URL
     // invokes user's default browser
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:ERRORS_URL]];
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:ERRORS_URL]];
     
     return;
 }
@@ -674,14 +752,14 @@ extern os_log_t logHandle;
             self.installButton.tag = ACTION_SHOW_FDA;
         }
         //no need
-        // just configure button to show support
+        // just set button to show config
         else
         {
             //dbg msg
             os_log_debug(logHandle, "got/have FDA already!");
             
             //set tag
-            self.installButton.tag = ACTION_SHOW_SUPPORT;
+            self.installButton.tag = ACTION_SHOW_CONFIGURATIONS;
         }
     }
     //otherwise

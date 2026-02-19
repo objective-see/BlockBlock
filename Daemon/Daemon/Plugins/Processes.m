@@ -11,6 +11,7 @@
 #import "consts.h"
 #import "Processes.h"
 #import "utilities.h"
+#import "Preferences.h"
 
 #import <EndpointSecurity/EndpointSecurity.h>
 
@@ -18,6 +19,9 @@
 
 //log handle
 extern os_log_t logHandle;
+
+//prefs obj
+extern Preferences* preferences;
 
 @implementation Processes
 
@@ -41,7 +45,7 @@ extern os_log_t logHandle;
 }
 
 //should process be ignored?
-// for now, yes, unless it's non-notarized translocated/quarantined (and not user approved)
+// checks notarization status, quarantined (and not user approved), etc.
 -(BOOL)shouldIgnore:(Process*)process message:(es_message_t *)message
 {
     //flag
@@ -70,19 +74,15 @@ extern os_log_t logHandle;
     path = process.path;
     
     //script?
-    if(nil != process.script)
+    if(process.script)
     {
         //use script as path instead
         path = process.script;
         
         //check if script event is the "same" as last
         // avoids situations where sh <script> forks bash <script>
-        if(YES == [self isRelatedScriptEvent:process])
-        {
-            //dbg msg
-            os_log_debug(logHandle, "%{public}@ was run by %{public}@, thus appears related, so will allow", path, lastScript.name);
-            
-            //done
+        if(YES == [self isRelatedScriptEvent:process]) {
+            os_log_debug(logHandle, "%{public}@ was run by %{public}@, thus appears related, so will allow", path, self.lastScript.name);
             goto bail;
         }
     }
@@ -90,24 +90,18 @@ extern os_log_t logHandle;
     //not a script
     // ignore here if it's an apple or notarized processes
     else if( (YES == process.isPlatformBinary.boolValue) ||
-             (YES == [process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) )
-    {
-        //dbg msg
+             (YES == [process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) ) {
         os_log_debug(logHandle, "%{public}@ is platform binary || is notarized, will allow", process.name);
-        
-        //done
         goto bail;
     }
     
     //not a script?
     // grab app bundle (for subsequent checks)
-    if(nil != process.script)
+    if(!process.script)
     {
         //find app bundle
         appBundle = findAppBundle(path);
-        if(nil != appBundle)
-        {
-            //dbg msg
+        if(nil != appBundle) {
             os_log_debug(logHandle, "is app, with bundle...");
         }
     }
@@ -115,112 +109,96 @@ extern os_log_t logHandle;
     //is an app store app?
     // ignore, as it's trusted (though not 'notarized' per se)
     if( (noErr == [process.signingInfo[KEY_SIGNATURE_STATUS] intValue]) &&
-        (AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) )
-    {
-        //dbg msg
-        os_log_debug(logHandle, "%{public}@ is from the app store ...will allow", process.name);
+        (AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) ) {
         
-        //done
+        os_log_debug(logHandle, "%{public}@ is from the app store ...will allow", process.name);
         goto bail;
     }
-
-    //not translocated
-    // ...if quarantined, make sure it's user approved
-    if(YES != isTranslocated(path))
+    
+    //notarization all mode?
+    // skip quarantine  checks
+    if(YES == [preferences.preferences[PREF_NOTARIZATION_ALL_MODE] boolValue]) {
+        
+        os_log_debug(logHandle, "notarization 'all mode' is set, flagging non-notarized process: %{public}@", process.name);
+        
+        //should block
+        ignore = NO;
+        goto bail;
+    }
+    
+    //now get quarantine flags
+    quarantineFlags = getQuarantineFlags(path);
+    if(QTN_NOT_QUARANTINED == quarantineFlags) {
+        
+        os_log_debug(logHandle, "%{public}@ is not quarantined ...will allow", path);
+        goto bail;
+    }
+       
+    //quarantined, but user is approved?
+    // ok, safe to allow
+    if(QTN_FLAG_USER_APPROVED & quarantineFlags) {
+        
+        os_log_debug(logHandle, "%{public}@ is quarantined, but user approved ...will allow", path);
+        goto bail;
+    }
+       
+    //get app path
+    appPath = appBundle.bundlePath;
+    
+    //also check app bundle
+    // to see if it has been approved
+    if(0 != appPath.length)
     {
-        //dbg msg
-        os_log_debug(logHandle, "%{public}@ is not app translocated ...checking quarantine attributes", path);
-        
-        //get quarantine flags
-        quarantineFlags = getQuarantineFlags(path);
-        
-        //not quarantined?
-        // ok, safe to allow
-        if(QTN_NOT_QUARANTINED == quarantineFlags)
-        {
-            //dbg msg
-            os_log_debug(logHandle, "%{public}@ is not quarantined ...will allow", path);
+        //get app bundle's flags
+        quarantineFlags = getQuarantineFlags(appPath);
+        if( (QTN_NOT_QUARANTINED != quarantineFlags) &&
+            (QTN_FLAG_USER_APPROVED & quarantineFlags) ) {
             
-            //done
+            os_log_debug(logHandle, "app bundle, %{public}@, is user approved ...will allow", appPath);
             goto bail;
-        }
-           
-        //quarantined, but user is approved?
-        // ok, safe to allow
-        if(QTN_FLAG_USER_APPROVED & quarantineFlags)
-        {
-            //dbg msg
-            os_log_debug(logHandle, "%{public}@ is quarantined, but user approved ...will allow", path);
-            
-            //done
-            goto bail;
-        }
-           
-        //get app path
-        appPath = appBundle.bundlePath;
-        
-        //also check app bundle
-        // to see if it has been approved
-        if(0 != appPath.length)
-        {
-            //get app bundle's flags
-            quarantineFlags = getQuarantineFlags(appPath);
-            if( (QTN_NOT_QUARANTINED != quarantineFlags) &&
-               (QTN_FLAG_USER_APPROVED & quarantineFlags) )
-            {
-                //dbg msg
-                os_log_debug(logHandle, "app bundle, %{public}@, is user approved ...will allow", appPath);
-                
-                //done
-                goto bail;
-            }
         }
     }
     
     //dbg msg
-    os_log_debug(logHandle, "%{public}@ is translocated or quarantined (and not user approved)", process.name);
+    os_log_debug(logHandle, "%{public}@ is quarantined (and not user approved)", path);
     
-    //dbg
-    os_log_debug(logHandle, "checking if process is still alive...");
-    
-    //when macOS kills a process
-    // we still get an event, so handle this case
-    for(int i=0; i<5; i++)
-    {
-        //is (still) alive?
-        isAlive = isProcessAlive(process.pid);
-        
-        //dead?
-        // done!
-        if(YES != isAlive) break;
-        
-        //nap
-        [NSThread sleepForTimeInterval:0.1];
-    }
-    
-    //process killed?
-    if(YES != isAlive)
-    {
-        //dbg
-        os_log_debug(logHandle, "processed died, so will ignore");
-        
-        //bail
-        goto bail;
-    }
-    
-    //process is:
-    // translocated/quarantine (and unapproved)
-    // non-notarized
-    // and is still alive
+    //process is quarantined (and unapproved)
     ignore = NO;
 
 bail:
     
+    //when macOS kills a process
+    // we still get an event, so handle this case
+    if(!ignore) {
+        
+        //dbg
+        os_log_debug(logHandle, "checking if process is still alive...");
+        
+        //when macOS kills a process
+        // we still get an event, so handle this case
+        for(int i=0; i<5; i++)
+        {
+            //is (still) alive?
+            isAlive = isProcessAlive(process.pid);
+            
+            //dead?
+            // done!
+            if(YES != isAlive) break;
+            
+            //nap
+            [NSThread sleepForTimeInterval:0.1];
+        }
+        
+        //process killed?
+        if(!isAlive) {
+            os_log_debug(logHandle, "processed died, so will ignore");
+            ignore = YES;
+        }
+    }
+
     //script?
     // save it
-    if(nil != process.script)
-    {
-        //save
+    if(process.script) {
         self.lastScript = process;
     }
     

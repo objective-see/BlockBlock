@@ -52,6 +52,17 @@
 //issues button
 @property (weak, nonatomic) IBOutlet NSButton *issuesButton;
 
+/* (additional) PROTECTIONS */
+
+//protections view
+@property (strong) IBOutlet NSView *protectionsView;
+
+@property (weak) IBOutlet NSButton *notarizationMode;
+@property (weak) IBOutlet NSButton *notarizationAllMode;
+@property (weak) IBOutlet NSButton *clickFixMode;
+@property (weak) IBOutlet NSButton *clickFixHeuristicsMode;
+
+
 /* SUPPORT US */
 
 //support us view
@@ -62,6 +73,10 @@
 
 //observer for app activation
 @property(nonatomic, retain)id appActivationObserver;
+
+//preferences
+@property (nonatomic, retain)NSDictionary* preferences;
+
 
 /* METHODS */
 

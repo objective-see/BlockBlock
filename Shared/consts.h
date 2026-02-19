@@ -113,6 +113,9 @@
 //add rule, allow
 #define BUTTON_ALLOW 1
 
+//prefs changed notification
+#define PREFERENCES_UPDATED_NOTIFICATION @"prefsChangedNotification"
+
 //prefs
 // got FDA
 #define PREF_GOT_FDA @"gotFullDiskAccess"
@@ -132,10 +135,13 @@
 //prefs
 // notarizaion mode
 #define PREF_NOTARIZATION_MODE @"notarizationMode"
+#define PREF_NOTARIZATION_ALL_MODE @"notarizationAllMode"
 
 //prefs
 // (block) click fix mode
 #define PREF_CLICKFIX_MODE @"clickFixMode"
+#define PREF_CLICKFIX_HEURISTICS_MODE @"clickFixHeuristicsMode"
+
 //prefs
 // update mode
 #define PREF_NO_UPDATE_MODE @"noupdateMode"
@@ -212,11 +218,14 @@
 //flag to show full disk access
 #define ACTION_SHOW_FDA 3
 
+//flag to show protections/conf access
+#define ACTION_SHOW_CONFIGURATIONS 4
+
 //show friends
-#define ACTION_SHOW_SUPPORT 4
+#define ACTION_SHOW_SUPPORT 5
 
 //support us
-#define ACTION_SUPPORT 5
+#define ACTION_SUPPORT 6
 
 //register
 #define LSREGISTER @"/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister"
@@ -334,5 +343,26 @@ typedef enum {
 
 //path to log
 #define UNIVERSAL_LOG "/usr/bin/log"
+
+//'passive mode' button
+#define BUTTON_PASSIVE_MODE 1
+
+//'no-icon mode' button
+#define BUTTON_NO_ICON_MODE 2
+
+//'notarization mode' button
+#define BUTTON_NOTARIZATION_MODE 3
+
+//'notarization mode all' button
+#define BUTTON_NOTARIZATION_ALL_MODE 33
+
+//(block) 'ClickFix' mode
+#define BUTTON_CLICKFIX_MODE 4
+
+//(block) 'ClickFix' mode + hueristics
+#define BUTTON_CLICKFIX_HEURISTICS_MODE 44
+
+//'update mode' button
+#define BUTTON_NO_UPDATE_MODE 5
 
 #endif

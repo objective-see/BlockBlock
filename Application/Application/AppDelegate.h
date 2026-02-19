@@ -21,6 +21,9 @@
 
 /* PROPERTIES */
 
+//preferences
+@property(nonatomic, retain)NSDictionary* preferences;
+
 //status bar menu
 @property(strong) IBOutlet NSMenu* statusMenu;
 

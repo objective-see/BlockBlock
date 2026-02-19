@@ -37,7 +37,7 @@
 		CD8FD5F823C05AD900EFE0FB /* RulesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5F323C05AD800EFE0FB /* RulesWindowController.m */; };
 		CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5F523C05AD900EFE0FB /* Rules.xib */; };
 		CD8FD5FD23C05C6900EFE0FB /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5FC23C05C6900EFE0FB /* Rule.m */; };
-		CDE203C82F43BEE900567EF6 /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDE203C72F43BEE900567EF6 /* BlockBlock Installer.app */; };
+		CDE203CC2F43C6B300567EF6 /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */; };
 		CDFA08E1214900BF0089758C /* XPCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA08DF214900BF0089758C /* XPCUser.m */; };
 /* End PBXBuildFile section */
 
@@ -108,7 +108,7 @@
 		CD8FD5F523C05AD900EFE0FB /* Rules.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Rules.xib; sourceTree = "<group>"; };
 		CD8FD5FB23C05C6900EFE0FB /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
 		CD8FD5FC23C05C6900EFE0FB /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
-		CDE203C72F43BEE900567EF6 /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "BlockBlock Installer.app"; sourceTree = "<group>"; };
+		CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "BlockBlock Installer.app"; sourceTree = "<group>"; };
 		CDFA08D7214606DB0089758C /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
 		CDFA08DB21460A400089758C /* XPCUserProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserProto.h; path = ../Shared/XPCUserProto.h; sourceTree = "<group>"; };
 		CDFA08DF214900BF0089758C /* XPCUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCUser.m; path = ../Shared/XPCUser.m; sourceTree = "<group>"; };
@@ -137,15 +137,11 @@
 		7D3B75201F13356900568828 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				7D3B75221F13357D00568828 /* consts.h */,
+				CDD5666423AB4CF900F51B1F /* Libraries */,
 				CD2F801624468A8C009C3D77 /* patrons.txt */,
 				CD8FD5FB23C05C6900EFE0FB /* Rule.h */,
 				CD8FD5FC23C05C6900EFE0FB /* Rule.m */,
-				CDD5666423AB4CF900F51B1F /* Libraries */,
-				7D3B75221F13357D00568828 /* consts.h */,
-				CDFA08E0214900BF0089758C /* XPCUser.h */,
-				CDFA08DF214900BF0089758C /* XPCUser.m */,
-				CDFA08DB21460A400089758C /* XPCUserProto.h */,
-				CDFA08D7214606DB0089758C /* XPCDaemonProto.h */,
 				7D16D68F1F64E43300DB3161 /* Update.h */,
 				7D16D6901F64E43300DB3161 /* Update.m */,
 				7D16D6911F64E43300DB3161 /* UpdateWindow.xib */,
@@ -155,6 +151,10 @@
 				7D5C5F511F200B9200C0E94A /* utilities.m */,
 				7DD2BF781F1EAC9C00B33214 /* XPCDaemonClient.h */,
 				7DD2BF791F1EAC9C00B33214 /* XPCDaemonClient.m */,
+				CDFA08D7214606DB0089758C /* XPCDaemonProto.h */,
+				CDFA08E0214900BF0089758C /* XPCUser.h */,
+				CDFA08DF214900BF0089758C /* XPCUser.m */,
+				CDFA08DB21460A400089758C /* XPCUserProto.h */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -236,7 +236,7 @@
 		CD4597F4291DB39300F2A1C6 /* Uninstaller */ = {
 			isa = PBXGroup;
 			children = (
-				CDE203C72F43BEE900567EF6 /* BlockBlock Installer.app */,
+				CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */,
 			);
 			path = Uninstaller;
 			sourceTree = "<group>";
@@ -337,7 +337,7 @@
 				CD2F801724468A8C009C3D77 /* patrons.txt in Resources */,
 				CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */,
 				7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */,
-				CDE203C82F43BEE900567EF6 /* BlockBlock Installer.app in Resources */,
+				CDE203CC2F43C6B300567EF6 /* BlockBlock Installer.app in Resources */,
 				7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,7 +506,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.3.1;
+				CURRENT_PROJECT_VERSION = 2.4.0;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -514,7 +514,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.3.1;
+				MARKETING_VERSION = 2.4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";
@@ -528,7 +528,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.3.1;
+				CURRENT_PROJECT_VERSION = 2.4.0;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -536,7 +536,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.3.1;
+				MARKETING_VERSION = 2.4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";

@@ -56,14 +56,9 @@ enum menuItems
         // show popover
         dispatch_once(&onceToken, ^{
             
-            //first time?
-            // show popover
-            if(YES == [[[NSProcessInfo processInfo] arguments] containsObject:INITIAL_LAUNCH])
-            {
-                //dbg msg
+            //show popover
+            if([NSProcessInfo.processInfo.arguments containsObject:INITIAL_LAUNCH]) {
                 os_log_debug(logHandle, "initial launch, will show popover");
-                
-                //show
                 [self showPopover];
             }
             

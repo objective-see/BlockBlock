@@ -18,7 +18,10 @@
 #define TOOLBAR_MODES 0
 
 //update view
-#define TOOLBAR_UPDATE 1
+#define TOOLBAR_PROTECTIONS 1
+
+//update view
+#define TOOLBAR_UPDATE 2
 
 //to select, need string ID
 #define TOOLBAR_MODES_ID @"mode"
@@ -41,6 +44,9 @@
 
 //modes view
 @property (strong) IBOutlet NSView *modesView;
+
+//protections view
+@property (strong) IBOutlet NSView *protectionsView;
 
 //update view
 @property (weak) IBOutlet NSView *updateView;

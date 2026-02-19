@@ -9,6 +9,8 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ConfigureWindowController">
             <connections>
                 <outlet property="activityIndicator" destination="b1w-5W-ayX" id="P5e-PO-Ozi"/>
+                <outlet property="clickFixHeuristicsMode" destination="JR6-ow-ACO" id="uvu-BH-1Oi"/>
+                <outlet property="clickFixMode" destination="JjJ-IR-QUa" id="DT7-Qz-mZJ"/>
                 <outlet property="diskAccessButton" destination="Xfy-pO-bPJ" id="Y96-Sg-svZ"/>
                 <outlet property="diskAccessView" destination="8vS-7f-v27" id="ahv-e7-iub"/>
                 <outlet property="fdaActivityIndicator" destination="goS-M0-vWy" id="Xvx-W8-7Ev"/>
@@ -16,6 +18,9 @@
                 <outlet property="installButton" destination="553-2y-kvm" id="nxf-wO-EI3"/>
                 <outlet property="issuesButton" destination="6nx-nf-Lpb" id="veM-dT-fZD"/>
                 <outlet property="moreInfoButton" destination="QWu-qZ-Za2" id="8kC-Ga-5oJ"/>
+                <outlet property="notarizationAllMode" destination="eVx-59-M9Q" id="xtZ-LG-EXG"/>
+                <outlet property="notarizationMode" destination="Yru-qL-t1m" id="6g1-7z-J9Q"/>
+                <outlet property="protectionsView" destination="Eao-54-c4A" id="FEe-cY-avU"/>
                 <outlet property="statusMsg" destination="SpB-Xc-WlB" id="jlm-ke-XfM"/>
                 <outlet property="supportButton" destination="pM7-Wp-KdU" id="fez-2X-gLE"/>
                 <outlet property="supportView" destination="bkk-rY-ALC" id="3xt-YX-akQ"/>
@@ -101,85 +106,76 @@
             <point key="canvasLocation" x="216.5" y="-225.5"/>
         </window>
         <customView id="8vS-7f-v27" userLabel="Disk Access">
-            <rect key="frame" x="0.0" y="0.0" width="1064" height="348"/>
+            <rect key="frame" x="0.0" y="0.0" width="1064" height="405"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qNV-KX-UQg">
-                    <rect key="frame" x="346" y="319" width="487" height="29"/>
+                    <rect key="frame" x="290" y="350" width="485" height="44"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Grant Full Disk Access" id="7wy-Mn-dLg">
-                        <font key="font" size="20" name="Menlo-Bold"/>
+                        <font key="font" size="32" name="AvenirNextCondensed-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <button tag="4" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tCu-p3-YpG">
-                    <rect key="frame" x="951" y="13" width="100" height="32"/>
+                    <rect key="frame" x="944" y="20" width="100" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Next »" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" tag="3" imageScaling="proportionallyDown" inset="2" id="2bh-JF-lbl">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" size="13" name="Menlo-Regular"/>
+                        <font key="font" size="13" name="Menlo-Bold"/>
                     </buttonCell>
                     <connections>
                         <action selector="configureButtonHandler:" target="-2" id="EKL-3w-hKD"/>
                     </connections>
                 </button>
-                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fx-Ct-TfV">
-                    <rect key="frame" x="527" y="213" width="492" height="80"/>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqj-bL-Uao">
+                    <rect key="frame" x="527" y="259" width="35" height="27"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" alignment="left" title="BlockBlock requires 'Full Disk Access' This must be granted via 'System Settings'" id="v8h-lw-Wzd">
-                        <font key="font" size="17" name="Menlo-Regular"/>
+                    <textFieldCell key="cell" alignment="left" title="1.  " id="Zck-cH-GpA">
+                        <font key="font" size="15" name="Menlo-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqj-bL-Uao">
-                    <rect key="frame" x="527" y="167" width="625" height="68"/>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F7J-e6-yxC">
+                    <rect key="frame" x="527" y="204" width="526" height="49"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" alignment="left" title="1.   2. Toggle on BlockBlock in the 'Full Disk Access' table.  " id="Zck-cH-GpA">
+                    <textFieldCell key="cell" alignment="left" title=" 2. Toggle on BlockBlock in the 'Full Disk Access' table.  " id="6lT-oM-dXL">
                         <font key="font" size="15" name="Menlo-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tiU-5S-rkl">
-                    <rect key="frame" x="20" y="-52" width="488" height="416"/>
+                    <rect key="frame" x="19" y="23" width="488" height="277"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="SystemPrefs" id="Ig5-36-GEz"/>
                 </imageView>
                 <button tag="1" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xfy-pO-bPJ">
-                    <rect key="frame" x="553" y="210" width="236" height="32"/>
+                    <rect key="frame" x="559" y="262" width="236" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="push" title="Open 'System Settings'" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cZ4-lX-UNP">
+                    <buttonCell key="cell" type="push" title="Open 'System Settings'" bezelStyle="rounded" alignment="center" controlSize="large" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cZ4-lX-UNP">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" size="13" name="Menlo-Regular"/>
+                        <font key="font" size="13" name="Menlo-Bold"/>
                     </buttonCell>
                     <connections>
                         <action selector="openSystemPreferences:" target="-2" id="HyP-wM-nKz"/>
                     </connections>
                 </button>
-                <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VKg-cQ-9gk">
-                    <rect key="frame" x="560" y="110" width="472" height="57"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="  If BlockBlock doesn't show up, click the '+'   and add: /Library/Objective-See/BlockBlock/BlockBlock.app" drawsBackground="YES" id="Ob0-Ni-jks">
-                        <font key="font" size="13" name="Menlo-Regular"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="quaternaryLabelColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6nx-nf-Lpb">
-                    <rect key="frame" x="522" y="13" width="100" height="32"/>
+                    <rect key="frame" x="541" y="20" width="100" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Issues?" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WdC-Zi-mMl">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" size="13" name="Menlo-Regular"/>
                     </buttonCell>
                     <connections>
                         <action selector="fdaIssues:" target="-2" id="ZWQ-LP-dd3"/>
                     </connections>
                 </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wH6-TW-h1P">
-                    <rect key="frame" x="680" y="67" width="284" height="18"/>
+                    <rect key="frame" x="675" y="104" width="284" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" title="Waiting for Full Disk Access..." id="08d-fd-1uE">
                         <font key="font" size="15" name="Menlo-Regular"/>
@@ -188,11 +184,39 @@
                     </textFieldCell>
                 </textField>
                 <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="goS-M0-vWy">
-                    <rect key="frame" x="631" y="60" width="32" height="32"/>
+                    <rect key="frame" x="631" y="97" width="32" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </progressIndicator>
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="yF2-CQ-adH">
+                    <rect key="frame" x="142" y="316" width="781" height="37"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="BlockBlock requires 'Full Disk Access' This must be granted via 'System Settings'" id="qxK-YG-Wv1">
+                        <font key="font" size="13" name="Menlo-Regular"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="7I0-d4-sak">
+                    <rect key="frame" x="555" y="157" width="489" height="52"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <view key="contentView" id="enf-S2-Kxy">
+                        <rect key="frame" x="0.0" y="0.0" width="489" height="52"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="ihe-2h-pVa">
+                                <rect key="frame" x="6" y="-4" width="498" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="  If BlockBlock doesn't show up, click the '+'   and add: /Library/Objective-See/BlockBlock/BlockBlock.app" id="0Zc-pP-iW4">
+                                    <font key="font" size="13" name="Menlo-Regular"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                </box>
             </subviews>
-            <point key="canvasLocation" x="383" y="250"/>
+            <point key="canvasLocation" x="383" y="258.5"/>
         </customView>
         <customView id="bkk-rY-ALC" userLabel="Support">
             <rect key="frame" x="0.0" y="0.0" width="812" height="494"/>
@@ -216,7 +240,7 @@
                                     <action selector="configureButtonHandler:" target="-2" id="Ipm-LG-LXx"/>
                                 </connections>
                             </button>
-                            <button tag="5" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pM7-Wp-KdU">
+                            <button tag="6" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pM7-Wp-KdU">
                                 <rect key="frame" x="718" y="7" width="81" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Yes!" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="E5X-AO-6V1">
@@ -313,7 +337,204 @@
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="FriendsKandji" id="Wtf-BC-gkm"/>
                 </imageView>
             </subviews>
-            <point key="canvasLocation" x="698" y="1362"/>
+            <point key="canvasLocation" x="2273" y="251"/>
+        </customView>
+        <customView id="Eao-54-c4A" userLabel="Configure">
+            <rect key="frame" x="0.0" y="0.0" width="700" height="475"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <box fixedFrame="YES" boxType="custom" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="0IO-Xc-rVt">
+                    <rect key="frame" x="0.0" y="0.0" width="700" height="48"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <view key="contentView" id="dUV-M5-D9I">
+                        <rect key="frame" x="0.0" y="0.0" width="700" height="48"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button tag="5" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OG0-wB-Z5N">
+                                <rect key="frame" x="605" y="6" width="81" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Next" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rj7-l8-fcj">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" size="13" name="Menlo-Bold"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="configureButtonHandler:" target="-2" id="6WB-sm-f3w"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <color key="fillColor" red="0.57793885469999995" green="0.75859862570000003" blue="0.2368842065" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </box>
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="660" translatesAutoresizingMaskIntoConstraints="NO" id="niD-eH-4wa">
+                    <rect key="frame" x="-2" y="406" width="704" height="54"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Now, let's configure BlockBlock's addition protections" id="E0l-CV-cAg">
+                        <font key="font" size="32" name="AvenirNextCondensed-Regular"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button tag="3" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yru-qL-t1m">
+                    <rect key="frame" x="177" y="331" width="22" height="44"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="uYu-hI-vtw">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="18" name="Menlo-Bold"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="protectionsButtonHandler:" target="-2" id="SV8-V0-aDm"/>
+                    </connections>
+                </button>
+                <button tag="4" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JjJ-IR-QUa">
+                    <rect key="frame" x="177" y="188" width="22" height="44"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="jRS-VI-ymO">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system" size="20"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="protectionsButtonHandler:" target="-2" id="UtP-9p-Aev"/>
+                    </connections>
+                </button>
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="4CM-BV-lpW">
+                    <rect key="frame" x="178" y="319" width="503" height="20"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on the execution of non-notarized programs." id="b8B-Hv-f5F">
+                        <font key="font" size="12" name="Menlo-Regular"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="wu6-ML-9mq">
+                    <rect key="frame" x="177" y="151" width="505" height="45"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on suspicious content pasted into terminals" id="V0I-yU-YPQ">
+                        <font key="font" size="12" name="Menlo-Regular"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="Acr-Fn-vUf">
+                    <rect key="frame" x="52" y="402" width="597" height="15"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="These can be changed later, via BlockBlock's Settings." id="0Ei-yq-60A">
+                        <font key="font" size="12" name="Menlo-Regular"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7qh-rA-XML">
+                    <rect key="frame" x="200" y="336" width="310" height="28"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Notarization Mode" id="qve-Yc-4jg">
+                        <font key="font" size="17" name="Menlo-Bold"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hrO-1C-4bt">
+                    <rect key="frame" x="200" y="191" width="399" height="28"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Paste Protection ('ClickFix') Mode" id="Fxi-Iu-jX0">
+                        <font key="font" size="17" name="Menlo-Bold"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HMV-MJ-83H">
+                    <rect key="frame" x="175" y="145" width="266" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="zGL-HR-sa2">
+                        <font key="font" size="13" name="Menlo-Bold"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="vkN-Io-pB5">
+                    <rect key="frame" x="179" y="116" width="471" height="58"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <view key="contentView" id="GO1-U0-x8U">
+                        <rect key="frame" x="0.0" y="0.0" width="471" height="58"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button tag="44" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JR6-ow-ACO">
+                                <rect key="frame" x="13" y="29" width="29" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" alignment="left" enabled="NO" inset="2" id="cYa-9k-Jh9">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="menu" size="14"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="protectionsButtonHandler:" target="-2" id="3NJ-v2-zQ7"/>
+                                </connections>
+                            </button>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="btG-Z0-71J">
+                                <rect key="frame" x="38" y="31" width="214" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply Heuristics" id="D90-iR-lcC">
+                                    <font key="font" size="13" name="Menlo-Bold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="z9G-q8-ZEI">
+                                <rect key="frame" x="38" y="14" width="355" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Only block pastes matching suspicious patterns." id="tiE-dy-rqP">
+                                    <font key="font" size="12" name="Menlo-Regular"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                </box>
+                <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Vvv-px-XRK">
+                    <rect key="frame" x="177" y="261" width="471" height="58"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <view key="contentView" id="qj6-PI-VgG">
+                        <rect key="frame" x="0.0" y="0.0" width="471" height="58"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button tag="33" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eVx-59-M9Q">
+                                <rect key="frame" x="13" y="29" width="29" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" alignment="left" enabled="NO" inset="2" id="hsn-YD-0gH">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="menu" size="14"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="protectionsButtonHandler:" target="-2" id="kT3-ts-Wem"/>
+                                </connections>
+                            </button>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="REk-3D-RNZ">
+                                <rect key="frame" x="38" y="30" width="111" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="All Programs" id="eSF-fW-lGI">
+                                    <font key="font" size="14" name="Menlo-Bold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="Z13-gp-uvr">
+                                <rect key="frame" x="38" y="12" width="432" height="15"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply to all programs (not just user downloaded ones)." id="AbY-mg-dSh">
+                                    <font key="font" size="12" name="Menlo-Regular"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                </box>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TWU-5z-12I">
+                    <rect key="frame" x="26" y="185" width="128" height="128"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="Lock" id="Tvd-jv-xLl"/>
+                </imageView>
+            </subviews>
+            <point key="canvasLocation" x="1376" y="313.5"/>
         </customView>
     </objects>
     <resources>
@@ -327,6 +548,7 @@
         <image name="FriendsSophos" width="1201" height="131"/>
         <image name="FriendsiVerify" width="736" height="268"/>
         <image name="Icon" width="769" height="769"/>
+        <image name="Lock" width="128" height="128"/>
         <image name="Love" width="256" height="256"/>
         <image name="SystemPrefs" width="1430" height="799"/>
     </resources>

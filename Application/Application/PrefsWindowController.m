@@ -30,21 +30,6 @@ extern XPCDaemonClient* xpcDaemonClient;
 @synthesize updateView;
 @synthesize updateWindowController;
 
-//'passive mode' button
-#define BUTTON_PASSIVE_MODE 1
-
-//'no-icon mode' button
-#define BUTTON_NO_ICON_MODE 2
-
-//'notarization mode' button
-#define BUTTON_NOTARIZATION_MODE 3
-
-//(block) click fix mode
-#define BUTTON_CLICKFIX_MODE 4
-
-//'update mode' button
-#define BUTTON_NO_UPDATE_MODE 5
-
 //init 'general' view
 // add it, and make it selected
 -(void)awakeFromNib
@@ -64,6 +49,7 @@ extern XPCDaemonClient* xpcDaemonClient;
     return;
 }
 
+//invoked when user clicks on toolbar
 -(IBAction)toolbarButtonHandler:(id)sender
 {
     NSView* view = nil;
@@ -76,8 +62,27 @@ extern XPCDaemonClient* xpcDaemonClient;
             view = self.modesView;
             ((NSButton*)[view viewWithTag:BUTTON_PASSIVE_MODE]).state = [self.preferences[PREF_PASSIVE_MODE] boolValue];
             ((NSButton*)[view viewWithTag:BUTTON_NO_ICON_MODE]).state = [self.preferences[PREF_NO_ICON_MODE] boolValue];
+            break;
+            
+        case TOOLBAR_PROTECTIONS:
+            view = self.protectionsView;
             ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_MODE]).state = [self.preferences[PREF_NOTARIZATION_MODE] boolValue];
+            
+            ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ALL_MODE]).state = [self.preferences[PREF_NOTARIZATION_ALL_MODE] boolValue];
+            
+            //disable child if parent is off
+            if(((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_MODE]).state == NSControlStateValueOff) {
+                ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ALL_MODE]).enabled = NO;
+            }
+            
             ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state = [self.preferences[PREF_CLICKFIX_MODE] boolValue];
+            ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).state = [self.preferences[PREF_CLICKFIX_HEURISTICS_MODE] boolValue];
+            
+            //disable child if parent is off
+            if(((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state == NSControlStateValueOff) {
+                ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).enabled = NO;
+            }
+            
             break;
             
         case TOOLBAR_UPDATE:
@@ -105,45 +110,91 @@ bail:
 
 //invoked when user toggles button
 // update preferences for that button
--(IBAction)togglePreference:(id)sender
-{
-    //preferences
-    NSMutableDictionary* updatedPreferences = nil;
+-(IBAction)togglePreference:(id)sender {
+    
+    //button tag
+    NSInteger tag = ((NSButton*)sender).tag;
     
     //button state
-    NSNumber* state = nil;
+    NSInteger state = ((NSButton*)sender).state;
     
-    //init
-    updatedPreferences = [NSMutableDictionary dictionary];
+    //preferences
+    NSMutableDictionary* updatedPreferences = [NSMutableDictionary dictionary];
     
-    //get button state
-    state = [NSNumber numberWithBool:((NSButton*)sender).state];
+    //child
+    NSButton* child = nil;
     
+    //notarization mode
+    // toggle 'all' state off/on
+    if(tag == BUTTON_NOTARIZATION_MODE) {
+    
+        //get button
+        child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_NOTARIZATION_ALL_MODE];
+    }
+    
+    //ClickFix mode
+    // toggle 'heuristics' state off/on
+    else if(tag == BUTTON_CLICKFIX_MODE) {
+    
+        //get button
+        child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE];
+    }
+    
+    //child logic
+    if(child) {
+        
+        //clear if parent is off
+        if(state == NSControlStateValueOff) {
+            child.state = NSControlStateValueOff;
+        }
+        
+        //match parent's state
+        child.enabled = (state == NSControlStateValueOn);
+    }
+        
     //set appropriate preference
-    switch(((NSButton*)sender).tag)
+    switch(tag)
     {
         //passive mode
         case BUTTON_PASSIVE_MODE:
-            updatedPreferences[PREF_PASSIVE_MODE] = state;
+            updatedPreferences[PREF_PASSIVE_MODE] = @(state);
             break;
             
         //no icon mode
         case BUTTON_NO_ICON_MODE:
-            updatedPreferences[PREF_NO_ICON_MODE] = state;
+            updatedPreferences[PREF_NO_ICON_MODE] = @(state);
             break;
         
         //notarization mode
+        // toggle off child too
         case BUTTON_NOTARIZATION_MODE:
-            updatedPreferences[PREF_NOTARIZATION_MODE] = state;
+            updatedPreferences[PREF_NOTARIZATION_MODE] = @(state);
+            if(state == NSControlStateValueOff) {
+                updatedPreferences[PREF_NOTARIZATION_ALL_MODE] = @(NSControlStateValueOff);
+            }
             break;
             
+        //notarization all mode
+        case BUTTON_NOTARIZATION_ALL_MODE:
+            updatedPreferences[PREF_NOTARIZATION_ALL_MODE] = @(state);
+            break;
+         
+        //ClickFix mode
         case BUTTON_CLICKFIX_MODE:
-            updatedPreferences[PREF_CLICKFIX_MODE] = state;
+            updatedPreferences[PREF_CLICKFIX_MODE] = @(state);
+            if(state == NSControlStateValueOff) {
+                updatedPreferences[PREF_CLICKFIX_HEURISTICS_MODE] = @(NSControlStateValueOff);
+            }
+            break;
+            
+        //ClickFix heuristics mode
+        case BUTTON_CLICKFIX_HEURISTICS_MODE:
+            updatedPreferences[PREF_CLICKFIX_HEURISTICS_MODE] = @(state);
             break;
             
         //no update mode
         case BUTTON_NO_UPDATE_MODE:
-            updatedPreferences[PREF_NO_UPDATE_MODE] = state;
+            updatedPreferences[PREF_NO_UPDATE_MODE] = @(state);
             break;
             
         default:
@@ -157,22 +208,25 @@ bail:
     // note: this will include (all) prefs, which is what we want
     self.preferences = [xpcDaemonClient getPreferences];
     
+    //tell anybody we've updated
+    [NSNotificationCenter.defaultCenter postNotificationName:PREFERENCES_UPDATED_NOTIFICATION object:nil userInfo:self.preferences];
+    
     //some prefs require immediate action
     
     //no icon mode
     // toggle icon
-    if(BUTTON_NO_ICON_MODE == ((NSButton*)sender).tag)
+    if(BUTTON_NO_ICON_MODE == tag)
     {
         //toggle icon
         [((AppDelegate*)[[NSApplication sharedApplication] delegate]) toggleIcon:self.preferences];
     }
     
     //toggle (status menu) icon
-    else if(BUTTON_CLICKFIX_MODE == ((NSButton*)sender).tag) {
+    else if(BUTTON_CLICKFIX_MODE == tag) {
         
         //on?
         // start
-        if(NSControlStateValueOn == ((NSButton*)sender).state) {
+        if(NSControlStateValueOn == state) {
             [((AppDelegate*)[[NSApplication sharedApplication] delegate]) startClickFixMonitor:YES];
         }
         //off?
