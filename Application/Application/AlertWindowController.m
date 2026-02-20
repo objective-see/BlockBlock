@@ -340,8 +340,8 @@ bail:
     SigningInfoViewController* popover = nil;
     
     //open popover
-    if(NSControlStateValueOn == self.signingInfoButton.state)
-    {
+    if(NSControlStateValueOn == self.signingInfoButton.state) {
+        
         //grab delegate
         popover = (SigningInfoViewController*)self.signingInfoPopover.delegate;
         
@@ -351,14 +351,17 @@ bail:
         //set alert info
         popover.alert = self.alert;
         
+        //(re)size
+        [popover.view setNeedsLayout:YES];
+        [popover.view layoutSubtreeIfNeeded];
+        self.signingInfoPopover.contentSize = [popover.view fittingSize];
+        
         //show popover
         [self.signingInfoPopover showRelativeToRect:[self.signingInfoButton bounds] ofView:self.signingInfoButton preferredEdge:NSMaxYEdge];
     }
     
     //close popover
-    else
-    {
-        //close
+    else {
         [self.signingInfoPopover close];
     }
     
@@ -369,20 +372,88 @@ bail:
 // depending on state, show/populate the popup, or close it
 -(IBAction)vtButtonHandler:(id)sender
 {
+    NSString* path = nil;
+    NSString* hash = nil;
+    
     //view controller
-    VirusTotalViewController* popoverVC = nil;
+    VirusTotalViewController* popover = nil;
     
     //open popover
-    if(NSControlStateValueOn == self.virusTotalButton.state)
-    {
+    if(NSControlStateValueOn == self.virusTotalButton.state) {
+    
         //grab
-        popoverVC = (VirusTotalViewController*)self.virusTotalPopover.delegate;
+        popover = (VirusTotalViewController*)self.virusTotalPopover.delegate;
         
-        //set name
-        popoverVC.itemName = self.processName.stringValue;
+        //default
+        path = self.processPath.stringValue;
         
-        //set path
-        popoverVC.itemPath = self.processPath.stringValue;
+        //instigator a package?
+        // get path of binary from bundle
+        if([NSWorkspace.sharedWorkspace isFilePackageAtPath:self.processPath.stringValue]) {
+            
+            //get path
+            path = getBundleExecutable(self.processPath.stringValue);
+        }
+            
+        //hash instigator
+        if(path) {
+            hash = hashFile(path);
+        }
+        
+        if(hash.length) {
+            
+            //set instigator
+            popover.instigator.stringValue = [NSString stringWithFormat:@"%@ ↗", self.processName.stringValue];
+            
+            //make url a hyperlink
+            makeTextViewHyperlink(popover.instigator, [NSURL URLWithString:[NSString stringWithFormat:@"https://www.virustotal.com/gui/file/%@", hash]]);
+        }
+        //error: hashing
+        else {
+            popover.instigator.stringValue = @"ERROR: failed to hash for VT";
+        }
+                
+        //set (persisted) item
+        if(self.startupObject.stringValue.length) {
+            
+            hash = nil;
+            path = self.startupObject.stringValue;
+            
+            //startup item a package?
+            // get path of binary from bundle
+            if([NSWorkspace.sharedWorkspace isFilePackageAtPath:path]) {
+                
+                //get path
+                path = getBundleExecutable(path);
+            }
+                
+            //hash startup item
+            if(path) {
+                hash = hashFile(path);
+            }
+            
+            if(hash.length) {
+                        
+                //set startup item
+                popover.startupItem.stringValue = [NSString stringWithFormat:@"%@ ↗", path.lastPathComponent];
+                
+                //make url a hyperlink
+                makeTextViewHyperlink(popover.startupItem, [NSURL URLWithString:[NSString stringWithFormat:@"https://www.virustotal.com/gui/file/%@", hash]]);
+            }
+            //error: hashing
+            else {
+                popover.startupItem.stringValue = @"ERROR: failed to hash for VT";
+            }
+        }
+        //no startup item
+        else {
+            popover.startupItem.stringValue = @"n/a";
+        }
+        
+        //(re)size
+        [popover.view setNeedsLayout:YES];
+        [popover.view layoutSubtreeIfNeeded];
+        self.virusTotalPopover.contentSize = [popover.view fittingSize];
         
         //show popover
         [self.virusTotalPopover showRelativeToRect:[self.virusTotalButton bounds] ofView:self.virusTotalButton preferredEdge:NSMaxYEdge];

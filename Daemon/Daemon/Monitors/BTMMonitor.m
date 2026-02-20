@@ -38,7 +38,6 @@ extern os_log_t logHandle;
     //dbg msg
     os_log_debug(logHandle, "starting 'BTM' monitor...");
     
-    
     //create client
     // and handle btm events
     result = es_new_client(&_endpointClient, ^(es_client_t *client, const es_message_t *message)

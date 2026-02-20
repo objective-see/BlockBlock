@@ -6,12 +6,17 @@
 //  Copyright © 2020 Objective-See. All rights reserved.
 //
 
+@import OSLog;
+
 #import <libproc.h>
 #import <bsm/libbsm.h>
 #import <sys/sysctl.h>
 
 #import "FileMonitor.h"
 #import "utilities.h"
+
+//log handle
+extern os_log_t logHandle;
 
 /* GLOBALS */
 
@@ -42,9 +47,20 @@ extern NSCache* processCache;
         
         //set timestamp
         self.timestamp = [NSDate date];
+    
+        //BTM add
+        // the instigator is more important
+        if(message->event_type == ES_EVENT_TYPE_NOTIFY_BTM_LAUNCH_ITEM_ADD) {
+            if( (message->version >= 8) &&
+                (message->event.btm_launch_item_add->instigator_token) ) {
+                auditToken = [NSData dataWithBytes:&message->event.btm_launch_item_add->instigator_token length:sizeof(audit_token_t)];
+            }
+        }
         
-        //init audit token
-        auditToken = [NSData dataWithBytes:&message->process->audit_token length:sizeof(audit_token_t)];
+        //default to process in ES msg
+        if(!auditToken) {
+            auditToken = [NSData dataWithBytes:&message->process->audit_token length:sizeof(audit_token_t)];
+        }
         
         //check cache for (same) process
         // not found? create process obj...

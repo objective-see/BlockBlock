@@ -16,7 +16,6 @@
 		7D7755EB1F02E05B00D0017D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7755EA1F02E05B00D0017D /* main.m */; };
 		7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D7755EE1F02E05B00D0017D /* MainMenu.xib */; };
 		7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DD25FEF1F23B73C00277EC4 /* Assets.xcassets */; };
-		7DD2600C1F252E0C00277EC4 /* VirusTotal.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD2600B1F252E0C00277EC4 /* VirusTotal.m */; };
 		7DD2600F1F252E8C00277EC4 /* VirusTotalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD2600E1F252E8C00277EC4 /* VirusTotalViewController.m */; };
 		7DD2601C1F25600900277EC4 /* ParentsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD2601B1F25600900277EC4 /* ParentsWindowController.m */; };
 		7DD2BF7A1F1EAC9C00B33214 /* XPCDaemonClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD2BF791F1EAC9C00B33214 /* XPCDaemonClient.m */; };
@@ -38,6 +37,7 @@
 		CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5F523C05AD900EFE0FB /* Rules.xib */; };
 		CD8FD5FD23C05C6900EFE0FB /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5FC23C05C6900EFE0FB /* Rule.m */; };
 		CDE203CC2F43C6B300567EF6 /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */; };
+		CDF3C7902F48299E00383631 /* HyperlinkTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF3C78F2F48299E00383631 /* HyperlinkTextField.m */; };
 		CDFA08E1214900BF0089758C /* XPCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA08DF214900BF0089758C /* XPCUser.m */; };
 /* End PBXBuildFile section */
 
@@ -72,8 +72,6 @@
 		7D7755EF1F02E05B00D0017D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		7D7755F11F02E05B00D0017D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7DD25FEF1F23B73C00277EC4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7DD2600A1F252E0C00277EC4 /* VirusTotal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirusTotal.h; sourceTree = "<group>"; };
-		7DD2600B1F252E0C00277EC4 /* VirusTotal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VirusTotal.m; sourceTree = "<group>"; };
 		7DD2600D1F252E8C00277EC4 /* VirusTotalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirusTotalViewController.h; sourceTree = "<group>"; };
 		7DD2600E1F252E8C00277EC4 /* VirusTotalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VirusTotalViewController.m; sourceTree = "<group>"; };
 		7DD2601A1F25600900277EC4 /* ParentsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParentsWindowController.h; sourceTree = "<group>"; };
@@ -109,6 +107,8 @@
 		CD8FD5FB23C05C6900EFE0FB /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
 		CD8FD5FC23C05C6900EFE0FB /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
 		CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "BlockBlock Installer.app"; sourceTree = "<group>"; };
+		CDF3C78E2F48299E00383631 /* HyperlinkTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HyperlinkTextField.h; sourceTree = "<group>"; };
+		CDF3C78F2F48299E00383631 /* HyperlinkTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HyperlinkTextField.m; sourceTree = "<group>"; };
 		CDFA08D7214606DB0089758C /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
 		CDFA08DB21460A400089758C /* XPCUserProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserProto.h; path = ../Shared/XPCUserProto.h; sourceTree = "<group>"; };
 		CDFA08DF214900BF0089758C /* XPCUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPCUser.m; path = ../Shared/XPCUser.m; sourceTree = "<group>"; };
@@ -191,6 +191,8 @@
 				7D7755E71F02E05B00D0017D /* AppDelegate.m */,
 				7DD25FEF1F23B73C00277EC4 /* Assets.xcassets */,
 				7D3B75001F13354900568828 /* Base.lproj */,
+				CDF3C78E2F48299E00383631 /* HyperlinkTextField.h */,
+				CDF3C78F2F48299E00383631 /* HyperlinkTextField.m */,
 				7D7755F11F02E05B00D0017D /* Info.plist */,
 				7D7755EE1F02E05B00D0017D /* MainMenu.xib */,
 				CD2F8006244551AB009C3D77 /* NSApplicationKeyEvents.h */,
@@ -215,8 +217,6 @@
 				CD22785C20434CAB00C72C76 /* StatusBarPopoverController.h */,
 				CD22785D20434CAB00C72C76 /* StatusBarPopoverController.m */,
 				7D7755E91F02E05B00D0017D /* Supporting Files */,
-				7DD2600A1F252E0C00277EC4 /* VirusTotal.h */,
-				7DD2600B1F252E0C00277EC4 /* VirusTotal.m */,
 				7DD2600D1F252E8C00277EC4 /* VirusTotalViewController.h */,
 				7DD2600E1F252E8C00277EC4 /* VirusTotalViewController.m */,
 			);
@@ -354,6 +354,7 @@
 				7D3B75141F13354900568828 /* StatusBarItem.m in Sources */,
 				7D7755EB1F02E05B00D0017D /* main.m in Sources */,
 				CD2F8008244551AC009C3D77 /* NSApplicationKeyEvents.m in Sources */,
+				CDF3C7902F48299E00383631 /* HyperlinkTextField.m in Sources */,
 				7DD2600F1F252E8C00277EC4 /* VirusTotalViewController.m in Sources */,
 				CD32C2352094062D009CADF6 /* SigningInfoViewController.m in Sources */,
 				7D5C5F521F200B9200C0E94A /* utilities.m in Sources */,
@@ -365,7 +366,6 @@
 				7DD2BF7A1F1EAC9C00B33214 /* XPCDaemonClient.m in Sources */,
 				7DD2BF981F1FF64300B33214 /* AlertWindowController.m in Sources */,
 				CDFA08E1214900BF0089758C /* XPCUser.m in Sources */,
-				7DD2600C1F252E0C00277EC4 /* VirusTotal.m in Sources */,
 				CD22785F20434CAC00C72C76 /* StatusBarPopoverController.m in Sources */,
 				CD8FD5F623C05AD900EFE0FB /* RuleRow.m in Sources */,
 				CD2F800D24455333009C3D77 /* AboutWindowController.m in Sources */,

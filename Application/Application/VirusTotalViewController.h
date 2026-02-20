@@ -10,6 +10,8 @@
 @import Cocoa;
 @import OSLog;
 
+#import "HyperlinkTextField.h"
+
 
 @interface VirusTotalViewController : NSViewController <NSPopoverDelegate>
 {
@@ -18,19 +20,9 @@
 
 /* METHODS */
 
-
 /* PROPERTIES */
 
-//item name
-@property(nonatomic, retain)NSString* itemName;
-
-//item path
-@property(nonatomic, retain)NSString* itemPath;
-
-//progress indicator
-@property(weak)IBOutlet NSProgressIndicator *vtSpinner;
-
-//query msg
-@property(weak)IBOutlet NSTextField *message;
+@property (weak) IBOutlet HyperlinkTextField* instigator;
+@property (weak) IBOutlet HyperlinkTextField *startupItem;
 
 @end

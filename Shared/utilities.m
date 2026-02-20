@@ -140,7 +140,7 @@ NSString* getMainAppPath(void)
 
 //give path to app
 // get full path to its binary
-NSString* getAppBinary(NSString* appPath)
+NSString* getBundleExecutable(NSString* appPath)
 {
     //binary path
     NSString* binaryPath = nil;
@@ -154,16 +154,19 @@ NSString* getAppBinary(NSString* appPath)
     {
         //err msg
         os_log_error(logHandle, "ERROR: failed to load app bundle for %{public}@", appPath);
+        
+        //bail
         goto bail;
     }
     
     //extract executable
-    binaryPath = appBundle.executablePath;
+    binaryPath = [appBundle.executablePath stringByResolvingSymlinksInPath];
     
 bail:
     
     return binaryPath;
 }
+
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -867,8 +870,11 @@ NSImage* getIconForProcess(NSString* path)
 
     //otherwise, generic executable icon
     if(!icon) {
-        
-        icon = [NSWorkspace.sharedWorkspace iconForContentType:UTTypeUnixExecutable];
+        if(@available(macOS 11.0, *)) {
+            icon = [NSWorkspace.sharedWorkspace iconForContentType:UTTypeUnixExecutable];
+        } else {
+            icon = [NSWorkspace.sharedWorkspace iconForFileType:@"public.unix-executable"];
+        }
     }
 
     [icon setSize:NSMakeSize(128, 128)];
@@ -1636,6 +1642,43 @@ NSString* convertStringToken(es_string_token_t* stringToken)
 bail:
     
     return string;
+}
+
+//convert a textview to a clickable hyperlink
+void makeTextViewHyperlink(NSTextField* textField, NSURL* url)
+{
+    //hyperlink
+    NSMutableAttributedString *hyperlinkString = nil;
+    
+    //range
+    NSRange range = {0};
+    
+    //init hyper link
+    hyperlinkString = [[NSMutableAttributedString alloc] initWithString:textField.stringValue];
+    
+    //init range
+    range = NSMakeRange(0, [hyperlinkString length]);
+   
+    //start editing
+    [hyperlinkString beginEditing];
+    
+    //add url
+    [hyperlinkString addAttribute:NSLinkAttributeName value:url range:range];
+    
+    //make it blue
+    [hyperlinkString addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:NSMakeRange(0, [hyperlinkString length])];
+    
+    //underline
+    [hyperlinkString addAttribute:
+     NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSSingleUnderlineStyle] range:NSMakeRange(0, [hyperlinkString length])];
+    
+    //done editing
+    [hyperlinkString endEditing];
+    
+    //set text
+    [textField setAttributedStringValue:hyperlinkString];
+    
+    return;
 }
 
 #ifdef DAEMON_BUILD

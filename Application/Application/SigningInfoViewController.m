@@ -54,7 +54,7 @@ extern os_log_t logHandle;
     ((NSTextField*)[self.view viewWithTag:CS_FLAGS_VIEW]).stringValue = [NSString stringWithFormat:@"%#x", [signingInfo[CS_FLAGS] unsignedIntValue]];
     
     //set platform binary
-    ((NSTextField*)[self.view viewWithTag:PLATFORM_BINARY_VIEW]).stringValue = (YES == [signingInfo[CS_FLAGS] boolValue]) ? @"yes" : @"no";
+    ((NSTextField*)[self.view viewWithTag:PLATFORM_BINARY_VIEW]).stringValue = (YES == [signingInfo[PLATFORM_BINARY] boolValue]) ? @"yes" : @"no";
     
     //set team id
     ((NSTextField*)[self.view viewWithTag:TEAM_ID_VIEW]).stringValue = (nil != signingInfo[TEAM_ID]) ? signingInfo[TEAM_ID] : @"n/a";
@@ -97,7 +97,7 @@ extern os_log_t logHandle;
         else
         {
             //append
-            [summary appendFormat:@" (by a Developer Identity, '!PLATFORM_BINARY')"];
+            [summary appendFormat:@" (by a Developer Identity)"];
         }
     
         //bail

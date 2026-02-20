@@ -408,7 +408,7 @@
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="wu6-ML-9mq">
                     <rect key="frame" x="177" y="151" width="505" height="45"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on suspicious content pasted into terminals" id="V0I-yU-YPQ">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on content pasted into terminals" id="V0I-yU-YPQ">
                         <font key="font" size="12" name="Menlo-Regular"/>
                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

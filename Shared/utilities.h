@@ -46,7 +46,7 @@ uint64_t machTimeToNanoseconds(uint64_t machTime);
 
 //give path to app
 // get full path to its binary
-NSString* getAppBinary(NSString* appPath);
+NSString* getBundleExecutable(NSString* appPath);
 
 //given an app binary
 // try get app's bundle
@@ -161,5 +161,8 @@ NSString* valueForStringItem(NSString* item);
 
 //convert es_string_token_t to string
 NSString* convertStringToken(es_string_token_t* stringToken);
+
+//convert a textview to a clickable hyperlink
+void makeTextViewHyperlink(NSTextField* textField, NSURL* url);
 
 #endif

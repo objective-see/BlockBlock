@@ -6,6 +6,8 @@
 //  Copyright © 2020 Objective-See. All rights reserved.
 //
 
+@import OSLog;
+
 #import <dlfcn.h>
 #import <libproc.h>
 #import <bsm/libbsm.h>
@@ -27,6 +29,9 @@ extern NSCache* processesCache;
 
 //responsbile pid
 extern pid_t (*getRPID)(pid_t pid);
+
+//log handle
+extern os_log_t logHandle;
 
 /* FUNCTIONS */
 
@@ -131,6 +136,21 @@ pid_t getParentID(pid_t child);
                 
                 //set exit code
                 self.exit = message->event.exit.stat;
+                
+                break;
+                
+            //BTM add
+            // see if we can use instigator
+            case ES_EVENT_TYPE_NOTIFY_BTM_LAUNCH_ITEM_ADD:
+                
+                if( (message->version >= 8) &&
+                    (message->event.btm_launch_item_add->instigator_token) ) {
+                        process = message->event.btm_launch_item_add->instigator;
+                }
+            
+                if(!process) {
+                    process = message->process;
+                }
                 
                 break;
             
