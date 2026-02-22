@@ -151,7 +151,6 @@ extern os_log_t logHandle;
 }
 
 //button handler for configure window
-// install/uninstall/close logic
 -(IBAction)configureButtonHandler:(id)sender {
     
     //action (tag)
@@ -259,6 +258,15 @@ extern os_log_t logHandle;
             //dbg msg
             os_log_debug(logHandle, "showing 'configuration' (of additional protections) view");
             
+            //set (any) existing prefs
+            NSDictionary* preferences = [NSDictionary dictionaryWithContentsOfFile:[INSTALL_DIRECTORY stringByAppendingPathComponent:PREFS_FILE]];
+            if(preferences) {
+                self.notarizationMode.state = [preferences[PREF_NOTARIZATION_MODE] integerValue];
+                self.notarizationAllMode.state = [preferences[PREF_NOTARIZATION_ALL_MODE] integerValue];
+                self.clickFixMode.state = [preferences[PREF_CLICKFIX_MODE] integerValue];
+                self.clickFixHeuristicsMode.state = [preferences[PREF_CLICKFIX_HEURISTICS_MODE] integerValue];
+            }
+                
             //show view
             [self showView:self.protectionsView firstResponder:ACTION_SHOW_SUPPORT];
             

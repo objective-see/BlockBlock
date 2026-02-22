@@ -72,7 +72,7 @@ extern Preferences* preferences;
             //os_log_debug(logHandle, "allowing process, due to preferences (%{public}@)", preferences.preferences]);
             
             //allow
-            if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
+            if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:YES])
             {
                 //err msg
                 os_log_error(logHandle, "ERROR: failed to allow process");
@@ -87,7 +87,7 @@ extern Preferences* preferences;
         if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
             
             //allow
-            [self allowProcessEvent:client message:(es_message_t*)message];
+            [self allowProcessEvent:client message:(es_message_t*)message cache:NO];
             
             //dbg msg
             os_log_debug(logHandle, "ES timeout (%llu seconds) is too short, so allowing process",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC);
@@ -105,7 +105,7 @@ extern Preferences* preferences;
             os_log_debug(logHandle, "allowing %{public}@", process);
             
             //allow
-            if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
+            if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:YES])
             {
                 //err msg
                 os_log_error(logHandle, "ERROR: failed to allow process");
@@ -169,7 +169,7 @@ extern Preferences* preferences;
                 @synchronized(self)
                 {
                     //allow
-                    if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
+                    if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:NO])
                     {
                         //err msg
                         os_log_error(logHandle, "ERROR: failed to allow process");
@@ -225,7 +225,7 @@ extern Preferences* preferences;
             @synchronized(self)
             {
                 //allow
-                if(YES != [self allowProcessEvent:client message:(es_message_t*)message])
+                if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:NO])
                 {
                     //err msg
                     os_log_error(logHandle, "ERROR: failed to allow process");
@@ -292,14 +292,10 @@ bail:
 }
 
 //allow process event
--(BOOL)allowProcessEvent:(es_client_t*)client message:(es_message_t*)message
+-(BOOL)allowProcessEvent:(es_client_t*)client message:(es_message_t*)message cache:(BOOL)cache
 {
     //flag
     BOOL allowed = NO;
-    
-    //flag
-    // default cache
-    BOOL shouldCache = YES;
     
     //result
     es_respond_result_t result = !ES_RESPOND_RESULT_SUCCESS;
@@ -313,12 +309,12 @@ bail:
         if(NULL != message->event.exec.script)
         {
             //set flag
-            shouldCache = NO;
+            cache = NO;
         }
     }
 
     //allow
-    result = es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, shouldCache);
+    result = es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, cache);
     if(ES_RESPOND_RESULT_SUCCESS != result)
     {
         //err msg
