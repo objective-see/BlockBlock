@@ -265,6 +265,14 @@ extern os_log_t logHandle;
                 self.notarizationAllMode.state = [preferences[PREF_NOTARIZATION_ALL_MODE] integerValue];
                 self.clickFixMode.state = [preferences[PREF_CLICKFIX_MODE] integerValue];
                 self.clickFixHeuristicsMode.state = [preferences[PREF_CLICKFIX_HEURISTICS_MODE] integerValue];
+                
+                //enable children
+                if(self.notarizationMode.state == NSControlStateValueOn) {
+                    self.notarizationAllMode.enabled = YES;
+                }
+                if(self.clickFixMode.state == NSControlStateValueOn) {
+                    self.clickFixHeuristicsMode.enabled = YES;
+                }
             }
                 
             //show view
