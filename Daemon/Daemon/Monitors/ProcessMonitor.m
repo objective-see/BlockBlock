@@ -51,6 +51,9 @@ extern Preferences* preferences;
     // and handle process (auth exec) events
     result = es_new_client(&_endpointClient, ^(es_client_t *client, const es_message_t *message)
     {
+        //flag
+        BOOL isAlive = YES;
+        
         //event
         Event* event = nil;
         
@@ -63,31 +66,12 @@ extern Preferences* preferences;
         //dbg msg
         //os_log_debug(logHandle, "new ES_EVENT_TYPE_AUTH_EXEC event");
         
-        //check prefs
-        // allow if passive mode, or not in notarization mode
-        if( (YES == [preferences.preferences[PREF_PASSIVE_MODE] boolValue]) ||
-            (YES != [preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) )
-        {
-            //dbg msg
-            //os_log_debug(logHandle, "allowing process, due to preferences (%{public}@)", preferences.preferences]);
-            
-            //allow
-            if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:YES])
-            {
-                //err msg
-                os_log_error(logHandle, "ERROR: failed to allow process");
-            }
-            
-            //done
-            return;
-        }
-        
         //if deadline is super short
         // user won't be able to respond anyways, so just allow :|
         if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
             
             //allow
-            [self allowProcessEvent:client message:(es_message_t*)message cache:NO];
+            [self allowProcessEvent:client message:(es_message_t*)message cache:false];
             
             //dbg msg
             os_log_debug(logHandle, "ES timeout (%llu seconds) is too short, so allowing process",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC);
@@ -95,25 +79,53 @@ extern Preferences* preferences;
             //done
             return;
         }
+        
+        //notarization mode off?
+        // process is irrelvant, so allow (and cache)
+        if(![preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) {
+            
+            //dbg msg
+            //os_log_debug(logHandle, "allowing process, due to preferences (%{public}@)", preferences.preferences]);
+            
+            [self allowProcessEvent:client message:(es_message_t*)message cache:true];
+            return;
+        }
     
         //init process obj
         process = [[Process alloc] init:(es_message_t* _Nonnull)message csOption:csDynamic];
-        if( (nil == process) ||
-            (YES == [plugin shouldIgnore:process message:(es_message_t *)message]) )
-        {
-            //dbg msg
-            os_log_debug(logHandle, "allowing %{public}@", process);
+        if(!process) {
             
-            //allow
-            if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:YES])
-            {
-                //err msg
-                os_log_error(logHandle, "ERROR: failed to allow process");
-            }
-            
-            //done
+            os_log_error(logHandle, "failed to create process object");
+            [self allowProcessEvent:client message:(es_message_t*)message cache:false];
+
             return;
         }
+        
+        //allow?
+        // and cache
+        if([plugin shouldIgnore:process message:(es_message_t *)message]) {
+            
+            os_log_debug(logHandle, "allowing (and caching) %{public}@", process);
+            [self allowProcessEvent:client message:(es_message_t*)message cache:true];
+
+            return;
+        }
+        
+        //ignore if dead now
+        //when macOS kills a process we still get an event, so handle this case
+        for(int i=0; i<3; i++)
+        {
+            if(!isProcessAlive(process.pid)) {
+                os_log_debug(logHandle, "process died, so will ignore");
+                [self allowProcessEvent:client message:(es_message_t*)message cache:false];
+                return;
+            }
+            
+            [NSThread sleepForTimeInterval:0.05];
+        }
+      
+        /* from here on, we're going to ask user
+           ...even in passive mode (killing processes w/o user input isn't ideal) */
         
         //dbg msg
         os_log_debug(logHandle, "alerting user about: %{public}@", process);
@@ -292,7 +304,7 @@ bail:
 }
 
 //allow process event
--(BOOL)allowProcessEvent:(es_client_t*)client message:(es_message_t*)message cache:(BOOL)cache
+-(BOOL)allowProcessEvent:(es_client_t*)client message:(es_message_t*)message cache:(bool)cache
 {
     //flag
     BOOL allowed = NO;
@@ -305,7 +317,7 @@ bail:
     if( (message->version >= 2) &&
         (ES_EVENT_TYPE_AUTH_EXEC == message->event_type) )
     {
-        //is script?
+        //has script?
         if(NULL != message->event.exec.script)
         {
             //set flag

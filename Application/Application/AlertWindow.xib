@@ -44,7 +44,7 @@
         <window title="BlockBlock Alert" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES"/>
             <rect key="contentRect" x="949" y="509" width="745" height="392"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1410"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="770"/>
             <value key="minSize" type="size" width="745" height="392"/>
             <value key="maxSize" type="size" width="2000" height="392"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
@@ -217,8 +217,8 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i43-b2-cU0">
-                        <rect key="frame" x="155" y="244" width="374" height="72"/>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i43-b2-cU0" userLabel="alertMessage">
+                        <rect key="frame" x="161" y="244" width="368" height="72"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" id="hoJ-mx-qEO">
                             <font key="font" size="14" name="Menlo-Bold"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -302,7 +302,7 @@
                         </textFieldCell>
                     </textField>
                     <popUpButton springLoaded="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zhH-7b-Ibz">
-                        <rect key="frame" x="303" y="34" width="175" height="24"/>
+                        <rect key="frame" x="304" y="34" width="174" height="24"/>
                         <popUpButtonCell key="cell" type="push" title="Process + File + Item" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="yqR-4V-rQw" id="Uc0-wT-NwU">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="message"/>
@@ -330,7 +330,7 @@
                 <constraints>
                     <constraint firstItem="B2m-tX-bhM" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="32" id="0lg-gE-Ts4"/>
                     <constraint firstItem="AZu-DM-wj7" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="1bn-Ib-j9v"/>
-                    <constraint firstItem="i43-b2-cU0" firstAttribute="leading" secondItem="fJv-Iu-3gy" secondAttribute="trailing" constant="9" id="1ie-Km-ATX"/>
+                    <constraint firstItem="i43-b2-cU0" firstAttribute="leading" secondItem="fJv-Iu-3gy" secondAttribute="trailing" constant="15" id="1ie-Km-ATX"/>
                     <constraint firstItem="32G-48-5jq" firstAttribute="leading" secondItem="PJQ-Iq-93l" secondAttribute="trailing" constant="65" id="2RB-oe-ncK"/>
                     <constraint firstAttribute="trailing" secondItem="T6r-Lc-cqm" secondAttribute="trailing" constant="20" id="38L-k8-5BX"/>
                     <constraint firstItem="CvP-W3-IE1" firstAttribute="top" secondItem="sBf-sv-RQG" secondAttribute="bottom" constant="2" id="3og-jF-Wwd"/>

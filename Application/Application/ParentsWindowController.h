@@ -1,7 +1,7 @@
 //
 //  file: ParentsWindowController.h
 //  project: BlockBlock (login item)
-//  description: window controller for process heirachy (header)
+//  description: window controller for process hierachy (header)
 //
 //  created by Patrick Wardle
 //  copyright (c) 2017 Objective-See. All rights reserved.

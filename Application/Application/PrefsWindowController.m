@@ -295,7 +295,7 @@ bail:
         case -1:
             
             //set label
-            self.updateLabel.stringValue = @"error: update check failed";
+            self.updateLabel.stringValue = @"Error: update check failed";
             
             break;
             

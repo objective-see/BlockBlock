@@ -33,7 +33,7 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" texturedBackground="YES"/>
             <rect key="contentRect" x="196" y="240" width="523" height="237"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1410"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="770"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="523" height="237"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -397,16 +397,16 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="4CM-BV-lpW">
-                    <rect key="frame" x="178" y="319" width="503" height="20"/>
+                    <rect key="frame" x="177" y="327" width="503" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on the execution of non-notarized programs." id="b8B-Hv-f5F">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on downloaded non-notarized programs and scripts." id="b8B-Hv-f5F">
                         <font key="font" size="12" name="Menlo-Regular"/>
                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="445" translatesAutoresizingMaskIntoConstraints="NO" id="wu6-ML-9mq">
-                    <rect key="frame" x="177" y="151" width="505" height="45"/>
+                    <rect key="frame" x="177" y="152" width="505" height="45"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on content pasted into terminals" id="V0I-yU-YPQ">
                         <font key="font" size="12" name="Menlo-Regular"/>
@@ -519,7 +519,7 @@
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="Z13-gp-uvr">
                                 <rect key="frame" x="38" y="12" width="432" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply to all programs (not just user downloaded ones)." id="AbY-mg-dSh">
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply to all programs (not just downloaded ones)." id="AbY-mg-dSh">
                                     <font key="font" size="12" name="Menlo-Regular"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

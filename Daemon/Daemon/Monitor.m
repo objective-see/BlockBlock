@@ -435,7 +435,7 @@ bail:
         //not delivered?
         // free es message
         if( (YES != wasDelivered) &&
-           (NULL != event.esMessage) )
+            (NULL != event.esMessage) )
         {
             //release message
             if(@available(macOS 11.0, *))

@@ -167,6 +167,7 @@ bail:
     return binaryPath;
 }
 
+#ifndef DAEMON_BUILD
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -217,10 +218,8 @@ bail:
 
 #pragma GCC diagnostic pop
 
-/*
-
 //build an array of processes ancestry
-// uses `GetProcessForPID` to try get (real) parent
+// note: only call from UI session, due to use of carbon APIs
 NSMutableArray* generateProcessHierarchy(pid_t pid, NSString* name)
 {
     //process hierarchy
@@ -272,11 +271,11 @@ NSMutableArray* generateProcessHierarchy(pid_t pid, NSString* name)
         
         //get name
         // first from bundle, then from executable
-        name = parent[@"CFBundleName"];
+        parentName = parent[@"CFBundleName"];
         if(0 == name.length)
         {
             //via executable
-            name = [parent[@"CFBundleExecutable"] lastPathComponent];
+            parentName = [parent[@"CFBundleExecutable"] lastPathComponent];
         }
         
         //add parent
@@ -289,8 +288,8 @@ NSMutableArray* generateProcessHierarchy(pid_t pid, NSString* name)
     
     return processHierarchy;
 }
- 
-*/
+
+#endif
 
 //check if something is nil
 // if so, return a default ('unknown') value
@@ -1683,6 +1682,63 @@ void makeTextViewHyperlink(NSTextField* textField, NSURL* url)
 
 #ifdef DAEMON_BUILD
 
+//get current working directory of process
+NSString* getCWD(pid_t pid) {
+    
+    struct proc_vnodepathinfo vinfo = {0};
+    
+    if(proc_pidinfo(pid, PROC_PIDVNODEPATHINFO, 0, &vinfo, sizeof(vinfo)) > 0) {
+        NSString* cwd = [NSString stringWithUTF8String:vinfo.pvi_cdir.vip_path];
+        if(cwd.length) {
+            return [cwd stringByResolvingSymlinksInPath];
+        }
+    }
+    
+    return nil;
+}
+
+//extract scripts from process arguments
+NSArray* getScripts(pid_t pid, NSMutableArray* args, NSString* cwd) {
+    
+    if(args.count < 2) {
+        return nil;
+    }
+    
+    if(!cwd) {
+        cwd = getCWD(pid);
+    }
+    
+    BOOL isDirectory = NO;
+    NSMutableArray* scripts = [NSMutableArray array];
+    
+    for(NSUInteger i = 1; i < args.count; i++) {
+        
+        NSString* arg = args[i];
+        
+        //resolve relative paths against cwd
+        NSString* fullPath = nil;
+        if([arg hasPrefix:@"/"]) {
+            fullPath = arg;
+        } else if(cwd) {
+            fullPath = [cwd stringByAppendingPathComponent:arg];
+        } else {
+            continue;
+        }
+        
+        //resolve symlinks for consistent paths
+        fullPath = [fullPath stringByResolvingSymlinksInPath];
+        
+        //must be an existing regular file
+        if([NSFileManager.defaultManager fileExistsAtPath:fullPath isDirectory:&isDirectory] && !isDirectory) {
+            [scripts addObject:fullPath];
+        }
+    }
+    
+    return scripts.count > 0 ? scripts : nil;
+}
+
+
+
 //mach time to nanoseconds
 // from: https://developer.apple.com/documentation/apple-silicon/addressing-architectural-differences-in-your-macos-code
 uint64_t machTimeToNanoseconds(uint64_t machTime)
@@ -1695,6 +1751,32 @@ uint64_t machTimeToNanoseconds(uint64_t machTime)
     nanoseconds = ((machTime * sTimebase.numer) / sTimebase.denom);
 
     return nanoseconds;
+}
+
+//check if item is downloaded
+BOOL isDownloaded(NSString* path) {
+    
+    //sanity check
+    if(!path.length) {
+        return NO;
+    }
+    
+    //get flags
+    uint32_t quarantineFlags = getQuarantineFlags(path);
+    
+    //not quarantined?
+    if(quarantineFlags == QTN_NOT_QUARANTINED) {
+        os_log_debug(logHandle, "%{public}@ is not quarantined", path);
+        return NO;
+    }
+    
+    //quarantined, but allowed
+    if(quarantineFlags & QTN_FLAG_USER_APPROVED) {
+        os_log_debug(logHandle, "%{public}@ is quarantined, but user approved", path);
+        return NO;
+    }
+    
+    return YES;
 }
 
 //get items quarantine flags

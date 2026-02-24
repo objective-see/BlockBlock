@@ -23,6 +23,9 @@ extern os_log_t logHandle;
 //prefs obj
 extern Preferences* preferences;
 
+//interpreters
+NSMutableSet* interpreters = nil;
+
 @implementation Processes
 
 @synthesize lastScript;
@@ -39,6 +42,11 @@ extern Preferences* preferences;
         
         //set type
         self.type = PLUGIN_TYPE_PROCESS_MONITOR;
+        
+        //init w/ some common platform interpreters
+        interpreters = [NSMutableSet setWithArray:@[
+            @"com.apple.zsh", @"com.apple.bash", @"com.apple.python", @"com.apple.python2", @"com.apple.python3", @"com.apple.pythonw", @"com.apple.osascript"
+        ]];
     }
 
     return self;
@@ -46,163 +54,71 @@ extern Preferences* preferences;
 
 //should process be ignored?
 // checks notarization status, quarantined (and not user approved), etc.
--(BOOL)shouldIgnore:(Process*)process message:(es_message_t *)message
-{
-    //flag
-    BOOL ignore = YES;
+-(BOOL)shouldIgnore:(Process*)process message:(es_message_t *)message {
     
-    //flag
-    // process (still) alive
-    BOOL isAlive = NO;
+    os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
-    //item path
-    NSString* path = nil;
-    
-    //app bundle
-    NSBundle* appBundle = nil;
-    
-    //app's path
-    NSString* appPath = nil;
-    
-    //quarantine flags
-    uint32_t quarantineFlags = QTN_NOT_QUARANTINED;
-    
-    //dbg msg
-    //os_log_debug(logHandle, "checking if %{public}@ should be allowed", process.path);
-    
-    //init path from process
-    path = process.path;
-    
-    //script?
-    if(process.script)
-    {
-        //use script as path instead
-        path = process.script;
-        
-        //check if script event is the "same" as last
-        // avoids situations where sh <script> forks bash <script>
-        if(YES == [self isRelatedScriptEvent:process]) {
-            os_log_debug(logHandle, "%{public}@ was run by %{public}@, thus appears related, so will allow", path, self.lastScript.name);
-            goto bail;
-        }
-    }
-    
-    //not a script
-    // ignore here if it's an apple or notarized processes
-    else if( (YES == process.isPlatformBinary.boolValue) ||
-             (YES == [process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) ) {
-        os_log_debug(logHandle, "%{public}@ is platform binary || is notarized, will allow", process.name);
-        goto bail;
-    }
-    
-    //not a script?
-    // grab app bundle (for subsequent checks)
-    if(!process.script)
-    {
-        //find app bundle
-        appBundle = findAppBundle(path);
-        if(nil != appBundle) {
-            os_log_debug(logHandle, "is app, with bundle...");
-        }
-    }
-    
-    //is an app store app?
-    // ignore, as it's trusted (though not 'notarized' per se)
-    if( (noErr == [process.signingInfo[KEY_SIGNATURE_STATUS] intValue]) &&
-        (AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) ) {
-        
-        os_log_debug(logHandle, "%{public}@ is from the app store ...will allow", process.name);
-        goto bail;
-    }
-    
-    //notarization all mode?
-    // skip quarantine  checks
-    if(YES == [preferences.preferences[PREF_NOTARIZATION_ALL_MODE] boolValue]) {
-        
-        os_log_debug(logHandle, "notarization 'all mode' is set, flagging non-notarized process: %{public}@", process.name);
-        
-        //should block
-        ignore = NO;
-        goto bail;
-    }
-    
-    //now get quarantine flags
-    quarantineFlags = getQuarantineFlags(path);
-    if(QTN_NOT_QUARANTINED == quarantineFlags) {
-        
-        os_log_debug(logHandle, "%{public}@ is not quarantined ...will allow", path);
-        goto bail;
-    }
+    //platfrom binary?
+    // downloaded script: not allowed
+    // no script / local script: allowed
+    // note: this is only time we have to check script
+    if(process.isPlatformBinary.boolValue) {
        
-    //quarantined, but user is approved?
-    // ok, safe to allow
-    if(QTN_FLAG_USER_APPROVED & quarantineFlags) {
-        
-        os_log_debug(logHandle, "%{public}@ is quarantined, but user approved ...will allow", path);
-        goto bail;
-    }
-       
-    //get app path
-    appPath = appBundle.bundlePath;
-    
-    //also check app bundle
-    // to see if it has been approved
-    if(0 != appPath.length)
-    {
-        //get app bundle's flags
-        quarantineFlags = getQuarantineFlags(appPath);
-        if( (QTN_NOT_QUARANTINED != quarantineFlags) &&
-            (QTN_FLAG_USER_APPROVED & quarantineFlags) ) {
+        //downloaded script?
+        if(isDownloaded(process.script)) {
+            os_log_debug(logHandle, "%{public}@ is a downloaded script, so *will not* ignore", process.script);
             
-            os_log_debug(logHandle, "app bundle, %{public}@, is user approved ...will allow", appPath);
-            goto bail;
+            self.lastScript = process;
+            return NO;
+        }
+        //no || no downloaded script
+        else {
+            os_log_debug(logHandle, "%{public}@ is platform binary (with no/no downloaded script), so will ignore", process.name);
+            return YES;
         }
     }
     
-    //dbg msg
-    os_log_debug(logHandle, "%{public}@ is quarantined (and not user approved)", path);
+    //now, we're dealing w/ non-platform binaries
     
-    //process is quarantined (and unapproved)
-    ignore = NO;
-
-bail:
-    
-    //when macOS kills a process
-    // we still get an event, so handle this case
-    if(!ignore) {
-        
-        //dbg
-        os_log_debug(logHandle, "checking if process is still alive...");
-        
-        //when macOS kills a process
-        // we still get an event, so handle this case
-        for(int i=0; i<5; i++)
-        {
-            //is (still) alive?
-            isAlive = isProcessAlive(process.pid);
-            
-            //dead?
-            // done!
-            if(YES != isAlive) break;
-            
-            //nap
-            [NSThread sleepForTimeInterval:0.1];
-        }
-        
-        //process killed?
-        if(!isAlive) {
-            os_log_debug(logHandle, "processed died, so will ignore");
-            ignore = YES;
-        }
+    //App Store?
+    // always allow (same same as "notarized")
+    if(AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) {
+        os_log_debug(logHandle, "%{public}@ is from App Store, so will ignore", process.name);
+        return YES;
     }
 
-    //script?
-    // save it
-    if(process.script) {
-        self.lastScript = process;
+    //now, not from app store
+    
+    //Notarized?
+    // allowed (in any mode)
+    if([process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) {
+        os_log_debug(logHandle, "%{public}@ is notarized, so will ignore", process.name);
+        return YES;
     }
     
-    return ignore;
+    //now, not notarized program
+
+    //All-mode?
+    // don't ignore non-notarized
+    if([preferences.preferences[PREF_NOTARIZATION_ALL_MODE] boolValue]) {
+        os_log_debug(logHandle, "%{public}@ is not notarized (and 'all' mode is set), so *will not* ignore", process.name);
+        return NO;
+    }
+    
+    //now, not in 'all' mode
+
+    //Normal mode?
+    // allow if not downloaded
+    if(!isDownloaded(process.path)) {
+        os_log_debug(logHandle, "%{public}@ is not downloaded (and 'all' mode is not set), so will ignore", process.name);
+        return YES;
+    }
+    
+    //now, is downloaded
+
+    //Downloaded
+    // + non-notarized
+    return NO;
 }
 
 //check if script event is the "same"

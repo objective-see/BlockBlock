@@ -23,14 +23,14 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-            <rect key="contentRect" x="196" y="240" width="600" height="381"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3440" height="1410"/>
+            <rect key="contentRect" x="196" y="240" width="620" height="381"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="770"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="600" height="381"/>
+                <rect key="frame" x="0.0" y="0.0" width="620" height="381"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="Tx4-yW-fcJ">
-                        <rect key="frame" x="138" y="8" width="325" height="65"/>
+                        <rect key="frame" x="148" y="8" width="325" height="65"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="65" id="jUa-ov-hfy"/>
                             <constraint firstAttribute="width" constant="325" id="xSe-ws-rB8"/>
@@ -38,7 +38,7 @@
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="BlockBlock" id="m7R-HO-YMp"/>
                     </imageView>
                     <customView id="Cnk-qD-whO" userLabel="Container">
-                        <rect key="frame" x="0.0" y="82" width="600" height="299"/>
+                        <rect key="frame" x="0.0" y="82" width="620" height="299"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </customView>
                 </subviews>
@@ -84,7 +84,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-823" y="528.5"/>
+            <point key="canvasLocation" x="-813" y="528.5"/>
         </window>
         <customView id="K6i-xr-27e" userLabel="Modes">
             <rect key="frame" x="0.0" y="0.0" width="600" height="355"/>
@@ -163,7 +163,7 @@
             <point key="canvasLocation" x="-143" y="380.5"/>
         </customView>
         <customView id="Ub2-Lk-awa" userLabel="Protections">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="355"/>
+            <rect key="frame" x="0.0" y="0.0" width="612" height="355"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button tag="3" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-qH-XeT">
@@ -187,9 +187,9 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="TRm-Rl-xCV">
-                    <rect key="frame" x="72" y="289" width="475" height="25"/>
+                    <rect key="frame" x="72" y="289" width="522" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on non-notarized programs." id="KxF-zG-H4l">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on downloaded non-notarized programs and scripts." id="KxF-zG-H4l">
                         <font key="font" size="13" name="Menlo-Regular"/>
                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -225,10 +225,10 @@
                     </textFieldCell>
                 </textField>
                 <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Vjq-sE-Fdv">
-                    <rect key="frame" x="74" y="236" width="471" height="58"/>
+                    <rect key="frame" x="74" y="234" width="506" height="58"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <view key="contentView" id="lvX-fp-F7y">
-                        <rect key="frame" x="0.0" y="0.0" width="471" height="58"/>
+                        <rect key="frame" x="0.0" y="0.0" width="506" height="58"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button tag="33" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7m6-iN-RYS">
@@ -254,7 +254,7 @@
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="iF3-to-joZ">
                                 <rect key="frame" x="38" y="16" width="432" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply to all programs (not just user downloaded ones)." id="uVV-OG-Glq">
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply to all programs (not just downloaded ones)." id="uVV-OG-Glq">
                                     <font key="font" size="13" name="Menlo-Regular"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -264,10 +264,10 @@
                     </view>
                 </box>
                 <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Tef-Zu-mRL">
-                    <rect key="frame" x="74" y="95" width="471" height="58"/>
+                    <rect key="frame" x="74" y="95" width="506" height="58"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <view key="contentView" id="hZb-SN-Pns">
-                        <rect key="frame" x="0.0" y="0.0" width="471" height="58"/>
+                        <rect key="frame" x="0.0" y="0.0" width="506" height="58"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button tag="44" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a7e-ki-Wau">
@@ -303,7 +303,7 @@
                     </view>
                 </box>
             </subviews>
-            <point key="canvasLocation" x="538" y="380.5"/>
+            <point key="canvasLocation" x="544" y="380.5"/>
         </customView>
         <customView id="1OV-sl-cSe" userLabel="Update">
             <rect key="frame" x="0.0" y="0.0" width="618" height="174"/>
@@ -369,7 +369,7 @@
     <resources>
         <image name="BlockBlock" width="1230" height="193"/>
         <image name="PrefsMode" width="72" height="72"/>
-        <image name="PrefsProtections" width="48" height="48"/>
+        <image name="PrefsProtections" width="32" height="32"/>
         <image name="PrefsUpdate" width="72" height="72"/>
     </resources>
 </document>

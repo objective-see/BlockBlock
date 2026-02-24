@@ -40,6 +40,9 @@ uint32_t getQuarantineFlags(NSString* path);
 //mach time to nano-seconds
 uint64_t machTimeToNanoseconds(uint64_t machTime);
 
+//is item downloaded
+BOOL isDownloaded(NSString* path);
+
 #endif
 
 /* FUNCTIONS */
@@ -164,5 +167,16 @@ NSString* convertStringToken(es_string_token_t* stringToken);
 
 //convert a textview to a clickable hyperlink
 void makeTextViewHyperlink(NSTextField* textField, NSURL* url);
+
+//extract script via args
+NSArray* getScripts(pid_t pid, NSMutableArray* args, NSString* cwd);
+
+#ifndef DAEMON_BUILD
+
+//build an array of processes ancestry
+// note: only call from UI session, due to use of carbon APIs
+NSMutableArray* generateProcessHierarchy(pid_t pid, NSString* name);
+
+#endif
 
 #endif

@@ -853,6 +853,12 @@ bail:
     
     os_log_debug(logHandle, "heuristics are on, so will check");
     
+    //skip very short ones
+    if(clipboard.length < 20) {
+        os_log_debug(logHandle, "clipboard only contains %lu characters, so allowing", (unsigned long)clipboard.length);
+        return YES;
+    }
+    
     //lower case
     NSString *lower = clipboard.lowercaseString;
     

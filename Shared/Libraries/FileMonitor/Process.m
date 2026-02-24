@@ -17,7 +17,6 @@
 #import "utilities.h"
 #import "FileMonitor.h"
 
-
 //hash length
 // from: cs_blobs.h
 #define CS_CDHASH_LEN 20
@@ -32,6 +31,9 @@ extern pid_t (*getRPID)(pid_t pid);
 
 //log handle
 extern os_log_t logHandle;
+
+//interpreters
+extern NSMutableSet* interpreters;
 
 /* FUNCTIONS */
 
@@ -299,6 +301,30 @@ pid_t getParentID(pid_t child);
                 {
                     self.script = convertStringToken(&message->event.exec.script->path);
                 }
+            }
+        }
+        
+        //no script, but this is an interpreter?
+        // try look up script manually, if ES didn't give us one
+        if( (!self.script.length) &&
+            (arguments.count >= 2) ) {
+            
+            if( (self.signingID) &&
+                ([interpreters containsObject:self.signingID]) ) {
+                
+                NSString* cwd = nil;
+                NSArray* scripts = nil;
+                
+                //grab CWD
+                if (message->version >= 3 && message->event.exec.cwd) {
+                    cwd = convertStringToken(&message->event.exec.cwd->path);
+                }
+            
+                //get via args
+                scripts = getScripts(pid, arguments, cwd);
+                
+                //for now just grab ...first?
+                self.script = scripts.firstObject;
             }
         }
     
