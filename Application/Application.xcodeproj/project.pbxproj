@@ -36,7 +36,6 @@
 		CD8FD5F823C05AD900EFE0FB /* RulesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5F323C05AD800EFE0FB /* RulesWindowController.m */; };
 		CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD8FD5F523C05AD900EFE0FB /* Rules.xib */; };
 		CD8FD5FD23C05C6900EFE0FB /* Rule.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FD5FC23C05C6900EFE0FB /* Rule.m */; };
-		CDE203CC2F43C6B300567EF6 /* BlockBlock Installer.app in Resources */ = {isa = PBXBuildFile; fileRef = CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */; };
 		CDF3C7902F48299E00383631 /* HyperlinkTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF3C78F2F48299E00383631 /* HyperlinkTextField.m */; };
 		CDFA08E1214900BF0089758C /* XPCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA08DF214900BF0089758C /* XPCUser.m */; };
 /* End PBXBuildFile section */
@@ -106,7 +105,6 @@
 		CD8FD5F523C05AD900EFE0FB /* Rules.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Rules.xib; sourceTree = "<group>"; };
 		CD8FD5FB23C05C6900EFE0FB /* Rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rule.h; path = ../Shared/Rule.h; sourceTree = "<group>"; };
 		CD8FD5FC23C05C6900EFE0FB /* Rule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Rule.m; path = ../Shared/Rule.m; sourceTree = "<group>"; };
-		CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "BlockBlock Installer.app"; sourceTree = "<group>"; };
 		CDF3C78E2F48299E00383631 /* HyperlinkTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HyperlinkTextField.h; sourceTree = "<group>"; };
 		CDF3C78F2F48299E00383631 /* HyperlinkTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HyperlinkTextField.m; sourceTree = "<group>"; };
 		CDFA08D7214606DB0089758C /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../Shared/XPCDaemonProto.h; sourceTree = "<group>"; };
@@ -236,7 +234,6 @@
 		CD4597F4291DB39300F2A1C6 /* Uninstaller */ = {
 			isa = PBXGroup;
 			children = (
-				CDE203CB2F43C6B300567EF6 /* BlockBlock Installer.app */,
 			);
 			path = Uninstaller;
 			sourceTree = "<group>";
@@ -337,7 +334,6 @@
 				CD2F801724468A8C009C3D77 /* patrons.txt in Resources */,
 				CD8FD5FA23C05AD900EFE0FB /* Rules.xib in Resources */,
 				7D7755F01F02E05B00D0017D /* MainMenu.xib in Resources */,
-				CDE203CC2F43C6B300567EF6 /* BlockBlock Installer.app in Resources */,
 				7DD25FF01F23B73C00277EC4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,7 +502,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.4.0;
+				CURRENT_PROJECT_VERSION = 2.4.1;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -514,7 +510,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.4.0;
+				MARKETING_VERSION = 2.4.1;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";
@@ -528,7 +524,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.4.0;
+				CURRENT_PROJECT_VERSION = 2.4.1;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -536,7 +532,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.4.0;
+				MARKETING_VERSION = 2.4.1;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock.helper";
 				PRODUCT_NAME = "BlockBlock Helper";

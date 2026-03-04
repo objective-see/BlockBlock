@@ -275,17 +275,17 @@ pid_t getParentID(pid_t child);
                
         //when specified
         // generate full code signing info
-        if(csNone != csOption)
-        {
-            if(nil == cachedProcess)
-            {
-                //generate code signing info
-                [self generateCSInfo:csOption];
-            }
-            //from cache
-            else
+        if(csNone != csOption) {
+            
+            //use cached signing info (if available)
+            if(cachedProcess.signingInfo.count)
             {
                 self.signingInfo = cachedProcess.signingInfo;
+            }
+            //otherwise generate
+            else
+            {
+                [self generateCSInfo:csOption];
             }
         }
         
@@ -331,12 +331,14 @@ pid_t getParentID(pid_t child);
         //enumerate ancestors
         [self enumerateAncestors];
         
-        //add process to processes cache
-        if( (nil == cachedProcess) &&
-            (0 != inode.unsignedLongValue) )
-        {
-            //add
-            [processesCache setObject:self forKey:inode];
+        //for EXEC events
+        // now, cache process
+        if ( (message->event_type == ES_EVENT_TYPE_AUTH_EXEC) ||
+             (message->event_type == ES_EVENT_TYPE_NOTIFY_EXEC) ) {
+            
+            if(!cachedProcess && inode.unsignedLongValue) {
+                [processesCache setObject:self forKey:inode];
+            }
         }
     }
     
