@@ -215,11 +215,21 @@ bail:
     //flag
     BOOL blocked = NO;
     
+    //name
+    NSString* name = event.process.name;
+    
     //block
-    if(YES != (blocked = [self respond:event action:ES_AUTH_RESULT_DENY]))
-    {
-        //err msg
-        os_log_error(logHandle, "ERROR: failed to block %{public}@", event.process.name);
+    if(YES != (blocked = [self respond:event action:ES_AUTH_RESULT_DENY])) {
+        
+        os_log_error(logHandle, "ERROR: failed to block %{public}@, will try kill", name);
+        
+        //kill
+        if(noErr != kill(event.process.pid, SIGKILL)){
+            os_log_error(logHandle, "ERROR: failed to kill %{public}@", name);
+        }
+        else {
+            os_log_debug(logHandle, "killed %{public}@", name);
+        }
     }
     
 bail:

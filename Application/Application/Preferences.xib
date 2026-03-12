@@ -196,7 +196,7 @@
                     </textFieldCell>
                 </textField>
                 <button tag="4" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k0k-6Z-NO8">
-                    <rect key="frame" x="39" y="130" width="29" height="18"/>
+                    <rect key="frame" x="39" y="120" width="29" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="09U-MW-B2W">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -207,7 +207,7 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y70-84-Uhl">
-                    <rect key="frame" x="72" y="129" width="271" height="19"/>
+                    <rect key="frame" x="72" y="119" width="271" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Paste Protection ('ClickFix') Mode" id="Heh-2c-0AR">
                         <font key="font" size="13" name="Menlo-Bold"/>
@@ -216,7 +216,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="njg-h7-piE">
-                    <rect key="frame" x="72" y="101" width="475" height="30"/>
+                    <rect key="frame" x="72" y="91" width="475" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on content pasted into terminals." id="qzK-DW-u5y">
                         <font key="font" size="13" name="Menlo-Regular"/>
@@ -293,7 +293,7 @@
                     </view>
                 </box>
                 <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Tef-Zu-mRL">
-                    <rect key="frame" x="74" y="50" width="506" height="58"/>
+                    <rect key="frame" x="74" y="40" width="506" height="58"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <view key="contentView" id="hZb-SN-Pns">
                         <rect key="frame" x="0.0" y="0.0" width="506" height="58"/>

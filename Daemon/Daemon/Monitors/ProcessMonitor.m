@@ -67,7 +67,9 @@ extern Preferences* preferences;
         // user won't be able to respond anyways, so just allow :|
         if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
             
-            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short...",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC);
+            NSString* path = convertStringToken(&message->event.exec.target->executable->path);
+        
+            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short for %@",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC, path);
             
             //deny on timeout?
             if([preferences.preferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] boolValue]) {
@@ -183,15 +185,17 @@ extern Preferences* preferences;
                 //sync
                 @synchronized(self)
                 {
+                    NSString* path = convertStringToken(&message->event.exec.target->executable->path);
+                    
                     //deny on timeout?
                     if([preferences.preferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] boolValue]) {
                         es_respond_auth_result(client, message, ES_AUTH_RESULT_DENY, false);
-                        os_log_debug(logHandle, "blocking process (due to user preference)");
+                        os_log(logHandle, "Blocking %{public}@ ...ES timeout hit, and user set default action to 'Block'", path);
                     }
                     //allow
                     else {
                         es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, false);
-                        os_log_debug(logHandle, "allowing process (due to user preference)");
+                        os_log(logHandle, "Allowing %{public}@ ...ES timeout hit, and default action is set to 'Allow'", path);
                     }
                     
                     //sync
