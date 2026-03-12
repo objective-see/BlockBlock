@@ -1737,8 +1737,6 @@ NSArray* getScripts(pid_t pid, NSMutableArray* args, NSString* cwd) {
     return scripts.count > 0 ? scripts : nil;
 }
 
-
-
 //mach time to nanoseconds
 // from: https://developer.apple.com/documentation/apple-silicon/addressing-architectural-differences-in-your-macos-code
 uint64_t machTimeToNanoseconds(uint64_t machTime)

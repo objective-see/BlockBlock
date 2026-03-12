@@ -136,6 +136,7 @@
 // notarizaion mode
 #define PREF_NOTARIZATION_MODE @"notarizationMode"
 #define PREF_NOTARIZATION_ALL_MODE @"notarizationAllMode"
+#define PREF_NOTARIZATION_ES_TIMEOUT_MODE @"notarizationESTimeoutMode"
 
 //prefs
 // (block) click fix mode
@@ -355,6 +356,9 @@ typedef enum {
 
 //'notarization mode all' button
 #define BUTTON_NOTARIZATION_ALL_MODE 33
+
+//action on ES timeout
+#define BUTTON_NOTARIZATION_ES_TIMEOUT_MODE 34
 
 //(block) 'ClickFix' mode
 #define BUTTON_CLICKFIX_MODE 4

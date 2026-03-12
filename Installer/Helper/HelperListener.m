@@ -78,6 +78,9 @@ bail:
     //result
     BOOL result = NO;
     
+    //requirement
+    NSString* requirement = nil;
+    
     //init listener
     listener = [[NSXPCListener alloc] initWithMachServiceName:CONFIG_HELPER_ID];
     if(nil == self.listener)
@@ -87,6 +90,21 @@ bail:
         
         //bail
         goto bail;
+    }
+    
+    //macOS 13+
+    // set code signing requirement for clients via 'setConnectionCodeSigningRequirement'
+    if(@available(macOS 13.0, *)) {
+        
+        //init requirement
+        requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"2.0.0\"", INSTALLER_ID, SIGNING_AUTH];
+            
+        //set requirement
+        [self.listener setConnectionCodeSigningRequirement:requirement];
+        
+        //dbg msg
+        os_log_debug(logHandle, "set XPC requirement %{public}@", requirement);
+        
     }
     
     //dbg msg
@@ -200,8 +218,8 @@ bail:
     //dbg msg
     os_log_debug(logHandle, "code signing flags, ok (`CS_RUNTIME` is set)");
     
-    //init signing req
-    requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\"", INSTALLER_ID, SIGNING_AUTH];
+    //init requirement
+    requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"2.0.0\"", INSTALLER_ID, SIGNING_AUTH];
     
     //step 1: create task ref
     // uses NSXPCConnection's (private) 'auditToken' iVar

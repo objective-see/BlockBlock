@@ -51,9 +51,6 @@ extern Preferences* preferences;
     // and handle process (auth exec) events
     result = es_new_client(&_endpointClient, ^(es_client_t *client, const es_message_t *message)
     {
-        //flag
-        BOOL isAlive = YES;
-        
         //event
         Event* event = nil;
         
@@ -70,12 +67,18 @@ extern Preferences* preferences;
         // user won't be able to respond anyways, so just allow :|
         if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
             
+            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short...",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC);
+            
+            //deny on timeout?
+            if([preferences.preferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] boolValue]) {
+                es_respond_auth_result(client, message, ES_AUTH_RESULT_DENY, false);
+                os_log_debug(logHandle, "blocking process (due to user preference)");
+            }
             //allow
-            [self allowProcessEvent:client message:(es_message_t*)message cache:false];
-            
-            //dbg msg
-            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short, so allowing process",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC);
-            
+            else {
+                es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, false);
+                os_log_debug(logHandle, "allowing process (due to user preference)");
+            }
             //done
             return;
         }
@@ -175,16 +178,20 @@ extern Preferences* preferences;
             if(0 != dispatch_semaphore_wait(deadlineSema, dispatch_time(DISPATCH_TIME_NOW, waitTime)))
             {
                 //err msg
-                os_log_error(logHandle, "ERROR: ES timeout (%llu seconds) about to be hit, forced to allow process", waitTime / NSEC_PER_SEC);
+                os_log_error(logHandle, "ERROR: ES timeout (%llu seconds) about to be hit, forced to take action", waitTime / NSEC_PER_SEC);
                 
                 //sync
                 @synchronized(self)
                 {
+                    //deny on timeout?
+                    if([preferences.preferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] boolValue]) {
+                        es_respond_auth_result(client, message, ES_AUTH_RESULT_DENY, false);
+                        os_log_debug(logHandle, "blocking process (due to user preference)");
+                    }
                     //allow
-                    if(YES != [self allowProcessEvent:client message:(es_message_t*)message cache:NO])
-                    {
-                        //err msg
-                        os_log_error(logHandle, "ERROR: failed to allow process");
+                    else {
+                        es_respond_auth_result(client, message, ES_AUTH_RESULT_ALLOW, false);
+                        os_log_debug(logHandle, "allowing process (due to user preference)");
                     }
                     
                     //sync
@@ -194,21 +201,14 @@ extern Preferences* preferences;
                         event.esClient = NULL;
                         
                         //release message
-                        if(@available(macOS 11.0, *))
-                        {
-                            //release
-                            if(NULL != event.esMessage)
-                            {
+                        if(@available(macOS 11.0, *)) {
+                            if(event.esMessage) {
                                 es_release_message(event.esMessage);
                             }
                         }
                         //free message
-                        else
-                        {
-                            //free
-                            if(NULL != event.esMessage)
-                            {
-                                //free
+                        else {
+                            if(event.esMessage) {
                                 es_free_message(event.esMessage);
                             }
                         }

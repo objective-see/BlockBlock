@@ -78,8 +78,7 @@ XPCDaemonClient* xpcDaemonClient;
         
         NSArray* args = NSProcessInfo.processInfo.arguments;
         NSMutableDictionary* initialPreferences = [NSMutableDictionary dictionary];
-        NSArray* prefKeys = @[PREF_NOTARIZATION_MODE, PREF_NOTARIZATION_ALL_MODE,
-                                  PREF_CLICKFIX_MODE, PREF_CLICKFIX_HEURISTICS_MODE];
+        NSArray* prefKeys = @[PREF_NOTARIZATION_MODE, PREF_NOTARIZATION_ALL_MODE, PREF_CLICKFIX_MODE, PREF_CLICKFIX_HEURISTICS_MODE];
             
         //extract set key/value pairs
         for(NSString* key in prefKeys) {

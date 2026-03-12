@@ -66,21 +66,47 @@ extern XPCDaemonClient* xpcDaemonClient;
             
         case TOOLBAR_PROTECTIONS:
             view = self.protectionsView;
+            
+            //notarization mode
             ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_MODE]).state = [self.preferences[PREF_NOTARIZATION_MODE] boolValue];
             
+            //notarization all mode
             ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ALL_MODE]).state = [self.preferences[PREF_NOTARIZATION_ALL_MODE] boolValue];
             
-            //disable child if parent is off
+            //es timeout mode
+            ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ES_TIMEOUT_MODE]).state = [self.preferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] boolValue];
+            
+            //disable childen if parent is off
             if(((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_MODE]).state == NSControlStateValueOff) {
+                
                 ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ALL_MODE]).enabled = NO;
+                
+                ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ES_TIMEOUT_MODE]).enabled = NO;
             }
             
+            //otherwise enable
+            else {
+                
+                ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ALL_MODE]).enabled = YES;
+                
+                ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ES_TIMEOUT_MODE]).enabled = YES;
+
+            }
+            
+            //click fix mode
             ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state = [self.preferences[PREF_CLICKFIX_MODE] boolValue];
+            
+            //click fix heuristics mode
             ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).state = [self.preferences[PREF_CLICKFIX_HEURISTICS_MODE] boolValue];
             
             //disable child if parent is off
             if(((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state == NSControlStateValueOff) {
                 ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).enabled = NO;
+            }
+            //otherwise enable
+            if(((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state == NSControlStateValueOff) {
+                
+                ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).enabled = YES;
             }
             
             break;
@@ -124,12 +150,26 @@ bail:
     //child
     NSButton* child = nil;
     
+    //children
+    NSMutableArray* children = [NSMutableArray array];
+    
     //notarization mode
     // toggle 'all' state off/on
     if(tag == BUTTON_NOTARIZATION_MODE) {
     
-        //get button
+        //get 'all' button
         child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_NOTARIZATION_ALL_MODE];
+        
+        if(child) {
+            [children addObject:child];
+        }
+        
+        //get 'es timeout' button
+        child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_NOTARIZATION_ES_TIMEOUT_MODE];
+        
+        if(child) {
+            [children addObject:child];
+        }
     }
     
     //ClickFix mode
@@ -138,10 +178,14 @@ bail:
     
         //get button
         child = (NSButton*)[self.protectionsView viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE];
+        
+        if(child) {
+            [children addObject:child];
+        }
     }
     
     //child logic
-    if(child) {
+    for(NSButton* child in children){
         
         //clear if parent is off
         if(state == NSControlStateValueOff) {
@@ -166,11 +210,12 @@ bail:
             break;
         
         //notarization mode
-        // toggle off child too
+        // toggle off children too
         case BUTTON_NOTARIZATION_MODE:
             updatedPreferences[PREF_NOTARIZATION_MODE] = @(state);
             if(state == NSControlStateValueOff) {
                 updatedPreferences[PREF_NOTARIZATION_ALL_MODE] = @(NSControlStateValueOff);
+                updatedPreferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] = @(NSControlStateValueOff);
             }
             break;
             
@@ -178,7 +223,12 @@ bail:
         case BUTTON_NOTARIZATION_ALL_MODE:
             updatedPreferences[PREF_NOTARIZATION_ALL_MODE] = @(state);
             break;
-         
+        
+        //notarization es timeout mode
+        case BUTTON_NOTARIZATION_ES_TIMEOUT_MODE:
+            updatedPreferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] = @(state);
+            break;
+            
         //ClickFix mode
         case BUTTON_CLICKFIX_MODE:
             updatedPreferences[PREF_CLICKFIX_MODE] = @(state);

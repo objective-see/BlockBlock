@@ -196,7 +196,7 @@
                     </textFieldCell>
                 </textField>
                 <button tag="4" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k0k-6Z-NO8">
-                    <rect key="frame" x="39" y="175" width="29" height="18"/>
+                    <rect key="frame" x="39" y="130" width="29" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="09U-MW-B2W">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -207,7 +207,7 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y70-84-Uhl">
-                    <rect key="frame" x="72" y="174" width="271" height="19"/>
+                    <rect key="frame" x="72" y="129" width="271" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Paste Protection ('ClickFix') Mode" id="Heh-2c-0AR">
                         <font key="font" size="13" name="Menlo-Bold"/>
@@ -216,7 +216,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="njg-h7-piE">
-                    <rect key="frame" x="72" y="146" width="475" height="30"/>
+                    <rect key="frame" x="72" y="101" width="475" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block and alert on content pasted into terminals." id="qzK-DW-u5y">
                         <font key="font" size="13" name="Menlo-Regular"/>
@@ -225,14 +225,14 @@
                     </textFieldCell>
                 </textField>
                 <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Vjq-sE-Fdv">
-                    <rect key="frame" x="74" y="234" width="506" height="58"/>
+                    <rect key="frame" x="74" y="174" width="506" height="118"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <view key="contentView" id="lvX-fp-F7y">
-                        <rect key="frame" x="0.0" y="0.0" width="506" height="58"/>
+                        <rect key="frame" x="0.0" y="0.0" width="506" height="118"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button tag="33" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7m6-iN-RYS">
-                                <rect key="frame" x="13" y="29" width="29" height="18"/>
+                                <rect key="frame" x="13" y="89" width="29" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="HAt-y8-0QR">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -243,7 +243,7 @@
                                 </connections>
                             </button>
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="N2E-s5-PSq">
-                                <rect key="frame" x="38" y="30" width="111" height="17"/>
+                                <rect key="frame" x="38" y="90" width="111" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="All programs" id="Nrb-nn-z6n">
                                     <font key="font" size="13" name="Menlo-Bold"/>
@@ -252,9 +252,38 @@
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="iF3-to-joZ">
-                                <rect key="frame" x="38" y="16" width="432" height="15"/>
+                                <rect key="frame" x="38" y="76" width="432" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Apply to all programs (not just downloaded ones)." id="uVV-OG-Glq">
+                                    <font key="font" size="13" name="Menlo-Regular"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button tag="34" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QeD-Fm-QYF">
+                                <rect key="frame" x="13" y="43" width="29" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2bv-if-cRp">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="menu" size="14"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="togglePreference:" target="-2" id="g5t-3p-Udj"/>
+                                </connections>
+                            </button>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="XdX-7h-lmC">
+                                <rect key="frame" x="38" y="44" width="251" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Block on timeout" id="wh6-xt-0nn">
+                                    <font key="font" size="13" name="Menlo-Bold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="471" translatesAutoresizingMaskIntoConstraints="NO" id="A3v-of-GiH">
+                                <rect key="frame" x="38" y="5" width="432" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If the Endpoint Security authorization deadline is reached, automatically deny the process." id="muo-Kf-Kiv">
                                     <font key="font" size="13" name="Menlo-Regular"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -264,7 +293,7 @@
                     </view>
                 </box>
                 <box fixedFrame="YES" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Tef-Zu-mRL">
-                    <rect key="frame" x="74" y="95" width="506" height="58"/>
+                    <rect key="frame" x="74" y="50" width="506" height="58"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <view key="contentView" id="hZb-SN-Pns">
                         <rect key="frame" x="0.0" y="0.0" width="506" height="58"/>

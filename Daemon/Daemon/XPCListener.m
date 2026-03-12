@@ -152,7 +152,7 @@ bail:
     //status
     OSStatus status = !errSecSuccess;
     
-    //
+    //os version
     NSOperatingSystemVersion macOS13 = {13,0,0};
     
     //audit token
