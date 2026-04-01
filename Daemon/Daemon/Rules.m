@@ -134,6 +134,10 @@ bail:
     //log msg
     os_log_debug(logHandle, "adding rule");
     
+    //sync to access
+    @synchronized(self.rules)
+    {
+        
     //existing rule?
     // can occur if multiple alerts & user approved (entire) process
     if(nil != (rule = [self find:event]))
@@ -187,6 +191,8 @@ bail:
     
     //happy
     added = YES;
+        
+    } //sync
     
 bail:
     

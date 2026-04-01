@@ -682,7 +682,7 @@ bail:
     
     //not temp rule & rules window visible?
     // then refresh it, as rules have changed
-    if( (YES != [alert[ALERT_TEMPORARY] boolValue]) &&
+    if( (YES != [alertResponse[ALERT_TEMPORARY] boolValue]) &&
         (YES == ((AppDelegate*)[[NSApplication sharedApplication] delegate]).rulesWindowController.window.isVisible) )
     {
         //(shortly thereafter) refresh rules window

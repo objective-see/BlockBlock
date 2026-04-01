@@ -104,8 +104,7 @@ extern XPCDaemonClient* xpcDaemonClient;
                 ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).enabled = NO;
             }
             //otherwise enable
-            if(((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state == NSControlStateValueOff) {
-                
+            if(((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state == NSControlStateValueOn) {
                 ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_HEURISTICS_MODE]).enabled = YES;
             }
             
@@ -321,8 +320,13 @@ bail:
     // 'updateResponse newVersion:' method will be called when check is done
     [update checkForUpdate:^(NSUInteger result, NSString* newVersion) {
         
-        //process response
-        [self updateResponse:result newVersion:newVersion];
+        //slight delay for UI
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            //process response
+            [self updateResponse:result newVersion:newVersion];
+            
+        });
         
     }];
     

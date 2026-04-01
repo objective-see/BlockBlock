@@ -272,7 +272,7 @@ NSMutableArray* generateProcessHierarchy(pid_t pid, NSString* name)
         //get name
         // first from bundle, then from executable
         parentName = parent[@"CFBundleName"];
-        if(0 == name.length)
+        if(!parentName.length)
         {
             //via executable
             parentName = [parent[@"CFBundleExecutable"] lastPathComponent];

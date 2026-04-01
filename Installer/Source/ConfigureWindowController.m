@@ -238,14 +238,14 @@ extern os_log_t logHandle;
                     //hide spinner
                     self.fdaActivityIndicator.hidden = YES;
                     
-                    //hide fda message
-                    self.fdaMessage.hidden = YES;
+                    //change fda message
+                    self.fdaMessage.stringValue = @"☑️ Full Disk Access: granted";
                     
                     //enable 'next' button
-                    ((NSButton*)[self.diskAccessView viewWithTag:ACTION_SHOW_SUPPORT]).enabled = YES;
+                    ((NSButton*)[self.diskAccessView viewWithTag:ACTION_SHOW_CONFIGURATIONS]).enabled = YES;
                     
                     //make it first responder
-                    [self.window makeFirstResponder:[self.diskAccessView viewWithTag:ACTION_SHOW_SUPPORT]];
+                    [self.window makeFirstResponder:[self.diskAccessView viewWithTag:ACTION_SHOW_CONFIGURATIONS]];
                 });
             });
             
@@ -523,7 +523,7 @@ extern os_log_t logHandle;
     return;
 }
 
-//handler for (additiona) protections buttons
+//handler for (additional) protections buttons
 -(IBAction)protectionsButtonHandler:(id)sender {
     
     //button tag

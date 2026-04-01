@@ -230,7 +230,7 @@ bail:
     //dbg msg
     os_log_debug(logHandle, "launch item was blocked, (fully? %d)", !blockingFailed);
 
-    return blockingFailed;
+    return !blockingFailed;
 }
 
 @end

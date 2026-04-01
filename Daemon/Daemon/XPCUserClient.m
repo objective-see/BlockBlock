@@ -75,7 +75,10 @@ bail:
     
     //sanity check
     // no client connection?
-    if(nil == xpcListener.client) reply([NSNumber numberWithInt:-1]);
+    if(nil == xpcListener.client) {
+        reply([NSNumber numberWithInt:-1]);
+        return;
+    }
     
     //send to user (client)
     [[xpcListener.client synchronousRemoteObjectProxyWithErrorHandler:^(NSError * proxyError)

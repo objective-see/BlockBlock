@@ -392,7 +392,7 @@ bail:
     }//sync
     
     //set flag
-    self.isRunning = YES;
+    self.isRunning = NO;
     
 bail:
     
