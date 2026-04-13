@@ -242,10 +242,17 @@ bail:
 -(void)allow:(Event*)event
 {
     //allow
-    if(YES != [self respond:event action:ES_AUTH_RESULT_ALLOW])
-    {
-        //err msg
+    if(YES != [self respond:event action:ES_AUTH_RESULT_ALLOW]) {
         os_log_error(logHandle, "ERROR: failed to allow %{public}@", event.process.name);
+    }
+    
+    //remove quarantine attributes
+    // so we won't (re)prompt user
+    if(event.process.path.length) {
+        removeQuarantine(event.process.path);
+    }
+    if(event.process.script.length){
+        removeQuarantine(event.process.script);
     }
     
     return;

@@ -43,15 +43,6 @@ extern os_log_t logHandle;
         self.window.titlebarAppearsTransparent = YES;
     }
     
-    //make first responder
-    // calling this without a timeout sometimes fails :/
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-        
-        //and make it first responder
-        [self.window makeFirstResponder:self.installButton];
-        
-    });
-
     //init configure object
     if(nil == self.configureObj)
     {
@@ -84,20 +75,11 @@ extern os_log_t logHandle;
     {
         //enable uninstall
         self.uninstallButton.enabled = YES;
-        
+
         //disable install
         self.installButton.enabled = NO;
-        
-        //make uninstall button first responder
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-            
-            //set first responder
-            [self.window makeFirstResponder:self.uninstallButton];
-            
-        });
-        
     }
-    
+
     //app already installed?
     // enable 'uninstall' button
     // change 'install' button to say 'upgrade'
@@ -105,18 +87,27 @@ extern os_log_t logHandle;
     {
         //enable uninstall
         self.uninstallButton.enabled = YES;
-        
+
         //set to upgrade
         self.installButton.title = ACTION_UPGRADE;
     }
-    
+
     //otherwise disable uninstall
     else
     {
         //disable
         self.uninstallButton.enabled = NO;
     }
-    
+
+    //make first responder
+    // calling this without a timeout sometimes fails :/
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+
+        //set first responder
+        [self.window makeFirstResponder:(self.installButton.isEnabled) ? self.installButton : self.uninstallButton];
+
+    });
+
     //set delegate
     [self.window setDelegate:self];
 

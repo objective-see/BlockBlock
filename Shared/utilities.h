@@ -43,6 +43,9 @@ uint64_t machTimeToNanoseconds(uint64_t machTime);
 //is item downloaded
 BOOL isDownloaded(NSString* path);
 
+//remove quarantine attributes
+BOOL removeQuarantine(NSString* path);
+
 #endif
 
 /* FUNCTIONS */
