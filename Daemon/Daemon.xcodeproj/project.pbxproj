@@ -551,12 +551,14 @@
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.4.4;
+				CURRENT_PROJECT_VERSION = 2.5.0;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Daemon/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BlockBlock;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -564,7 +566,7 @@
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.4.4;
+				MARKETING_VERSION = 2.5.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";
@@ -582,12 +584,14 @@
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Daemon/BlockBlock.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2.4.4;
+				CURRENT_PROJECT_VERSION = 2.5.0;
 				DEVELOPMENT_TEAM = VBG97UB4TA;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = VBG97UB4TA;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Daemon/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BlockBlock;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -595,7 +599,7 @@
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 2.4.4;
+				MARKETING_VERSION = 2.5.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDAEMON_BUILD=1";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.blockblock";

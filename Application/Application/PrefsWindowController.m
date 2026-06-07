@@ -35,7 +35,10 @@ extern XPCDaemonClient* xpcDaemonClient;
 -(void)awakeFromNib
 {
     //set title
-    self.window.title = [NSString stringWithFormat:@"BlockBlock v%@", getAppVersion()];
+    self.window.title = PRODUCT_NAME;
+    if(@available(macOS 11.0, *)) {
+        self.window.subtitle = @"Application Settings";
+    }
     
     //get prefs
     self.preferences = [xpcDaemonClient getPreferences];
@@ -92,6 +95,9 @@ extern XPCDaemonClient* xpcDaemonClient;
                 ((NSButton*)[view viewWithTag:BUTTON_NOTARIZATION_ES_TIMEOUT_MODE]).enabled = YES;
 
             }
+            
+            //block (downloaded) scripts
+            ((NSButton*)[view viewWithTag:BUTTON_BLOCK_SCRIPTS_MODE]).state = [self.preferences[PREF_BLOCK_SCRIPTS_MODE] boolValue];
             
             //click fix mode
             ((NSButton*)[view viewWithTag:BUTTON_CLICKFIX_MODE]).state = [self.preferences[PREF_CLICKFIX_MODE] boolValue];
@@ -226,6 +232,11 @@ bail:
         //notarization es timeout mode
         case BUTTON_NOTARIZATION_ES_TIMEOUT_MODE:
             updatedPreferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] = @(state);
+            break;
+        
+        //block (downloaded) scripts
+        case BUTTON_BLOCK_SCRIPTS_MODE:
+            updatedPreferences[PREF_BLOCK_SCRIPTS_MODE] = @(state);
             break;
             
         //ClickFix mode

@@ -195,29 +195,32 @@ bail:
 
 
 //stop monitors
+// always attempt to stop *all* monitors, even if one fails
 -(BOOL)stop
 {
     //flag
-    BOOL stopped = NO;
+    BOOL stopped = YES;
     
     //dbg msg
     os_log_debug(logHandle, "stopping file monitor...");
     
-    //stop
+    //stop file monitor
     if(YES != [self.fileMon stop])
     {
         //err msg
         os_log_error(logHandle, "ERROR: failed to stop file monitor");
         
-        //bail
-        goto bail;
+        //flag
+        stopped = NO;
+    }
+    else
+    {
+        //dbg msg
+        os_log_debug(logHandle, "stopped file monitor");
     }
     
     //unset
     self.fileMon = nil;
-    
-    //dbg msg
-    os_log_debug(logHandle, "stopped file monitor");
     
     //dbg msg
     os_log_debug(logHandle, "stopping process monitor...");
@@ -228,15 +231,17 @@ bail:
         //err msg
         os_log_error(logHandle, "ERROR: failed to stop process monitor");
         
-        //bail
-        goto bail;
+        //flag
+        stopped = NO;
+    }
+    else
+    {
+        //dbg msg
+        os_log_debug(logHandle, "stopped process monitor");
     }
     
     //unset
     self.processMonitor = nil;
-    
-    //dbg msg
-    os_log_debug(logHandle, "stopped process monitor");
     
     //stop BTM monitor
     if(nil != self.btmMonitor)
@@ -254,11 +259,6 @@ bail:
         os_log_debug(logHandle, "stopped btm monitor");
     }
     
-    //happy
-    stopped = YES;
-    
-bail:
-
     return stopped;
 }
 

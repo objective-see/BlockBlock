@@ -203,7 +203,7 @@ extern XPCDaemonClient* xpcDaemonClient;
     {
         //script?
         // show script (will be argv[1])
-        if( (YES == [self.alert[ALERT_MESSAGE] containsString:@"a non-notarized script"]) &&
+        if( (YES == [self.alert[ALERT_MESSAGE] containsString:@"a downloaded script"]) &&
             ([self.alert[ALERT_PROCESS_ARGS] count] > 1) )
         {
             //set (main) info

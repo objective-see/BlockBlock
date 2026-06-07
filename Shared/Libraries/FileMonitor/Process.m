@@ -34,6 +34,7 @@ extern os_log_t logHandle;
 
 //interpreters
 extern NSMutableSet* interpreters;
+extern NSMutableSet* interpreterNames;
 
 /* FUNCTIONS */
 
@@ -309,8 +310,12 @@ pid_t getParentID(pid_t child);
         if( (!self.script.length) &&
             (arguments.count >= 2) ) {
             
-            if( (self.signingID) &&
-                ([interpreters containsObject:self.signingID]) ) {
+            //match by signing ID (Apple) or executable name (ad-hoc/non-Apple, e.g. node)
+            BOOL isKnownInterpreter =
+                (self.signingID && [interpreters containsObject:self.signingID]) ||
+                (self.name && [interpreterNames containsObject:self.name]);
+            
+            if(isKnownInterpreter) {
                 
                 NSString* cwd = nil;
                 NSArray* scripts = nil;

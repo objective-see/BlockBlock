@@ -63,6 +63,13 @@ extern Preferences* preferences;
         //dbg msg
         //os_log_debug(logHandle, "new ES_EVENT_TYPE_AUTH_EXEC event");
         
+        //BlockBlock disabled?
+        // process is irrelvant, so allow (don't cache, so re-enable can alert)
+        if([preferences.preferences[PREF_IS_DISABLED] boolValue]) {
+            [self allowProcessEvent:client message:(es_message_t*)message cache:false];
+            return;
+        }
+        
         //if deadline is super short
         // user won't be able to respond anyways, so just allow :|
         if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
@@ -85,9 +92,10 @@ extern Preferences* preferences;
             return;
         }
         
-        //notarization mode off?
-        // process is irrelvant, so allow (and cache)
-        if(![preferences.preferences[PREF_NOTARIZATION_MODE] boolValue]) {
+        //both notarization mode and block-scripts mode off?
+        // process is irrelevant, so allow (and cache)
+        if(![preferences.preferences[PREF_NOTARIZATION_MODE] boolValue] &&
+           ![preferences.preferences[PREF_BLOCK_SCRIPTS_MODE] boolValue]) {
             
             //dbg msg
             //os_log_debug(logHandle, "allowing process, due to preferences (%{public}@)", preferences.preferences]);
@@ -107,11 +115,13 @@ extern Preferences* preferences;
         }
         
         //allow?
-        // and cache
+        // don't cache interpreter+script events: cache key is the interpreter binary, but verdict
+        // depends on the script; caching would silently allow/block all future script invocations.
         if([plugin shouldIgnore:process message:(es_message_t *)message]) {
             
-            os_log_debug(logHandle, "allowing (and caching) %{public}@", process);
-            [self allowProcessEvent:client message:(es_message_t*)message cache:true];
+            BOOL cache = (0 == process.script.length);
+            os_log_debug(logHandle, "allowing %{public}@ (cache: %d)", process, cache);
+            [self allowProcessEvent:client message:(es_message_t*)message cache:cache];
 
             return;
         }

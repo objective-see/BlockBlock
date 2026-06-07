@@ -49,6 +49,32 @@ XPCDaemonClient* xpcDaemonClient;
     //flag
     BOOL autoLaunched = NO;
     
+    //single-instance guard
+    // if another instance is already running, ask it to show prefs and exit
+    for(NSRunningApplication* process in [NSRunningApplication runningApplicationsWithBundleIdentifier:MAIN_APP_ID])
+    {
+        //skip self
+        if(process.processIdentifier == NSRunningApplication.currentApplication.processIdentifier)
+        {
+            continue;
+        }
+        
+        os_log(logHandle, "another BlockBlock instance is already running (pid: %d); activating it and exiting", process.processIdentifier);
+        
+        //ask original to show prefs (cross-instance)
+        [NSDistributedNotificationCenter.defaultCenter postNotificationName:SHOW_PREFS_NOTIFICATION object:nil userInfo:nil deliverImmediately:YES];
+        
+        //bring original to front
+        [process activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+        
+        //exit this instance
+        [NSApp terminate:nil];
+        return;
+    }
+    
+    //listen for show-prefs requests from other (duplicate) instances
+    [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(showPreferences:) name:SHOW_PREFS_NOTIFICATION object:nil];
+    
     //allowed pids ('Click Fix' monitor)
     self.allowedTerminalPIDs = [NSMutableSet set];
     

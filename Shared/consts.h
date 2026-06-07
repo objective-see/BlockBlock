@@ -138,6 +138,9 @@
 #define PREF_NOTARIZATION_ALL_MODE @"notarizationAllMode"
 #define PREF_NOTARIZATION_ES_TIMEOUT_MODE @"notarizationESTimeoutMode"
 
+//alert on any downloaded script (independent of notarization mode)
+#define PREF_BLOCK_SCRIPTS_MODE @"blockScripts"
+
 //prefs
 // (block) click fix mode
 #define PREF_CLICKFIX_MODE @"clickFixMode"
@@ -158,6 +161,9 @@
 
 //rules changed
 #define RULES_CHANGED @"com.objective-see.blockblock.rulesChanged"
+
+//show preferences (cross-instance, via NSDistributedNotificationCenter)
+#define SHOW_PREFS_NOTIFICATION @"com.objective-see.blockblock.showPrefs"
 
 //first time flag
 #define INITIAL_LAUNCH @"-initialLaunch"
@@ -359,6 +365,9 @@ typedef enum {
 
 //action on ES timeout
 #define BUTTON_NOTARIZATION_ES_TIMEOUT_MODE 34
+
+//'block scripts' button
+#define BUTTON_BLOCK_SCRIPTS_MODE 35
 
 //(block) 'ClickFix' mode
 #define BUTTON_CLICKFIX_MODE 4

@@ -23,8 +23,12 @@ extern os_log_t logHandle;
 //prefs obj
 extern Preferences* preferences;
 
-//interpreters
+//interpreter signing IDs (Apple platform binaries)
 NSMutableSet* interpreters = nil;
+
+//interpreter executable names
+// used for ad-hoc / non-Apple signed interpreters (node, etc.) where signingID isn't reliable
+NSMutableSet* interpreterNames = nil;
 
 @implementation Processes
 
@@ -47,48 +51,58 @@ NSMutableSet* interpreters = nil;
         interpreters = [NSMutableSet setWithArray:@[
             @"com.apple.zsh", @"com.apple.bash", @"com.apple.python", @"com.apple.python2", @"com.apple.python3", @"com.apple.pythonw", @"com.apple.osascript"
         ]];
+        
+        //init w/ ad-hoc / non-Apple signed interpreters (matched by name)
+        interpreterNames = [NSMutableSet setWithArray:@[
+            @"node"
+        ]];
     }
 
     return self;
 }
 
 //should process be ignored?
-// checks notarization status, quarantined (and not user approved), etc.
+// scripts: handled independently via PREF_BLOCK_SCRIPTS_MODE
+// binaries: handled via notarization mode (default + all)
 -(BOOL)shouldIgnore:(Process*)process message:(es_message_t *)message {
     
     os_log_debug(logHandle, "'%s' invoked", __PRETTY_FUNCTION__);
     
-    //platfrom binary?
-    // downloaded script: not allowed
-    // no script / local script: allowed
-    // note: this is only time we have to check script
-    if(process.isPlatformBinary.boolValue) {
-       
-        //downloaded script?
-        if(isDownloaded(process.script)) {
+    //running a script?
+    // script check fires only on (block-scripts mode + downloaded);
+    // otherwise fall through so the *interpreter* binary still gets notarization-checked
+    if(process.script.length) {
+        
+        //user opted into blocking downloaded scripts?
+        if([preferences.preferences[PREF_BLOCK_SCRIPTS_MODE] boolValue] &&
+           isDownloaded(process.script)) {
             os_log_debug(logHandle, "%{public}@ is a downloaded script, so *will not* ignore", process.script);
             
             self.lastScript = process;
             return NO;
         }
-        //no || no downloaded script
-        else {
-            os_log_debug(logHandle, "%{public}@ is platform binary (with no/no downloaded script), so will ignore", process.name);
-            return YES;
-        }
+        
+        //script monitoring off, or script not downloaded
+        // fall through to binary/notarization checks on the interpreter itself
+        os_log_debug(logHandle, "%{public}@ running script: script check didn't fire, evaluating interpreter binary", process.name);
     }
     
-    //now, we're dealing w/ non-platform binaries
+    //binary checks (also apply to interpreter when script check didn't fire above)
+    
+    //platform binary?
+    // always allow
+    if(process.isPlatformBinary.boolValue) {
+        os_log_debug(logHandle, "%{public}@ is a platform binary, will ignore", process.name);
+        return YES;
+    }
     
     //App Store?
-    // always allow (same same as "notarized")
+    // always allow (same as "notarized")
     if(AppStore == [process.signingInfo[KEY_SIGNATURE_SIGNER] intValue]) {
         os_log_debug(logHandle, "%{public}@ is from App Store, so will ignore", process.name);
         return YES;
     }
 
-    //now, not from app store
-    
     //Notarized?
     // allowed (in any mode)
     if([process.signingInfo[KEY_SIGNING_IS_NOTARIZED] boolValue]) {
@@ -96,7 +110,7 @@ NSMutableSet* interpreters = nil;
         return YES;
     }
     
-    //now, not notarized program
+    //non-notarized binary
 
     //All-mode?
     // don't ignore non-notarized
@@ -105,19 +119,13 @@ NSMutableSet* interpreters = nil;
         return NO;
     }
     
-    //now, not in 'all' mode
-
-    //Normal mode?
-    // allow if not downloaded
+    //default mode: only alert if downloaded
     if(!isDownloaded(process.path)) {
         os_log_debug(logHandle, "%{public}@ is not downloaded (and 'all' mode is not set), so will ignore", process.name);
         return YES;
     }
     
-    //now, is downloaded
-
-    //Downloaded
-    // + non-notarized
+    //downloaded + non-notarized binary
     return NO;
 }
 
@@ -189,7 +197,7 @@ bail:
     if(nil != event.process.script)
     {
         //customize
-        alert = @"is attempting to run a non-notarized script";
+        alert = @"is attempting to run a downloaded script";
     }
     
     return alert;
@@ -286,7 +294,10 @@ bail:
         }
             
         //take action
-        result = es_respond_auth_result(event.esClient, event.esMessage, action, true);
+        // don't cache for interpreter+script events: the verdict applies to *this* script,
+        // not the interpreter binary. caching would auto-apply to all future scripts.
+        BOOL cache = (0 == event.process.script.length);
+        result = es_respond_auth_result(event.esClient, event.esMessage, action, cache);
         if(ES_RESPOND_RESULT_SUCCESS != result)
         {
             //err msg
