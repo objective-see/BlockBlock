@@ -115,20 +115,22 @@ bail:
         }
     }
     
-    //protection-affecting pref changed?
-    // clear cache so previously-cached processes get re-evaluated under new prefs
-    //  - passive mode toggled off (was allowing everything, now alerting)
-    //  - notarization mode toggled (either direction)
-    //  - block-scripts mode toggled (either direction)
-    if( ((nil != [updates objectForKey:PREF_PASSIVE_MODE]) &&
-         (YES != [updates[PREF_PASSIVE_MODE] boolValue])) ||
-        (nil != [updates objectForKey:PREF_NOTARIZATION_MODE]) ||
-        (nil != [updates objectForKey:PREF_BLOCK_SCRIPTS_MODE]) )
+    //passive mode toggled off?
+    // was allowing everything (cached); now needs re-evaluation
+    if( (nil != updates[PREF_PASSIVE_MODE]) &&
+        (![updates[PREF_PASSIVE_MODE] boolValue]) )
     {
-        //dbg msg
-        os_log_debug(logHandle, "protection-affecting pref changed, so clearing (ES) cache");
-        
-        //clear cache
+        os_log_debug(logHandle, "passive mode toggled off, so clearing (ES) cache");
+        [monitor.processMonitor clearCache];
+    }
+    
+    //notarization or block-scripts mode changed?
+    // verdict for previously-cached processes may differ under new prefs
+    if( (nil != updates[PREF_NOTARIZATION_MODE]) ||
+        (nil != updates[PREF_NOTARIZATION_ALL_MODE]) ||
+        (nil != updates[PREF_BLOCK_SCRIPTS_MODE]) )
+    {
+        os_log_debug(logHandle, "notarization/block-scripts mode changed, so clearing (ES) cache");
         [monitor.processMonitor clearCache];
     }
 

@@ -192,11 +192,12 @@ bail:
     //init to default
     alert = self.alertMsg;
     
-    //script?
-    // customize alert msg
-    if(nil != event.process.script)
+    //script the actual trigger?
+    // (i.e. block-scripts mode on + script downloaded — not just "process happens to have a script")
+    if( event.process.script.length &&
+        [preferences.preferences[PREF_BLOCK_SCRIPTS_MODE] boolValue] &&
+        isDownloaded(event.process.script) )
     {
-        //customize
         alert = @"is attempting to run a downloaded script";
     }
     
