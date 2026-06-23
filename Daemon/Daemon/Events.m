@@ -50,7 +50,7 @@ XPCUserClient* xpcUserClient;
         
         /*
         //register listener for new client/user (login item)
-        // when it fires, deliver any alerts that occured when user wasn't logged in
+        // when it fires, deliver any alerts that occurred when user wasn't logged in
         self.userObserver = [[NSNotificationCenter defaultCenter] addObserverForName:USER_NOTIFICATION object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification)
         {
             //grab console user
