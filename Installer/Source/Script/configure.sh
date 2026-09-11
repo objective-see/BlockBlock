@@ -76,6 +76,10 @@ if [ "${1}" == "-install" ]; then
         
     fi
 
+    #remove quarantine from installed files (macOS 27+ launchd won't load a quarantined plist)
+    xattr -rd com.apple.quarantine "$INSTALL_DIRECTORY" "/Library/LaunchDaemons/com.objective-see.blockblock.plist" "/Applications/BlockBlock Helper.app" 2>/dev/null
+    echo "removed quarantine attribute(s)"
+
     echo "install complete"
     exit 0
 

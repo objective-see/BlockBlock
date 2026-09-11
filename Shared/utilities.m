@@ -1681,6 +1681,36 @@ void makeTextViewHyperlink(NSTextField* textField, NSURL* url)
     return;
 }
 
+//remove quarantine attributes
+BOOL removeQuarantine(NSString* path) {
+    
+    //sanity check
+    if(!path.length) {
+        return NO;
+    }
+    
+    //remove
+    if(0 != removexattr(path.fileSystemRepresentation, "com.apple.quarantine", 0)) {
+
+        //not an error if attribute wasn't found
+        // or if file is on a read-only volume (e.g. /bin/bash)
+        if(ENOATTR == errno || EPERM == errno) {
+            os_log_debug(logHandle, "quarantine attribute not removed from %{public}@ (errno: %d)", path, errno);
+            return YES;
+        }
+
+        //err msg
+        os_log_error(logHandle, "ERROR: failed to remove quarantine from %{public}@ (%d)", path, errno);
+
+        return NO;
+    }
+    
+    //dbg msg
+    os_log_debug(logHandle, "removed quarantine from %{public}@", path);
+    
+    return YES;
+}
+
 #ifdef DAEMON_BUILD
 
 //get current working directory of process
@@ -1774,36 +1804,6 @@ BOOL isDownloaded(NSString* path) {
         os_log_debug(logHandle, "%{public}@ is quarantined, but user approved", path);
         return NO;
     }
-    
-    return YES;
-}
-
-//remove quarantine attributes
-BOOL removeQuarantine(NSString* path) {
-    
-    //sanity check
-    if(!path.length) {
-        return NO;
-    }
-    
-    //remove
-    if(0 != removexattr(path.fileSystemRepresentation, "com.apple.quarantine", 0)) {
-
-        //not an error if attribute wasn't found
-        // or if file is on a read-only volume (e.g. /bin/bash)
-        if(ENOATTR == errno || EPERM == errno) {
-            os_log_debug(logHandle, "quarantine attribute not removed from %{public}@ (errno: %d)", path, errno);
-            return YES;
-        }
-
-        //err msg
-        os_log_error(logHandle, "ERROR: failed to remove quarantine from %{public}@ (%d)", path, errno);
-
-        return NO;
-    }
-    
-    //dbg msg
-    os_log_debug(logHandle, "removed quarantine from %{public}@", path);
     
     return YES;
 }

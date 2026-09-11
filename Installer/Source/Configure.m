@@ -306,6 +306,14 @@ bail:
         goto bail;
     }
     
+    //remove quarantine from (embedded) helper, otherwise everything it installs will be quarantined too
+    if(YES != removeQuarantine([NSBundle.mainBundle.bundlePath stringByAppendingPathComponent:[@"Contents/Library/LaunchServices" stringByAppendingPathComponent:CONFIG_HELPER_ID]]))
+    {
+        //err msg
+        // ...but not fatal, so continue
+        os_log_error(logHandle, "ERROR: failed to remove quarantine attribute from embedded helper");
+    }
+    
     //bless
     if(YES != (BOOL)SMJobBless(kSMDomainSystemLaunchd, (__bridge CFStringRef)(CONFIG_HELPER_ID), authRef, &error))
     {
