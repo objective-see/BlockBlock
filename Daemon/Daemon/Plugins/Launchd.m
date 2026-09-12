@@ -12,6 +12,9 @@
 #import "Consts.h"
 #import "Utilities.h"
 
+#import <fcntl.h>
+#import <sys/stat.h>
+
 /* GLOBALS */
 
 //log handle
@@ -132,7 +135,8 @@ bail:
 }
 
 //block launch item
-// unload, then delete plist, and finally kill binary it references
+// unload (which terminates its process), then delete plist
+// note: we don't kill by (plist-specified, so attacker-controlled) path, as that could kill arbitrary processes
 -(BOOL)block:(Event*)event;
 {
     //flag
@@ -141,58 +145,121 @@ bail:
     //task results
     NSDictionary* results = nil;
     
-    //error
-    NSError* error = nil;
-        
     //plist
     NSString* propertyList = nil;
+    
+    //plist's directory (fd)
+    int directoryFD = -1;
+    
+    //plist (fd)
+    int plistFD = -1;
+    
+    //plist's directory (stat)
+    struct stat directoryStat = {0};
+    
+    //plist contents
+    NSDictionary* contents = nil;
+    
+    //launchd domain/label
+    NSString* target = nil;
     
     //extract plist
     propertyList = event.file.destinationPath;
     
     //dbg msg
     os_log_debug(logHandle, "PLUGIN %{public}@: blocking %{public}@", NSStringFromClass([self class]), propertyList);
-
-
-    //STEP 1: unload launch item (via launchctl)
     
-    //unload via 'launchctl'
-    results = execTask(LAUNCHCTL, @[@"unload", propertyList], YES, NO);
-    if( (nil == results[EXIT_CODE]) ||
-        (noErr != [results[EXIT_CODE] intValue]) )
+    //STEP 0: open plist's directory, refusing to follow symlinks in *any* path component
+    // ...as the path is user-controlled (e.g. ~/Library/LaunchAgents) and could be swapped between alert & block
+    // then hold the fd for the remaining steps, so the path can't be changed underneath us
+    directoryFD = open(propertyList.stringByDeletingLastPathComponent.fileSystemRepresentation, O_RDONLY | O_DIRECTORY | O_NOFOLLOW_ANY);
+    if(-1 == directoryFD)
     {
         //err msg
-        os_log_error(logHandle, "failed to unload %{public}@, error: %{public}@", propertyList, results[EXIT_CODE]);
+        os_log_error(logHandle, "ERROR: failed to open directory of %{public}@ (error: %d) ...symlink?", propertyList, errno);
         
         //set flag
         blockingFailed = YES;
         
-        //don't bail since still want to delete, etc
+        //bail
+        goto bail;
     }
-    //dbg msg
-    #ifdef DEBUG
+    
+    //STEP 1: unload launch item (via launchctl)
+    // read plist (via fd) to get label, and unload in the correct domain
+    // note: don't pass the path to launchctl, as it would be subject to the same (symlink) race
+    plistFD = openat(directoryFD, propertyList.lastPathComponent.fileSystemRepresentation, O_RDONLY | O_NOFOLLOW);
+    if(-1 != plistFD)
+    {
+        //read/parse
+        contents = [NSPropertyListSerialization propertyListWithData:[[[NSFileHandle alloc] initWithFileDescriptor:plistFD closeOnDealloc:NO] readDataToEndOfFile] options:NSPropertyListImmutable format:nil error:nil];
+        
+        //close
+        close(plistFD);
+    }
+    
+    //label?
+    if([contents[@"Label"] isKindOfClass:[NSString class]])
+    {
+        //launch daemon?
+        // system domain
+        if(YES == [propertyList containsString:@"/LaunchDaemons/"])
+        {
+            //init
+            target = [NSString stringWithFormat:@"system/%@", contents[@"Label"]];
+        }
+        //launch agent
+        // gui domain of the plist's owner (or console user for /Library/LaunchAgents)
+        else
+        {
+            //init
+            target = [NSString stringWithFormat:@"gui/%u/%@", ( (0 == fstat(directoryFD, &directoryStat)) && (0 != directoryStat.st_uid) ) ? directoryStat.st_uid : getConsoleUserID(), contents[@"Label"]];
+        }
+        
+        //unload via 'launchctl'
+        results = execTask(LAUNCHCTL, @[@"bootout", target], YES, NO);
+        if( (nil == results[EXIT_CODE]) ||
+            (noErr != [results[EXIT_CODE] intValue]) )
+        {
+            //err msg
+            os_log_error(logHandle, "failed to unload %{public}@, error: %{public}@", target, results[EXIT_CODE]);
+            
+            //set flag
+            blockingFailed = YES;
+            
+            //don't bail since still want to delete, etc
+        }
+        //dbg msg
+        #ifdef DEBUG
+        else
+        {
+            //dbg msg
+            os_log_debug(logHandle, "unloaded %{public}@", target);
+        }
+        #endif
+    }
+    //no label
     else
     {
-        //dbg msg
-        os_log_debug(logHandle, "unloaded %{public}@", propertyList);
+        //err msg
+        os_log_error(logHandle, "ERROR: failed to read label from %{public}@, so cannot unload", propertyList);
+        
+        //set flag
+        blockingFailed = YES;
     }
-    #endif
-    
     
     //STEP 2: delete the launch item's plist
-    
-    //delete
-    if(YES != [[NSFileManager defaultManager] removeItemAtPath:propertyList error:&error])
+    // relative to the (held) directory fd
+    if(0 != unlinkat(directoryFD, propertyList.lastPathComponent.fileSystemRepresentation, 0))
     {
         //err msg
-        os_log_error(logHandle, "ERROR: failed to delete %{public}@ (%{public}@)", propertyList, error);
+        os_log_error(logHandle, "ERROR: failed to delete %{public}@ (error: %d)", propertyList, errno);
         
         //set flag
         blockingFailed = YES;
         
-        //don't bail since still want to kill binary...
+        //don't bail (nothing left to do, but fall through to cleanup)
     }
-    
     //dbg msg
     #ifdef DEBUG
     else
@@ -202,29 +269,13 @@ bail:
     }
     #endif
     
+bail:
     
-    //STEP 3: kill launch item process
-    
-    //find any/all processes
-    for(NSNumber* pid in getProcessIDs(event.item.object, -1))
+    //close directory
+    if(-1 != directoryFD)
     {
-        //kill
-        if(noErr != kill(pid.intValue, SIGKILL))
-        {
-            //err msg
-            os_log_error(logHandle, "failed to kill %{public}@:%{public}@ (error: %d)", pid, event.item.object, errno);
-            
-            //set flag
-            blockingFailed = YES;
-        }
-        //dbg msg
-        #ifdef DEBUG
-        else
-        {
-            //dbg msg
-            os_log_debug(logHandle, "killed %{public}@:%{public}@", pid, event.item.object);
-        }
-        #endif
+        //close
+        close(directoryFD);
     }
     
     //dbg msg

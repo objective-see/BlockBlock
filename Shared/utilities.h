@@ -92,6 +92,9 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth);
 //get name of logged in user
 NSString* getConsoleUser(void);
 
+//get uid of logged in user
+uid_t getConsoleUserID(void);
+
 //start app with options
 BOOL startApplication(NSURL* appPath, NSUInteger launchOptions);
 

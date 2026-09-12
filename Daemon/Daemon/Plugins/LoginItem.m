@@ -339,7 +339,8 @@ bail:
     [xpcUserClient removeLoginItem:[NSURL fileURLWithPath:event.item.object] reply:^(NSNumber *result)
     {
         //save result
-        wasBlocked = (BOOL)(result.intValue == 0);
+        // 1: removed, 0: removal failed, -1: xpc error
+        wasBlocked = (BOOL)(result.intValue == 1);
         
     }];
     

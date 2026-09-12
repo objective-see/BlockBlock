@@ -343,7 +343,7 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
     SecRequirementRef requirementRef = NULL;
     
     //init signing req string
-    requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"1.0.0\"", INSTALLER_ID, signingAuth];
+    requirement = [NSString stringWithFormat:@"anchor apple generic and identifier \"%@\" and certificate leaf [subject.CN] = \"%@\" and info [CFBundleShortVersionString] >= \"2.0.0\"", INSTALLER_ID, signingAuth];
     
     //create static code
     status = SecStaticCodeCreateWithPath((__bridge CFURLRef)([NSURL fileURLWithPath:path]), kSecCSDefaultFlags, &staticCode);
@@ -365,7 +365,8 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
     }
     
     //check if file is signed w/ apple dev id by checking if it conforms to req string
-    status = SecStaticCodeCheckValidity(staticCode, kSecCSDefaultFlags, requirementRef);
+    // deep (nested code, resources, all archs) + strict, as this app will run as root
+    status = SecStaticCodeCheckValidity(staticCode, kSecCSCheckNestedCode | kSecCSStrictValidate | kSecCSCheckAllArchitectures, requirementRef);
     if(noErr != status)
     {
         os_log_error(logHandle, "ERROR: 'SecStaticCodeCheckValidity failed with %d/%#x", status, status);
@@ -401,6 +402,18 @@ NSString* getConsoleUser(void)
 {
     //copy/return user
     return CFBridgingRelease(SCDynamicStoreCopyConsoleUser(NULL, NULL, NULL));
+}
+
+//get uid of logged in user
+uid_t getConsoleUserID(void)
+{
+    //uid
+    uid_t uid = 0;
+    
+    //get uid
+    CFRelease(SCDynamicStoreCopyConsoleUser(NULL, &uid, NULL));
+    
+    return uid;
 }
 
 //get process name

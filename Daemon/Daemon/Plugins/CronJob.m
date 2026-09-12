@@ -64,10 +64,12 @@ extern os_log_t logHandle;
 
 //is a file a match?
 // just check if file has prefix
+// ...and isn't crontab(1)'s transient 'tmp.<pid>' file (which is renamed into place, triggering another event)
 -(BOOL)isMatch:(File*)file
 {
-    //has prefix?
-    return [file.destinationPath hasPrefix:self.watchPath];
+    //has prefix (and not temp file)?
+    return ( (YES == [file.destinationPath hasPrefix:self.watchPath]) &&
+             (YES != [file.destinationPath.lastPathComponent hasPrefix:@"tmp."]) );
 }
 
 //check cron jobs
@@ -150,6 +152,12 @@ extern os_log_t logHandle;
     //index of cron job to be blocked
     NSUInteger index = NSNotFound;
     
+    //file's (original) permissions
+    NSNumber* permissions = nil;
+    
+    //error
+    NSError* error = nil;
+    
     //dbg msg
     os_log_debug(logHandle, "'%s' invoked with %{public}@", __PRETTY_FUNCTION__, event);
     
@@ -180,8 +188,27 @@ extern os_log_t logHandle;
     //dbg msg
     os_log_debug(logHandle, "cron jobs, after; %{public}@", [jobs componentsJoinedByString:@"\n"]);
     
+    //grab file's (original) permissions
+    // as atomic write creates a new file (w/ default mode), so preserve original (0600)
+    permissions = [[NSFileManager defaultManager] attributesOfItemAtPath:event.file.destinationPath error:nil][NSFilePosixPermissions];
+    
     //update file
-    [[jobs componentsJoinedByString:@"\n"] writeToFile:event.file.destinationPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    // note: cron requires a trailing newline (otherwise last line is rejected)
+    if(YES != [[[jobs componentsJoinedByString:@"\n"] stringByAppendingString:@"\n"] writeToFile:event.file.destinationPath atomically:YES encoding:NSUTF8StringEncoding error:&error])
+    {
+        //err msg
+        os_log_error(logHandle, "ERROR: failed to update %{public}@ (%{public}@)", event.file.destinationPath, error);
+        
+        //bail
+        goto bail;
+    }
+    
+    //restore (original) permissions
+    if(nil != permissions)
+    {
+        //set
+        [[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions:permissions} ofItemAtPath:event.file.destinationPath error:nil];
+    }
     
     //dbg msg
     os_log_debug(logHandle, "updated %{public}@", event.file.destinationPath);

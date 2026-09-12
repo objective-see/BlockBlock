@@ -38,6 +38,9 @@
 
 //load/unload launch daemon
 // calls into helper via XPC
+//wait for launch daemon to start
+-(BOOL)waitForDaemon:(NSTimeInterval)timeout;
+
 -(BOOL)toggleDaemon:(BOOL)shouldLoad;
 
 //check if daemon has FDA

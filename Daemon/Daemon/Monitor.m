@@ -430,30 +430,35 @@ bail:
     
 bail:
     
-    @synchronized (event) {
-        
-        //not delivered?
-        // free es message
-        if( (YES != wasDelivered) &&
-            (NULL != event.esMessage) )
-        {
-            //release message
-            if(@available(macOS 11.0, *))
+    //not delivered?
+    // release es message (via event, or directly if we bailed before creating the event)
+    if(YES != wasDelivered)
+    {
+        @synchronized (event) {
+            
+            //message to release
+            es_message_t* unusedMessage = (nil != event) ? event.esMessage : message;
+            if(NULL != unusedMessage)
             {
-                //release
-                es_release_message(event.esMessage);
-            }
-            //free message
-            else
-            {
-                //free
-                es_free_message(event.esMessage);
+                //release message
+                if(@available(macOS 11.0, *))
+                {
+                    //release
+                    es_release_message(unusedMessage);
+                }
+                //free message
+                else
+                {
+                    //free
+                    es_free_message(unusedMessage);
+                }
+                
+                //unset
+                event.esMessage = NULL;
             }
             
-            //unset
-            event.esMessage = NULL;
-        }
-    } //sync
+        } //sync
+    }
     
     return;
 }

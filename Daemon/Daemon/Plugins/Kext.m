@@ -209,7 +209,7 @@ bail:
     //dbg msg
     os_log_debug(logHandle, "kext was blocked, (fully? %d)", !blockingFailed);
     
-    return blockingFailed;
+    return !blockingFailed;
 }
 
 @end

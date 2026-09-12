@@ -25,6 +25,14 @@ extern Events* events;
 extern Monitor* monitor;
 extern Preferences* preferences;
 
+//nanoseconds until (ES) deadline
+// zero if deadline has already passed (avoids unsigned underflow -> huge wait -> ES kills us)
+static uint64_t nanosecondsUntilDeadline(uint64_t deadline)
+{
+    uint64_t now = mach_absolute_time();
+    return (deadline > now) ? machTimeToNanoseconds(deadline - now) : 0;
+}
+
 @implementation ProcessMonitor
 
 //start process monitor
@@ -70,13 +78,14 @@ extern Preferences* preferences;
             return;
         }
         
-        //if deadline is super short
+        //if deadline is super short (or already passed)
         // user won't be able to respond anyways, so just allow :|
-        if((machTimeToNanoseconds(message->deadline - mach_absolute_time())) < (2.5 * NSEC_PER_SEC)) {
+        uint64_t remaining = nanosecondsUntilDeadline(message->deadline);
+        if(remaining < (2.5 * NSEC_PER_SEC)) {
             
             NSString* path = convertStringToken(&message->event.exec.target->executable->path);
         
-            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short for %@",  machTimeToNanoseconds(message->deadline - mach_absolute_time()) / NSEC_PER_SEC, path);
+            os_log_debug(logHandle, "ES timeout (%llu seconds) is too short for %@", remaining / NSEC_PER_SEC, path);
             
             //deny on timeout?
             if([preferences.preferences[PREF_NOTARIZATION_ES_TIMEOUT_MODE] boolValue]) {
@@ -181,9 +190,10 @@ extern Preferences* preferences;
             //dbg msg
             os_log_debug(logHandle, "alert delivered, waiting for response...");
             
-            //wait time
-            // note: we've already checked to make sure it's at least 2.5 seconds
-            uint64_t waitTime = machTimeToNanoseconds(message->deadline - mach_absolute_time()) - (2.0 * NSEC_PER_SEC);
+            //wait time: until 2 seconds before the deadline
+            // note: time has passed since the initial check, so clamp to zero (i.e. take default action now)
+            uint64_t remaining = nanosecondsUntilDeadline(message->deadline);
+            uint64_t waitTime = (remaining > (2.0 * NSEC_PER_SEC)) ? (remaining - (2.0 * NSEC_PER_SEC)) : 0;
             
             //wait till close to timeout
             // if haven't hit, just allow, otherwise we'll be killed

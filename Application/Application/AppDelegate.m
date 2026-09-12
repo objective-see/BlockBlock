@@ -51,7 +51,7 @@ XPCDaemonClient* xpcDaemonClient;
     
     //single-instance guard
     // if another instance is already running, ask it to show prefs and exit
-    for(NSRunningApplication* process in [NSRunningApplication runningApplicationsWithBundleIdentifier:MAIN_APP_ID])
+    for(NSRunningApplication* process in [NSRunningApplication runningApplicationsWithBundleIdentifier:HELPER_ID])
     {
         //skip self
         if(process.processIdentifier == NSRunningApplication.currentApplication.processIdentifier)
@@ -107,10 +107,11 @@ XPCDaemonClient* xpcDaemonClient;
         NSArray* prefKeys = @[PREF_NOTARIZATION_MODE, PREF_NOTARIZATION_ALL_MODE, PREF_CLICKFIX_MODE, PREF_CLICKFIX_HEURISTICS_MODE];
             
         //extract set key/value pairs
+        // note: only honor 'enable' (as anybody can launch us w/ args, so never allow disabling protections this way)
         for(NSString* key in prefKeys) {
             NSUInteger index = [args indexOfObject:key];
-            if(index != NSNotFound && index + 1 < args.count) {
-                initialPreferences[key] = @([args[index + 1] integerValue]);
+            if(index != NSNotFound && index + 1 < args.count && 0 != [args[index + 1] integerValue]) {
+                initialPreferences[key] = @YES;
             }
         }
         
@@ -887,78 +888,72 @@ bail:
     //lower case
     NSString *lower = clipboard.lowercaseString;
     
-    //compile regexes once
-    static NSRegularExpression* pipeToShellRegex = nil;
-    static NSRegularExpression* base64DecodeRegex = nil;
-    static NSRegularExpression* curlExecRegex = nil;
-    static NSRegularExpression* osascriptRegex = nil;
-    static NSRegularExpression* inlineExecRegex = nil;
+    //interpreter token
+    // optional sudo/path/env, and can't be glued to a preceding word char, '.' or '-' (so 'install.sh' isn't 'sh')
+    #define INTERPRETER @"(?<![\\w.\\-])(?:sudo\\s+)?(?:/\\S*/)?(?:env\\s+)?(?:sh|bash|zsh|ksh|dash|fish|python[0-9.]*|perl|ruby|node|php|osascript)\\b"
     
+    //fetcher token
+    #define FETCHER @"(?:sudo\\s+)?(?:/\\S*/)?(?:curl|wget)\\b"
+    
+    //compile regexes once
+    static NSArray* patterns = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
-        pipeToShellRegex =
-        [NSRegularExpression regularExpressionWithPattern:
-         @"\\|\\s*(?:/\\S+/)?(?:sh|bash|zsh)\\b"
-         options:0
-         error:nil];
+        //name / pattern pairs
+        NSArray* definitions = @[
+            
+            //curl ... | sh, | sudo bash, | /usr/bin/env zsh, | python3 -, etc
+            @[@"pipe to interpreter", @"\\|\\s*" INTERPRETER],
+            
+            //bash -c "$(curl ...)", eval "$(curl ...)", source <(curl ...), `curl ...`
+            @[@"substitution of a fetch", @"(?:\\$\\(|<\\(|`)\\s*" FETCHER],
+            
+            //curl ... ; sh x, && chmod +x, then ./x, /tmp/x, ~/x (newline counts as a separator)
+            @[@"fetch then execute", @"\\b(?:curl|wget)\\b[\\s\\S]{0,500}?(?:\\||&&|;|\\n|\\r)\\s*(?:" INTERPRETER @"|chmod\\b|xattr\\b|nohup\\b|open\\b|\\./|/tmp/|/private/tmp/|/var/tmp/|\\$tmpdir|~/)"],
+            
+            //base64 -d, -D, --decode, -i - -d
+            @[@"base64 decode", @"\\bbase64\\b[^|;&\\n]{0,40}?(?:-[a-z]*d\\b|--decode\\b)"],
+            
+            //osascript (any usage)
+            @[@"osascript", @"\\bosascript\\b|do shell script"],
+            
+            //python3 -c, python3 -u -c, perl -Mx -e, ruby -e, node -e, bash -c
+            @[@"inline interpreter code", @"(?<![\\w.\\-])(?:/\\S*/)?(?:python[0-9.]*|perl|ruby|node|php|sh|bash|zsh|ksh|dash)\\b\\s+(?:-\\S+\\s+)*-[a-z]*[ce]\\b"],
+            
+            //xattr -d com.apple.quarantine, xattr -c
+            @[@"quarantine removal", @"\\bxattr\\b\\s+-[a-z]*[dc]\\b"],
+            
+            //c${IFS}url
+            @[@"obfuscation", @"\\$\\{?ifs\\b"],
+        ];
         
-        base64DecodeRegex =
-        [NSRegularExpression regularExpressionWithPattern:
-         @"\\bbase64\\b\\s+(?:-d\\b|--decode\\b)"
-         options:0
-         error:nil];
+        //compile
+        NSMutableArray* compiled = [NSMutableArray array];
+        for(NSArray* definition in definitions)
+        {
+            NSError* error = nil;
+            NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:definition[1] options:0 error:&error];
+            if(nil == regex)
+            {
+                //err msg
+                os_log_error(logHandle, "ERROR: failed to compile 'ClickFix' regex '%{public}@' (%{public}@)", definition[0], error);
+                continue;
+            }
+            [compiled addObject:@[definition[0], regex]];
+        }
         
-        curlExecRegex =
-        [NSRegularExpression regularExpressionWithPattern:
-         @"\\bcurl\\b[\\s\\S]{0,500}?(\\||&&|;|\\$\\(|`|\\bbash\\b|\\bsh\\b|\\bchmod\\b|\\b\\./)"
-         options:0
-         error:nil];
-        
-        //osascript ... -e  (handles spacing/flags)
-        osascriptRegex =
-        [NSRegularExpression regularExpressionWithPattern:
-         @"\\bosascript\\b[\\s\\S]{0,120}?\\s-e\\b"
-         options:0
-         error:nil];
-        
-        //python -c / python3 -c / perl -e (handles optional paths + spacing)
-        inlineExecRegex =
-        [NSRegularExpression regularExpressionWithPattern:
-         @"\\b(?:/\\S+/)?(?:python3?|perl)\\b\\s+-(?:c|e)\\b"
-         options:0
-         error:nil];
+        patterns = compiled;
     });
     
-    //pipe to shell
-    if([pipeToShellRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
-        os_log_debug(logHandle, "clipboard contains pipe-to-shell pattern");
-        return NO;
-    }
-    
-    //base64 decode usage
-    if([base64DecodeRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
-        os_log_debug(logHandle, "clipboard contains base64 decode pattern");
-        return NO;
-    }
-    
-    //osascript execution
-    if([osascriptRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)] ||
-       [lower containsString:@"do shell script"]) {
-        os_log_debug(logHandle, "clipboard contains osascript pattern");
-        return NO;
-    }
-    
-    //curl + execute
-    if([curlExecRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
-        os_log_debug(logHandle, "clipboard contains curl+execute pattern");
-        return NO;
-    }
-        
-    //inline interpreter execution
-    if([inlineExecRegex firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)]) {
-        os_log_debug(logHandle, "clipboard contains inline script execution pattern");
-        return NO;
+    //check each pattern
+    for(NSArray* pattern in patterns)
+    {
+        if(nil != [pattern[1] firstMatchInString:lower options:0 range:NSMakeRange(0, lower.length)])
+        {
+            os_log_debug(logHandle, "clipboard matches 'ClickFix' pattern: %{public}@", pattern[0]);
+            return NO;
+        }
     }
     
     os_log_debug(logHandle, "no suspicious patterns found, allowing");
