@@ -380,7 +380,7 @@
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" preferredMaxLayoutWidth="660" translatesAutoresizingMaskIntoConstraints="NO" id="niD-eH-4wa">
                     <rect key="frame" x="-2" y="406" width="704" height="54"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Now, let's configure BlockBlock's addition protections" id="E0l-CV-cAg">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Now, let's configure BlockBlock's additional protections" id="E0l-CV-cAg">
                         <font key="font" size="32" name="AvenirNextCondensed-Regular"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
