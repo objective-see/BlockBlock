@@ -135,7 +135,8 @@ extern os_log_t logHandle;
     }
     
     //add timestamp
-    alert[ALERT_TIMESTAMP] = (nil != self.file.timestamp.description) ? self.file.timestamp.description : self.timestamp.description;
+    // note: NSDate's 'description' is always in UTC, so format in the local time zone
+    alert[ALERT_TIMESTAMP] = [self formatTimestamp:(nil != self.file.timestamp) ? self.file.timestamp : self.timestamp];
     
     //add cs flags
     signingInfo[CS_FLAGS] = self.process.csFlags;
@@ -283,6 +284,29 @@ extern os_log_t logHandle;
     os_log_debug(logHandle, "process hierarchy: %{public}@", processHierarchy);
 
     return processHierarchy;
+}
+
+//format a timestamp for display
+// uses the (system's) local time zone, as NSDate's 'description' is always UTC
+-(NSString*)formatTimestamp:(NSDate*)date
+{
+    //formatter
+    NSDateFormatter* formatter = nil;
+
+    //pick up any time zone change since daemon started
+    [NSTimeZone resetSystemTimeZone];
+
+    //init formatter
+    formatter = [[NSDateFormatter alloc] init];
+
+    //fixed format
+    formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+
+    //local time zone
+    formatter.timeZone = NSTimeZone.localTimeZone;
+
+    return [formatter stringFromDate:date];
 }
 
 //for pretty print
